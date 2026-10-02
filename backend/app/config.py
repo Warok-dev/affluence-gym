@@ -4,8 +4,24 @@ import os
 from zoneinfo import ZoneInfo
 
 DB_PATH = os.getenv("DB_PATH", "affluence.db")
-# DATABASE_URL takes precedence (PostgreSQL in production, phase 4).
-DATABASE_URL = os.getenv("DATABASE_URL") or f"sqlite:///{DB_PATH}"
+
+
+def _database_url() -> str:
+    """DATABASE_URL (PostgreSQL in production) takes precedence over DB_PATH (SQLite).
+
+    Hosts such as Neon or Render hand out "postgres://" / "postgresql://" URLs;
+    point them at the psycopg 3 driver used by this project.
+    """
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        return f"sqlite:///{DB_PATH}"
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix) :]
+    return url
+
+
+DATABASE_URL = _database_url()
 
 WINDOW_SECONDS = 30 * 60  # on moyenne les signalements des 30 dernières minutes
 COOLDOWN_SECONDS = 15 * 60  # 1 signalement par personne, par salle, par 15 min

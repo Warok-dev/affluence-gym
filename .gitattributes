@@ -1,0 +1,3 @@
+# Keep LF line endings in the repo and in checkouts (Docker, shell, CI run on Linux).
+* text=auto eol=lf
+*.png binary

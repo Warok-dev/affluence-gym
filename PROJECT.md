@@ -33,15 +33,21 @@ L'auteur est étudiant en génie informatique et vise un poste d'ingénieur en d
 
 ## 4. État actuel du code (déjà fait)
 
-Phases 1, 2 et 3 faites. Backend : 18 tests ; frontend : 22 tests.
+Phases 1 à 4 faites. Backend : 23 tests (exécutés sur SQLite et PostgreSQL en CI) ; frontend : 22 tests.
 
 ```
 affluence-gym/
-├── .gitignore
+├── .gitignore, .gitattributes, .env.example
 ├── PROJECT.md
 ├── README.md
+├── docker-compose.yml      # PostgreSQL + API + PWA (nginx)
+├── render.yaml             # déploiement Render (blueprint)
+├── .github/workflows/ci.yml
 ├── backend/
-│   ├── requirements.txt, pyproject.toml (config ruff)
+│   ├── Dockerfile, .dockerignore
+│   ├── requirements.txt (exécution), requirements-dev.txt (tests, lint)
+│   ├── pyproject.toml      # config ruff et pytest
+│   ├── alembic.ini, migrations/   # Alembic (révision 0001_initial)
 │   ├── app/
 │   │   ├── main.py         # création de l'app, CORS, tâche périodique (lifespan)
 │   │   ├── config.py       # variables d'environnement
@@ -53,8 +59,9 @@ affluence-gym/
 │   │   ├── scheduler.py    # boucle des snapshots toutes les 15 min
 │   │   └── snapshot.py     # `python -m app.snapshot` (pour un cron externe)
 │   ├── scripts/seed_demo.py  # données FICTIVES dans demo.db
-│   └── tests/ (conftest.py, test_api.py, test_history.py)
+│   └── tests/ (conftest.py, test_api.py, test_history.py, test_db.py)
 └── frontend/               # PWA React + Vite + TypeScript
+    ├── Dockerfile, nginx.conf.template   # build Node, puis nginx (proxy /api)
     ├── index.html
     ├── vite.config.ts      # PWA (vite-plugin-pwa), proxy /api, config Vitest
     ├── public/             # icônes PWA, favicon
@@ -102,6 +109,26 @@ Comportement actuel de l'API :
 - **Graphique sans bibliothèque** (barres en CSS) : une seule série, créneaux calmes en vert et autres heures en gris. Un tap ou un survol détaille l'heure choisie, et un tableau masqué sert aux lecteurs d'écran. L'heure de la salle est calculée dans son fuseau, même si le téléphone est ailleurs.
 - **Données de démo** : `scripts/seed_demo.py` écrit uniquement dans `demo.db`, jamais dans la vraie base.
 
+### Décisions prises (phase 4)
+
+- **Hébergement : Render + Neon.**
+  - L'API est un *web service* Docker gratuit, et la PWA un *static site* gratuit (CDN, HTTPS).
+  - PostgreSQL vient de **Neon** (offre gratuite permanente) : la base gratuite de Render expire après 30 jours, ce qui ferait perdre l'historique.
+  - Écartés : Fly.io et Railway, plus d'offre gratuite durable.
+- **Déploiement automatisé avec `autoDeployTrigger: checksPass`** : Render redéploie `main` seulement si la CI GitHub est verte. Il n'y a donc aucun secret de déploiement à stocker dans GitHub.
+- **En production, le frontend appelle l'API par son URL publique** (`VITE_API_URL`), avec CORS limité au site. Écarté : la réécriture `/api/*` de Render vers une URL externe, peu documentée (POST, en-têtes). En dev (Vite) et en Docker (nginx), `/api` reste en même origine.
+- **Migrations Alembic appliquées au démarrage de l'API.** C'est simple et sûr avec une seule instance. Les bases antérieures à Alembic sont complétées puis marquées `0001`. Si on passe un jour à plusieurs instances, il faudra une étape `alembic upgrade head` séparée avant le démarrage.
+- **psycopg 3** (paquet binaire), `pool_pre_ping` pour les connexions coupées par Neon quand il se met en veille, et `ts` en `BigInteger`.
+- **CI** :
+  - lint ruff ;
+  - tests backend en matrice **SQLite + PostgreSQL 17** ;
+  - `alembic check` ;
+  - tests et build frontend ;
+  - construction des images, puis **test de bout en bout de la stack compose via nginx**.
+  - Les images ne sont pas publiées dans un registre : Render construit lui-même l'image depuis le repo.
+- **Images** : l'API tourne sur `python:3.12-slim` avec un utilisateur non root et un `HEALTHCHECK` sur `/health`. Le frontend est construit en deux étapes (Node, puis `nginx:alpine`) ; `sw.js` et `index.html` n'y sont jamais mis en cache.
+- **Limites acceptées de l'offre gratuite** : l'API se met en veille après 15 min sans trafic (premier appel lent), et aucun snapshot n'est pris pendant la veille. Comme l'appli ouverte interroge l'API toutes les 45 s, ça ne touche que les périodes sans utilisateurs.
+
 ## 5. Modèle de données
 
 Table `reports` : `id`, `facility`, `level`, `client_id`, `ts` (epoch secondes).
@@ -129,7 +156,7 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Graphique dans l'UI : affluence typique par heure pour le jour courant, avec mise en évidence des créneaux calmes.
 - Horaires d'ouverture des salles (données statiques configurables).
 
-### Phase 4 — Déploiement
+### Phase 4 — Déploiement (fait ; mise en ligne : créer les comptes Render et Neon, voir README)
 - Dockerfile backend et frontend, `docker-compose.yml` pour le dev local.
 - Passage à PostgreSQL en prod via variable d'environnement `DATABASE_URL`.
 - CI GitHub Actions : lint (ruff), tests backend, tests frontend, build des images.

@@ -1,8 +1,11 @@
 """Database models and session handling (SQLAlchemy 2)."""
 
 from collections.abc import Iterator
+from pathlib import Path
 
-from sqlalchemy import Index, Integer, String, UniqueConstraint, create_engine
+from alembic import command
+from alembic.config import Config
+from sqlalchemy import BigInteger, Index, Integer, String, UniqueConstraint, create_engine, inspect
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 from .config import DATABASE_URL
@@ -20,7 +23,7 @@ class Report(Base):
     facility: Mapped[str] = mapped_column(String(32))
     level: Mapped[int] = mapped_column(Integer)
     client_id: Mapped[str] = mapped_column(String(64))
-    ts: Mapped[int] = mapped_column(Integer)  # epoch seconds
+    ts: Mapped[int] = mapped_column(BigInteger)  # epoch seconds
 
 
 class OccupancySnapshot(Base):
@@ -31,19 +34,37 @@ class OccupancySnapshot(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     facility: Mapped[str] = mapped_column(String(32))
-    ts: Mapped[int] = mapped_column(Integer)  # epoch seconds, floored to the quarter hour
+    ts: Mapped[int] = mapped_column(BigInteger)  # epoch seconds, floored to the quarter hour
     level: Mapped[int] = mapped_column(Integer)
     source: Mapped[str] = mapped_column(String(16))  # "crowd" today, "official" later
 
 
 _connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(DATABASE_URL, connect_args=_connect_args)
+# pool_pre_ping: serverless Postgres (Neon) closes idle connections when it scales to zero.
+engine = create_engine(DATABASE_URL, connect_args=_connect_args, pool_pre_ping=True)
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
+
+ALEMBIC_INI = Path(__file__).resolve().parents[1] / "alembic.ini"
+
+
+def alembic_config() -> Config:
+    cfg = Config(str(ALEMBIC_INI))
+    cfg.set_main_option("script_location", str(ALEMBIC_INI.parent / "migrations"))
+    return cfg
 
 
 def init_db() -> None:
-    # Phase 4 replaces this with Alembic migrations (needed for PostgreSQL).
-    Base.metadata.create_all(engine)
+    """Bring the schema up to date with Alembic migrations.
+
+    Databases created before Alembic (phase 2: `reports` only; phase 3: both tables)
+    are completed with the tables of the first revision, then stamped at it.
+    """
+    cfg = alembic_config()
+    tables = set(inspect(engine).get_table_names())
+    if "alembic_version" not in tables and "reports" in tables:
+        Base.metadata.create_all(engine, tables=[Report.__table__, OccupancySnapshot.__table__])
+        command.stamp(cfg, "0001")
+    command.upgrade(cfg, "head")
 
 
 def get_session() -> Iterator[Session]:
