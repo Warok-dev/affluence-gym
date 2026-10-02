@@ -343,3 +343,7 @@ button:disabled {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+.muted.small {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+}

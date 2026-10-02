@@ -41,6 +41,11 @@ export const fr = {
   chartTableCaption: "Affluence moyenne par heure",
   colHour: "Heure",
   colLevel: "Affluence moyenne",
+  // Phase 5: forecast
+  forecastCalm: (hour: string) => `Prévision : probablement calme vers ${hour}`,
+  forecastNoCalm: (hour: string, label: string) =>
+    `Prévision : pas de créneau calme dans les prochaines heures (le moins chargé : ${hour}, ${label.toLowerCase()})`,
+  forecastBasis: (n: number) => `Estimation à partir de ${n.toLocaleString("fr-CA")} relevés`,
 };
 
 export type Messages = typeof fr;

@@ -11,6 +11,7 @@ from . import history as hist
 from .config import COOLDOWN_SECONDS, LABELS, TIMEZONE
 from .db import Report, get_session
 from .facilities import FACILITIES
+from .forecast.service import forecast, forecast_service
 from .sources import source
 
 router = APIRouter()
@@ -96,4 +97,24 @@ def get_profile(
         "timezone": str(TIMEZONE),
         "opening_hours": {"open": hours[0], "close": hours[1]} if hours else None,
         "hours": [vars(h) for h in hist.profile(session, facility, weekday, weeks, now)],
+    }
+
+
+@router.get("/forecast/{facility}")
+def get_forecast(facility: FacilityDep, session: SessionDep, hours: Annotated[int, Query(ge=1, le=48)] = 12):
+    """Predicted level for the next `hours` whole hours when the gym is open."""
+    now = int(time.time())
+    trained = forecast_service.get(session, now)
+    points = forecast(trained, facility, now, hours) if trained else []
+    next_calm = next((p for p in points if p.calm), None)
+    return {
+        "facility": facility,
+        "available": trained is not None,
+        "model": trained.name if trained else None,
+        "trained_at": trained.trained_at if trained else None,
+        "training_samples": trained.samples if trained else 0,
+        "validation_mae": {name: m["mae"] for name, m in trained.validation.items()} if trained else {},
+        "timezone": str(TIMEZONE),
+        "hours": [vars(p) for p in points],
+        "next_calm": {"ts": next_calm.ts, "hour": next_calm.hour} if next_calm else None,
     }

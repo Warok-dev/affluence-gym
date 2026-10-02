@@ -81,6 +81,7 @@ jobs:
             -d '{"facility":"minto","level":3,"client_id":"ci-smoke-test"}'
           curl -fsS http://localhost:8080/api/occupancy/minto | grep -q '"level":3'
           curl -fsS http://localhost:8080/api/profile/minto | grep -q '"opening_hours"'
+          curl -fsS http://localhost:8080/api/forecast/minto | grep -q '"available"'
       - name: Logs on failure
         if: failure()
         run: docker compose logs

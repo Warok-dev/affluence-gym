@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import type { HourProfile, Profile } from "../api";
+import type { Forecast, HourProfile, Profile } from "../api";
 import type { Level } from "../config";
 import { useT } from "../i18n";
 
@@ -22,10 +22,11 @@ const toMinutes = (hhmm: string) => {
 
 interface Props {
   profile: Profile;
+  forecast?: Forecast;
   now: number;
 }
 
-export function TypicalDay({ profile, now }: Props) {
+export function TypicalDay({ profile, forecast, now }: Props) {
   const t = useT();
   const titleId = useId();
   const { hour: currentHour, minutes } = localTime(now, profile.timezone);
@@ -45,6 +46,16 @@ export function TypicalDay({ profile, now }: Props) {
   const hasHistory = hours.some((h) => h.level !== null);
   const calmLater = hours.filter((h) => h.calm && h.hour > currentHour).slice(0, 3);
   const shown = hours.find((h) => h.hour === (selected ?? (inRange ? currentHour : hours[0]?.hour)));
+
+  // The model's forecast takes precedence over the plain historical average.
+  const upcoming = forecast?.available ? forecast.hours : [];
+  let outlook: string | null = null;
+  if (forecast?.next_calm) {
+    outlook = t.forecastCalm(t.hour(forecast.next_calm.hour));
+  } else if (upcoming.length) {
+    const quietest = upcoming.reduce((a, b) => (b.level < a.level ? b : a));
+    outlook = t.forecastNoCalm(t.hour(quietest.hour), levelLabel(quietest.level));
+  }
 
   return (
     <section className="typical" aria-labelledby={titleId}>
@@ -102,9 +113,6 @@ export function TypicalDay({ profile, now }: Props) {
               </>
             )}
           </p>
-          <p className="calm-later">
-            {calmLater.length ? t.calmLater(t.list(calmLater.map((h) => t.hour(h.hour)))) : t.noCalmLater}
-          </p>
           <table className="sr-only">
             <caption>{t.chartTableCaption}</caption>
             <thead>
@@ -123,6 +131,21 @@ export function TypicalDay({ profile, now }: Props) {
             </tbody>
           </table>
         </>
+      )}
+
+      {outlook ? (
+        <>
+          <p className="calm-later" data-testid="forecast">
+            {outlook}
+          </p>
+          <p className="muted small">{t.forecastBasis(forecast!.training_samples)}</p>
+        </>
+      ) : (
+        hasHistory && (
+          <p className="calm-later">
+            {calmLater.length ? t.calmLater(t.list(calmLater.map((h) => t.hour(h.hour)))) : t.noCalmLater}
+          </p>
+        )
       )}
     </section>
   );

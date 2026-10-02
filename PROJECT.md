@@ -33,7 +33,7 @@ L'auteur est étudiant en génie informatique et vise un poste d'ingénieur en d
 
 ## 4. État actuel du code (déjà fait)
 
-Phases 1 à 4 faites. Backend : 23 tests (exécutés sur SQLite et PostgreSQL en CI) ; frontend : 22 tests.
+Phases 1 à 5 faites. Backend : 36 tests (exécutés sur SQLite et PostgreSQL en CI) ; frontend : 25 tests.
 
 ```
 affluence-gym/
@@ -43,6 +43,7 @@ affluence-gym/
 ├── docker-compose.yml      # PostgreSQL + API + PWA (nginx)
 ├── render.yaml             # déploiement Render (blueprint)
 ├── .github/workflows/ci.yml
+├── docs/forecast-evaluation.md
 ├── backend/
 │   ├── Dockerfile, .dockerignore
 │   ├── requirements.txt (exécution), requirements-dev.txt (tests, lint)
@@ -57,9 +58,10 @@ affluence-gym/
 │   │   ├── history.py      # snapshots, historique, profil par heure
 │   │   ├── routes.py       # endpoints
 │   │   ├── scheduler.py    # boucle des snapshots toutes les 15 min
-│   │   └── snapshot.py     # `python -m app.snapshot` (pour un cron externe)
+│   │   ├── snapshot.py     # `python -m app.snapshot` (pour un cron externe)
+│   │   └── forecast/       # features, models (baseline, gbm), service, evaluate
 │   ├── scripts/seed_demo.py  # données FICTIVES dans demo.db
-│   └── tests/ (conftest.py, test_api.py, test_history.py, test_db.py)
+│   └── tests/ (conftest.py, test_api.py, test_history.py, test_db.py, test_forecast.py)
 └── frontend/               # PWA React + Vite + TypeScript
     ├── Dockerfile, nginx.conf.template   # build Node, puis nginx (proxy /api)
     ├── index.html
@@ -129,6 +131,27 @@ Comportement actuel de l'API :
 - **Images** : l'API tourne sur `python:3.12-slim` avec un utilisateur non root et un `HEALTHCHECK` sur `/health`. Le frontend est construit en deux étapes (Node, puis `nginx:alpine`) ; `sw.js` et `index.html` n'y sont jamais mis en cache.
 - **Limites acceptées de l'offre gratuite** : l'API se met en veille après 15 min sans trafic (premier appel lent), et aucun snapshot n'est pris pendant la veille. Comme l'appli ouverte interroge l'API toutes les 45 s, ça ne touche que les périodes sans utilisateurs.
 
+### Décisions prises (phase 5)
+
+- **Module `app/forecast/` indépendant de FastAPI** (variables, modèles, service, évaluation). L'API ne fait que l'appeler. Le module peut être extrait en service séparé sans réécriture.
+- **Réentraînement en mémoire une fois par jour**, sans fichier de modèle : l'hébergement gratuit n'a pas de disque persistant, et l'entraînement prend moins d'une seconde pour environ 14 000 snapshots. Il est lancé par la tâche des quarts d'heure, ou au premier appel de `/forecast`.
+- **Sélection automatique du modèle** :
+  - la validation porte sur les 14 derniers jours (découpage temporel, jamais mélangé) ;
+  - le modèle à la plus petite MAE est réentraîné sur toutes les données ;
+  - le `gbm` n'est candidat qu'à partir de 500 snapshots.
+  - Le choix est exposé dans `/forecast` (`model`, `validation_mae`).
+- **Modèles** :
+  - la baseline (moyenne par salle, jour et heure, avec replis) ;
+  - `HistGradientBoostingRegressor` (scikit-learn), choisi plutôt que LightGBM ou XGBoost : pas de dépendance native de plus, et il gère nativement les variables catégorielles.
+- **Variables** :
+  - jour, heure, avec un encodage cyclique de l'heure ;
+  - week-end ;
+  - jours fériés de l'Ontario (bibliothèque `holidays`) ;
+  - périodes d'examens (configuration statique, **provisoire**).
+- **Météo écartée pour la v1** : il faudrait une source externe pour l'historique et pour les prévisions. Son ajout est documenté, et sera à valider par backtest.
+- **Évaluation hors ligne** : backtest à origine glissante (4 semaines), avec MAE, RMSE, exactitude du niveau et F1 « calme ». La commande est en **lecture seule**, donc sans danger sur une copie de la prod. Les résultats sur données de démo, **synthétiques**, sont dans `docs/forecast-evaluation.md`.
+- **Interface** : « Prévision : probablement calme vers 18 h », ou l'heure la moins chargée s'il n'y a pas de créneau calme. Si la prévision est indisponible, l'appli revient aux créneaux calmes de l'historique.
+
 ## 5. Modèle de données
 
 Table `reports` : `id`, `facility`, `level`, `client_id`, `ts` (epoch secondes).
@@ -163,7 +186,7 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Déploiement automatisé sur l'hébergeur choisi. Variables d'environnement documentées (`.env.example`).
 - Endpoint `/health` utilisé pour les health checks.
 
-### Phase 5 — IA : prévision d'affluence
+### Phase 5 — IA : prévision d'affluence (fait ; à réévaluer avec de vraies données)
 - Modèle simple de prévision (baseline : moyenne par heure et jour ; puis gradient boosting ou similaire) à partir de l'historique accumulé.
 - Variables possibles : jour de la semaine, heure, période d'examens, jours fériés, météo.
 - Endpoint `GET /forecast/{facility}` et affichage « le gym sera probablement calme à 18 h ».

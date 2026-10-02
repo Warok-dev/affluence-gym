@@ -54,3 +54,29 @@ export async function fetchProfile(facility: FacilityId): Promise<Profile> {
   if (!res.ok) throw new Error(`GET /profile/${facility} failed: ${res.status}`);
   return (await res.json()) as Profile;
 }
+
+export interface HourForecast {
+  ts: number;
+  hour: number;
+  level: number;
+  calm: boolean;
+}
+
+export interface Forecast {
+  facility: string;
+  /** False until the API has some history to learn from. */
+  available: boolean;
+  model: "baseline" | "gbm" | null;
+  trained_at: number | null;
+  training_samples: number;
+  validation_mae: Record<string, number>;
+  timezone: string;
+  hours: HourForecast[];
+  next_calm: { ts: number; hour: number } | null;
+}
+
+export async function fetchForecast(facility: FacilityId): Promise<Forecast> {
+  const res = await fetch(`${API_BASE}/forecast/${facility}`);
+  if (!res.ok) throw new Error(`GET /forecast/${facility} failed: ${res.status}`);
+  return (await res.json()) as Forecast;
+}
