@@ -2,7 +2,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "../App";
-import type { Occupancy } from "../api";
+import type { Occupancy, Profile } from "../api";
 import { REFRESH_MS } from "../config";
 import { I18nProvider } from "../i18n";
 
@@ -13,6 +13,21 @@ const occupancy: Record<string, Occupancy> = {
   minto: { facility: "minto", level: 3, label: "Modéré", reports: 4, last_report_ts: nowSec - 5 * 60 },
   montpetit: { facility: "montpetit", level: null, label: "Pas de données", reports: 0, last_report_ts: null },
 };
+
+// Typical Thursday at Minto (NOW is 14:00 in Toronto): calm at 16 h and 21 h.
+const profile = (facility: string): Profile => ({
+  facility,
+  weekday: 3,
+  weeks: 8,
+  timezone: "America/Toronto",
+  opening_hours: { open: "06:30", close: "23:00" },
+  hours: Array.from({ length: 17 }, (_, i) => {
+    const hour = 6 + i;
+    if (facility === "montpetit") return { hour, level: null, samples: 0, calm: false };
+    const calm = hour === 16 || hour === 21 || hour === 8;
+    return { hour, level: calm ? 1.5 : 3, samples: 4, calm };
+  }),
+});
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -27,6 +42,7 @@ beforeEach(() => {
   fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
     if (init?.method === "POST") return json({ status: "ok" }, reportStatus);
     const facility = url.split("/").pop()!;
+    if (url.includes("/profile/")) return json(profile(facility));
     return json(occupancy[facility]);
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -45,7 +61,7 @@ function renderApp() {
   );
 }
 
-const occupancyCalls = () => fetchMock.mock.calls.filter(([, init]) => init?.method !== "POST").length;
+const occupancyCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).includes("/occupancy/")).length;
 
 describe("affichage", () => {
   it("affiche une carte par salle avec niveau, signalements et « il y a X min »", async () => {
@@ -144,5 +160,52 @@ describe("signalement", () => {
     await user.click(within(minto).getByRole("button", { name: "Annuler" }));
     expect(within(minto).queryByRole("button", { name: /Signaler :/ })).not.toBeInTheDocument();
     expect(fetchMock.mock.calls.some(([, init]) => init?.method === "POST")).toBe(false);
+  });
+});
+
+describe("affluence typique (phase 3)", () => {
+  it("affiche les horaires, le graphique et les prochains créneaux calmes", async () => {
+    renderApp();
+    const minto = screen.getByTestId("card-minto");
+    expect(await within(minto).findByText("Affluence typique aujourd'hui")).toBeInTheDocument();
+    expect(within(minto).getByText("Ouvert aujourd'hui de 6 h 30 à 23 h")).toBeInTheDocument();
+    // 8 h is calm but already past: only later slots are suggested.
+    expect(within(minto).getByText("Plutôt calme plus tard vers 16 h et 21 h")).toBeInTheDocument();
+    const bars = within(within(minto).getByTestId("chart")).getAllByRole("button");
+    expect(bars).toHaveLength(17);
+    // The current hour (14 h) is selected by default and described.
+    expect(within(minto).getByRole("button", { name: /^14 h : Modéré en moyenne/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it("détaille l'heure touchée", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderApp();
+    const minto = screen.getByTestId("card-minto");
+    const bar = await within(minto).findByRole("button", { name: /^16 h : Calme en moyenne \(4 relevés\)/ });
+    await user.click(bar);
+    expect(bar).toHaveAttribute("aria-pressed", "true");
+    expect(bar).toHaveClass("calm");
+  });
+
+  it("indique quand il n'y a pas encore d'historique", async () => {
+    renderApp();
+    const montpetit = screen.getByTestId("card-montpetit");
+    expect(
+      await within(montpetit).findByText("Pas encore assez d'historique pour ce jour de la semaine."),
+    ).toBeInTheDocument();
+    expect(within(montpetit).queryByTestId("chart")).not.toBeInTheDocument();
+  });
+
+  it("n'affiche rien si le profil est indisponible, sans casser la carte", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      url.includes("/profile/") ? json({}, 500) : json(occupancy[url.split("/").pop()!]),
+    );
+    renderApp();
+    const minto = screen.getByTestId("card-minto");
+    expect(await within(minto).findByText("Modéré")).toBeInTheDocument();
+    expect(within(minto).queryByText("Affluence typique aujourd'hui")).not.toBeInTheDocument();
   });
 });

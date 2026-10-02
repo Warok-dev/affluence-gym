@@ -45,11 +45,13 @@ def test_last_report_ts():
 
 def test_last_report_ts_null_when_empty():
     # The test DB is shared across tests: empty one facility to check the "no data" shape.
-    from app import main
+    from sqlalchemy import delete
 
-    with main.closing(main.get_db()) as conn:
-        conn.execute("DELETE FROM reports WHERE facility='montpetit'")
-        conn.commit()
+    from app.db import Report, SessionLocal
+
+    with SessionLocal() as session:
+        session.execute(delete(Report).where(Report.facility == "montpetit"))
+        session.commit()
     data = client.get("/occupancy/montpetit").json()
     assert data == {
         "facility": "montpetit",

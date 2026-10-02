@@ -3,6 +3,9 @@ export const API_BASE: string = import.meta.env.VITE_API_URL ?? "/api";
 /** Refresh period of the occupancy cards (spec: every 30–60 s). */
 export const REFRESH_MS = 45_000;
 
+/** The typical-day profile changes slowly (one snapshot per 15 min). */
+export const PROFILE_REFRESH_MS = 15 * 60_000;
+
 export const FACILITIES = [
   { id: "minto", name: "Minto" },
   { id: "montpetit", name: "Montpetit" },

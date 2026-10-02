@@ -223,3 +223,123 @@ button:disabled {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* Phase 3: typical day chart */
+:root {
+  --bar: #9ca3af;
+  --calm: #15803d;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bar: #4b5563;
+    --calm: #4ade80;
+  }
+}
+
+.typical {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.typical h3 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+.hours-line,
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+}
+.bar {
+  flex: 1;
+  min-width: 0;
+  min-height: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px 4px 0 0;
+  background: var(--bar);
+}
+.bar.calm {
+  background: var(--calm);
+}
+.bar.empty {
+  height: 4px;
+  background: transparent;
+  border-top: 2px dashed var(--bar);
+  border-radius: 0;
+}
+.bar.selected {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+
+.axis {
+  display: flex;
+  gap: 2px;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.axis span {
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+.axis .now {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.chart-detail {
+  min-height: 1.5rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+}
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.legend .swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  background: var(--calm);
+}
+.calm-later {
+  margin: 0.4rem 0 0;
+  font-weight: 600;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.axis .now {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legend .now-key {
+  margin-left: 0.75rem;
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

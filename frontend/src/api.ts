@@ -31,3 +31,26 @@ export async function postReport(facility: FacilityId, level: Level, clientId: s
     return "error";
   }
 }
+
+export interface HourProfile {
+  hour: number;
+  /** Average level (1–4) for this hour over past weeks, or null without history. */
+  level: number | null;
+  samples: number;
+  calm: boolean;
+}
+
+export interface Profile {
+  facility: string;
+  weekday: number;
+  weeks: number;
+  timezone: string;
+  opening_hours: { open: string; close: string } | null;
+  hours: HourProfile[];
+}
+
+export async function fetchProfile(facility: FacilityId): Promise<Profile> {
+  const res = await fetch(`${API_BASE}/profile/${facility}`);
+  if (!res.ok) throw new Error(`GET /profile/${facility} failed: ${res.status}`);
+  return (await res.json()) as Profile;
+}
