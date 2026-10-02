@@ -14,16 +14,17 @@ Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes et les phases.
 - Python 3.12 ou plus récent
 - Node.js 20 ou plus récent (npm inclus)
 
+Les commandes ci-dessous sont pour **PowerShell** (Windows), depuis le dossier `affluence-gym`. Sous macOS/Linux, remplace `.venv\Scripts\python` par `.venv/bin/python`.
+
 ## Installation
 
-```bash
+```powershell
 cd backend
 python -m venv .venv
-.venv\Scripts\activate          # Windows (macOS/Linux : source .venv/bin/activate)
-pip install -r requirements.txt
+.venv\Scripts\python -m pip install -r requirements.txt
 ```
 
-```bash
+```powershell
 cd frontend
 npm install
 ```
@@ -32,14 +33,13 @@ npm install
 
 Deux terminaux :
 
-```bash
+```powershell
 # Terminal 1 : API sur http://127.0.0.1:8000 (doc interactive : /docs)
 cd backend
-.venv\Scripts\activate
-uvicorn app.main:app --reload --port 8000
+.venv\Scripts\python -m uvicorn app.main:app --reload --port 8000
 ```
 
-```bash
+```powershell
 # Terminal 2 : interface sur http://localhost:5173
 cd frontend
 npm run dev
@@ -50,7 +50,7 @@ Le frontend appelle `/api/...` et Vite redirige ces requêtes vers le backend (p
 ## Tester sur un téléphone (même Wi-Fi)
 
 1. Lance le backend comme ci-dessus (il peut rester sur `127.0.0.1` : c'est Vite qui le contacte).
-2. Lance le frontend : `npm run dev` (ou `npm run build && npm run preview` pour la version PWA, port 4173).
+2. Lance le frontend : `npm run dev` (ou `npm run build` puis `npm run preview` pour la version PWA, port 4173).
 3. Vite affiche une adresse `Network: http://192.168.x.x:5173`. Ouvre-la sur le téléphone.
 4. Si la page ne charge pas, autorise Node.js dans le pare-feu Windows (réseau privé).
 
@@ -61,7 +61,7 @@ Le frontend appelle `/api/...` et Vite redirige ces requêtes vers le backend (p
 On utilise un « quick tunnel » Cloudflare : gratuit, sans compte, avec une URL HTTPS temporaire.
 
 1. Installe `cloudflared` une fois (Windows : `winget install --id Cloudflare.cloudflared`).
-2. Lance le backend, puis `npm run build && npm run preview` dans `frontend/`.
+2. Lance le backend, puis `npm run build` et `npm run preview` dans `frontend/`.
 3. Dans un autre terminal : `cloudflared tunnel --url http://localhost:4173`
 4. Ouvre sur le téléphone l'URL `https://xxxx.trycloudflare.com` affichée, puis « Ajouter à l'écran d'accueil » (Chrome Android) ou Partager > « Sur l'écran d'accueil » (Safari iOS).
 
@@ -69,7 +69,7 @@ L'URL change à chaque lancement du tunnel, et le tunnel ne sert qu'à tester. P
 
 ## Tester la PWA (installable, hors ligne)
 
-```bash
+```powershell
 cd frontend
 npm run build
 npm run preview        # http://localhost:4173
@@ -79,12 +79,14 @@ Dans Chrome ou Edge : icône « Installer » dans la barre d'adresse. DevTools >
 
 ## Tests
 
-```bash
-cd backend && .venv\Scripts\activate && pytest
+```powershell
+cd backend
+.venv\Scripts\python -m pytest
 ```
 
-```bash
-cd frontend && npm test
+```powershell
+cd frontend
+npm test
 ```
 
 ## Configuration
