@@ -2,13 +2,15 @@
 
 [![CI](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml/badge.svg)](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml)
 
-Application web mobile (PWA) qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, à partir de **signalements anonymes** des étudiants, avec l'affluence typique heure par heure pour savoir quand y aller. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
+Application web mobile (PWA) qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, à partir de **signalements anonymes** des étudiants. Elle montre aussi l'affluence typique heure par heure et une **prévision** (« probablement calme vers 18 h ») produite par un modèle de machine learning. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
 
 Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes, les phases et les décisions d'architecture.
 
 | Dossier | Contenu |
 |---|---|
 | `backend/` | API FastAPI, SQLAlchemy 2 + Alembic, SQLite (dev) ou PostgreSQL (prod) |
+| `backend/app/forecast/` | Prévision : variables, modèles (baseline et gradient boosting), sélection, backtest |
+| `docs/forecast-evaluation.md` | Méthode et résultats de l'évaluation hors ligne du modèle |
 | `frontend/` | PWA React + Vite + TypeScript (mobile first, mode sombre, i18n fr/en) |
 | `docker-compose.yml` | Stack locale identique à la prod : PostgreSQL + API + PWA servie par nginx |
 | `.github/workflows/ci.yml` | CI : lint, tests (SQLite et PostgreSQL), build, images Docker et test de bout en bout |
@@ -115,7 +117,7 @@ cd backend
 
 ## Voir le graphique « affluence typique » avec des données de démo
 
-Le graphique a besoin de plusieurs semaines d'historique. Pour l'essayer tout de suite, on génère 8 semaines de données **fictives** dans une base séparée (`backend/demo.db`, ignorée par git) :
+Le graphique et la prévision ont besoin de plusieurs semaines d'historique. Pour les essayer tout de suite, on génère 16 semaines de données **fictives** dans une base séparée (`backend/demo.db`, ignorée par git) :
 
 ```powershell
 cd backend
@@ -125,6 +127,23 @@ $env:DB_PATH = "demo.db"
 ```
 
 Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH`) pour revenir à la vraie base.
+
+## Prévision (machine learning)
+
+- Deux modèles sont en concurrence. La **baseline** fait la moyenne par jour de semaine et heure. Le **gradient boosting** (scikit-learn) utilise l'heure, le jour, les jours fériés de l'Ontario et les périodes d'examens.
+- Le modèle est réentraîné **en mémoire une fois par jour** à partir des snapshots. Celui qui a la plus petite erreur sur les 14 derniers jours est servi.
+- Sans historique, `/forecast` répond `available: false`, et l'interface affiche les créneaux calmes tirés de l'historique.
+- Les dates d'examens se trouvent dans `backend/app/forecast/features.py`. **Ce sont des valeurs provisoires, à vérifier.**
+
+Pour lancer l'évaluation hors ligne (backtest à origine glissante, sans écriture dans la base) :
+
+```powershell
+cd backend
+$env:DB_PATH = "demo.db"   # ou DATABASE_URL vers une copie de la prod
+.venv\Scripts\python -m app.forecast.evaluate --folds 4
+```
+
+Méthode, résultats et limites : [docs/forecast-evaluation.md](docs/forecast-evaluation.md).
 
 ## Historique : tâche des snapshots
 
@@ -154,6 +173,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `GET` | `/occupancy/{facility}` | `{facility, level, label, reports, last_report_ts}` (moyenne sur 30 min ; `level`/`last_report_ts` = `null` sans données) |
 | `GET` | `/history/{facility}?days=7` | `{facility, days, points: [{ts, level, source}]}` (1 à 90 jours) |
 | `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
+| `GET` | `/forecast/{facility}?hours=12` | Prévision pour les prochaines heures d'ouverture (1 à 48) : `{available, model, trained_at, training_samples, validation_mae, hours: [{ts, hour, level, calm}], next_calm}` |
 | `GET` | `/health` | `{"status": "ok"}`, utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
