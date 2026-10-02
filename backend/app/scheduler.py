@@ -6,6 +6,7 @@ import time
 
 from .config import SNAPSHOT_SECONDS
 from .db import SessionLocal
+from .forecast.service import forecast_service
 from .history import take_snapshots
 from .sources import source
 
@@ -14,7 +15,10 @@ log = logging.getLogger(__name__)
 
 def run_once() -> int:
     with SessionLocal() as session:
-        return take_snapshots(session, source, int(time.time()))
+        written = take_snapshots(session, source, int(time.time()))
+        # Retrain the forecast once a day, off the request path.
+        forecast_service.get(session)
+        return written
 
 
 async def snapshot_loop() -> None:
