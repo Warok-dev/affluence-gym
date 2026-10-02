@@ -78,6 +78,94 @@ export const fr = {
   chartTableCaption: "Affluence moyenne par heure",
   colHour: "Heure",
   colLevel: "Affluence moyenne",
+
+  // Navigation
+  navLabel: "Navigation principale",
+  tabOccupancy: "Affluence",
+  tabWorkouts: "Séances",
+  inProgress: "en cours",
+
+  // Workouts: home
+  workoutsTitle: "Séances",
+  startWorkout: "Commencer une séance",
+  resumeWorkout: "Reprendre",
+  activeWorkoutTitle: "Séance en cours",
+  thisWeek: (n: number) => (n <= 1 ? `${n} séance cette semaine` : `${n} séances cette semaine`),
+  totalWorkouts: (n: number) => (n <= 1 ? `${n} séance au total` : `${n} séances au total`),
+  historyTitle: "Historique",
+  noWorkouts: "Aucune séance enregistrée pour l'instant. Ta première séance apparaîtra ici, avec tes records.",
+  recordsTitle: "Records",
+  recordLine: (weight: string, reps: number) => `${weight} × ${reps}`,
+  workoutSummary: (exercises: number, sets: number) =>
+    `${exercises} exercice${exercises > 1 ? "s" : ""} · ${sets} série${sets > 1 ? "s" : ""}`,
+  volume: (v: string) => `${v} soulevés`,
+
+  // Workouts: settings and backup
+  settingsTitle: "Réglages",
+  unitLabel: "Unité de charge",
+  restLabel: "Repos par défaut",
+  lessRest: "Réduire le repos de 15 secondes",
+  moreRest: "Allonger le repos de 15 secondes",
+  backupTitle: "Sauvegarde",
+  backupWarning:
+    "Tes séances sont enregistrées uniquement sur ce téléphone, jamais sur un serveur. Si tu effaces les données du navigateur ou changes d'appareil, elles disparaissent : exporte une sauvegarde de temps en temps.",
+  exportBackup: "Exporter une sauvegarde",
+  importBackup: "Importer une sauvegarde",
+  importDone: (n: number) => (n <= 1 ? `${n} séance ajoutée.` : `${n} séances ajoutées.`),
+  importError: "Ce fichier n'est pas une sauvegarde Affluence Gym valide.",
+  storageFull:
+    "Impossible d'enregistrer sur ce téléphone (stockage plein ou bloqué en navigation privée). Exporte une sauvegarde.",
+
+  // Active workout
+  finishWorkout: "Terminer",
+  confirmFinish: "Terminer la séance ? Les séries non cochées ne seront pas enregistrées.",
+  confirmFinishYes: "Oui, terminer",
+  keepGoing: "Continuer",
+  discardWorkout: "Abandonner la séance",
+  confirmDiscard: "Abandonner cette séance ? Rien ne sera enregistré.",
+  confirmDiscardYes: "Oui, abandonner",
+  emptyWorkout: "Ajoute ton premier exercice pour commencer.",
+  addExercise: "Ajouter un exercice",
+  removeExercise: "Retirer l'exercice",
+  addSet: "Ajouter une série",
+  removeSet: (n: number) => `Supprimer la série ${n}`,
+  setLabel: "Série",
+  repsLabel: "Rép.",
+  weightLabel: (unit: string) => `Charge (${unit})`,
+  doneLabel: (n: number) => `Série ${n} faite`,
+  lastTime: (sets: string) => `Dernière fois : ${sets}`,
+  firstTime: "Première fois : choisis une charge confortable.",
+  bodyweight: "PdC",
+  doneColumn: "Faite",
+  deleteColumn: "Supprimer",
+
+  // Exercise picker
+  searchExercise: "Rechercher un exercice",
+  noExerciseFound: "Aucun exercice ne correspond.",
+  close: "Fermer",
+  groups: {
+    chest: "Pectoraux",
+    back: "Dos",
+    legs: "Jambes",
+    shoulders: "Épaules",
+    arms: "Bras",
+    core: "Abdos",
+    cardio: "Cardio",
+  },
+
+  // Rest timer
+  rest: "Repos",
+  restDone: "Repos terminé, série suivante !",
+  skipRest: "Passer",
+  restTimerLabel: (clock: string) => `Repos restant : ${clock}`,
+
+  // Workout detail
+  backToWorkouts: "Toutes les séances",
+  deleteWorkout: "Supprimer la séance",
+  confirmDelete: "Supprimer définitivement cette séance de ce téléphone ?",
+  confirmDeleteYes: "Oui, supprimer",
+  workoutNotFound: "Cette séance n'existe pas (ou plus) sur ce téléphone.",
+  duration: (d: string) => `Durée ${d}`,
 };
 
 export type Messages = typeof fr;
