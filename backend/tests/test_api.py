@@ -59,6 +59,11 @@ def test_last_report_ts_null_when_empty():
         "label": "Pas de données",
         "reports": 0,
         "last_report_ts": None,
+        "source": "crowd",
+        "people": None,
+        "capacity": None,
+        "estimated": False,
+        "updated_ts": None,
     }
 
 

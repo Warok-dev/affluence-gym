@@ -5,8 +5,10 @@ import sys
 from pathlib import Path
 
 import pytest
+from alembic.script import ScriptDirectory
 
 from app import config
+from app.db import alembic_config
 
 BACKEND = Path(__file__).resolve().parents[1]
 
@@ -46,6 +48,9 @@ def test_phase2_database_is_upgraded_without_losing_reports(tmp_path):
 
     with sqlite3.connect(db) as conn:
         tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        assert {"reports", "occupancy_snapshots", "alembic_version"} <= tables
-        assert conn.execute("SELECT version_num FROM alembic_version").fetchone() == ("0001",)
+        assert {"reports", "occupancy_snapshots", "official_counts", "alembic_version"} <= tables
+        head = ScriptDirectory.from_config(alembic_config()).get_current_head()
+        assert conn.execute("SELECT version_num FROM alembic_version").fetchone() == (head,)
+        snapshot_columns = {r[1] for r in conn.execute("PRAGMA table_info(occupancy_snapshots)")}
+        assert "people" in snapshot_columns
         assert conn.execute("SELECT COUNT(*) FROM reports").fetchone() == (1,)

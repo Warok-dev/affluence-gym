@@ -108,7 +108,7 @@ def test_profile_averages_by_local_hour_and_flags_calm_slots(session):
 def test_profile_is_empty_on_a_closed_day(session, monkeypatch):
     from app.facilities import FACILITIES, Facility
 
-    closed = Facility("minto", "Minto", (None,) * 7)
+    closed = Facility("minto", "Minto", (None,) * 7, capacity=120)
     monkeypatch.setitem(FACILITIES, "minto", closed)
     assert hist.profile(session, "minto", weekday=0, weeks=8, now=NOW) == []
 

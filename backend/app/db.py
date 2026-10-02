@@ -5,7 +5,18 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import BigInteger, Index, Integer, String, UniqueConstraint, create_engine, inspect
+from sqlalchemy import (
+    BigInteger,
+    Column,
+    Index,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    UniqueConstraint,
+    create_engine,
+    inspect,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 from .config import DATABASE_URL
@@ -36,7 +47,25 @@ class OccupancySnapshot(Base):
     facility: Mapped[str] = mapped_column(String(32))
     ts: Mapped[int] = mapped_column(BigInteger)  # epoch seconds, floored to the quarter hour
     level: Mapped[int] = mapped_column(Integer)
-    source: Mapped[str] = mapped_column(String(16))  # "crowd" today, "official" later
+    source: Mapped[str] = mapped_column(String(16))  # "crowd" or "official"
+    people: Mapped[int | None] = mapped_column(Integer, nullable=True)  # official source only
+
+
+class OfficialCount(Base):
+    """A reading of the gym's turnstile counters, as sent by the university's system.
+
+    Counters are cumulative since midnight (gym local time); `exits` is null when the
+    exit turnstile has no counter. Aggregates only: no card number, no identity.
+    """
+
+    __tablename__ = "official_counts"
+    __table_args__ = (Index("idx_official_fac_ts", "facility", "ts"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    facility: Mapped[str] = mapped_column(String(32))
+    ts: Mapped[int] = mapped_column(BigInteger)  # epoch seconds of the reading
+    entries: Mapped[int] = mapped_column(Integer)
+    exits: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 _connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
@@ -62,9 +91,25 @@ def init_db() -> None:
     cfg = alembic_config()
     tables = set(inspect(engine).get_table_names())
     if "alembic_version" not in tables and "reports" in tables:
-        Base.metadata.create_all(engine, tables=[Report.__table__, OccupancySnapshot.__table__])
+        # Complete it to exactly the 0001 schema (not today's models), so that the
+        # later revisions apply on top of it as they would on any other database.
+        if "occupancy_snapshots" not in tables:
+            _SNAPSHOTS_0001.create(engine)
         command.stamp(cfg, "0001")
     command.upgrade(cfg, "head")
+
+
+# occupancy_snapshots as created by revision 0001, for databases that predate Alembic.
+_SNAPSHOTS_0001 = Table(
+    "occupancy_snapshots",
+    MetaData(),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("facility", String(32), nullable=False),
+    Column("ts", BigInteger, nullable=False),
+    Column("level", Integer, nullable=False),
+    Column("source", String(16), nullable=False),
+    UniqueConstraint("facility", "ts", "source", name="uq_snapshot"),
+)
 
 
 def get_session() -> Iterator[Session]:
