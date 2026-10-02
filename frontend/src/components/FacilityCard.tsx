@@ -1,9 +1,10 @@
 import { useId, useState } from "react";
-import { postReport, type Occupancy, type ReportResult } from "../api";
+import { postReport, type Occupancy, type Profile, type ReportResult } from "../api";
 import { getClientId } from "../clientId";
 import { LEVELS, type FacilityId, type Level } from "../config";
 import { useT } from "../i18n";
 import { minutesSince } from "../time";
+import { TypicalDay } from "./TypicalDay";
 
 type Status = "idle" | "sending" | ReportResult;
 
@@ -11,12 +12,13 @@ interface Props {
   id: FacilityId;
   name: string;
   data?: Occupancy;
+  profile?: Profile;
   loadError: boolean;
   now: number;
   onReported: () => void;
 }
 
-export function FacilityCard({ id, name, data, loadError, now, onReported }: Props) {
+export function FacilityCard({ id, name, data, profile, loadError, now, onReported }: Props) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
@@ -105,6 +107,8 @@ export function FacilityCard({ id, name, data, loadError, now, onReported }: Pro
         {status === "cooldown" && t.cooldown}
         {status === "error" && t.sendError}
       </p>
+
+      {profile && <TypicalDay profile={profile} now={now} />}
     </article>
   );
 }

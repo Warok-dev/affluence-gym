@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchOccupancy, type Occupancy } from "./api";
+import { fetchOccupancy, fetchProfile, type Occupancy, type Profile } from "./api";
 import { FacilityCard } from "./components/FacilityCard";
-import { FACILITIES, REFRESH_MS, type FacilityId } from "./config";
+import { FACILITIES, PROFILE_REFRESH_MS, REFRESH_MS, type FacilityId } from "./config";
 import { useT } from "./i18n";
 
 type OccupancyMap = Partial<Record<FacilityId, Occupancy>>;
@@ -10,6 +10,7 @@ export function App() {
   const t = useT();
   const [occupancy, setOccupancy] = useState<OccupancyMap>({});
   const [errors, setErrors] = useState<Partial<Record<FacilityId, boolean>>>({});
+  const [profiles, setProfiles] = useState<Partial<Record<FacilityId, Profile>>>({});
   const [now, setNow] = useState(() => Date.now());
 
   const refresh = useCallback(async () => {
@@ -25,6 +26,24 @@ export function App() {
     setErrors(Object.fromEntries(FACILITIES.map((f, i) => [f.id, results[i].status === "rejected"])));
     setNow(Date.now());
   }, []);
+
+  // The typical-day profile is optional: if it fails, the card simply omits it.
+  const refreshProfiles = useCallback(async () => {
+    const results = await Promise.allSettled(FACILITIES.map((f) => fetchProfile(f.id)));
+    setProfiles((prev) => {
+      const next = { ...prev };
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled") next[FACILITIES[i].id] = r.value;
+      });
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    void refreshProfiles();
+    const timer = setInterval(() => void refreshProfiles(), PROFILE_REFRESH_MS);
+    return () => clearInterval(timer);
+  }, [refreshProfiles]);
 
   useEffect(() => {
     void refresh();
@@ -53,6 +72,7 @@ export function App() {
             id={f.id}
             name={f.name}
             data={occupancy[f.id]}
+            profile={profiles[f.id]}
             loadError={!!errors[f.id]}
             now={now}
             onReported={() => void refresh()}
