@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { postReport, type Occupancy, type Profile, type ReportResult } from "../api";
+import { type Forecast, postReport, type Occupancy, type Profile, type ReportResult } from "../api";
 import { getClientId } from "../clientId";
 import { LEVELS, type FacilityId, type Level } from "../config";
 import { useT } from "../i18n";
@@ -13,12 +13,13 @@ interface Props {
   name: string;
   data?: Occupancy;
   profile?: Profile;
+  forecast?: Forecast;
   loadError: boolean;
   now: number;
   onReported: () => void;
 }
 
-export function FacilityCard({ id, name, data, profile, loadError, now, onReported }: Props) {
+export function FacilityCard({ id, name, data, profile, forecast, loadError, now, onReported }: Props) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
@@ -108,7 +109,7 @@ export function FacilityCard({ id, name, data, profile, loadError, now, onReport
         {status === "error" && t.sendError}
       </p>
 
-      {profile && <TypicalDay profile={profile} now={now} />}
+      {profile && <TypicalDay profile={profile} forecast={forecast} now={now} />}
     </article>
   );
 }

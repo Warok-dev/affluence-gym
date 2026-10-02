@@ -38,4 +38,8 @@ export const en: Messages = {
   chartTableCaption: "Average crowd level per hour",
   colHour: "Hour",
   colLevel: "Average level",
+  forecastCalm: (hour: string) => `Forecast: probably quiet around ${hour}`,
+  forecastNoCalm: (hour: string, label: string) =>
+    `Forecast: no quiet slot in the next hours (least busy: ${hour}, ${label.toLowerCase()})`,
+  forecastBasis: (n: number) => `Based on ${n.toLocaleString("en-CA")} samples`,
 };
