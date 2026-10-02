@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Profile } from "../api";
-import { localTime, TypicalDay } from "../components/TypicalDay";
+import { TypicalDay } from "../components/TypicalDay";
+import { localTime } from "../time";
 import { I18nProvider } from "../i18n";
 
 const base: Profile = {
@@ -18,7 +19,7 @@ const at = (iso: string) => new Date(iso).getTime();
 describe("localTime", () => {
   it("utilise le fuseau de la salle, pas celui du téléphone", () => {
     // 01:30 UTC = 21:30 the previous evening in Toronto (EDT, UTC-4)
-    expect(localTime(at("2026-10-03T01:30:00Z"), "America/Toronto")).toEqual({ hour: 21, minutes: 21 * 60 + 30 });
+    expect(localTime(at("2026-10-03T01:30:00Z"), "America/Toronto")).toEqual({ hour: 21, minute: 30, minutes: 21 * 60 + 30 });
   });
 });
 

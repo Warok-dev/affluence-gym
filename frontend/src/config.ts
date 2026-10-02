@@ -8,6 +8,12 @@ export const REFRESH_MS = 45_000;
 /** The typical-day profile changes slowly (one snapshot per 15 min). */
 export const PROFILE_REFRESH_MS = 15 * 60_000;
 
+/** Time zone of the gyms; the header clock and "closed now" use it. */
+export const TIMEZONE = "America/Toronto";
+
+/** After this long without a first answer, the server is probably waking up (free host). */
+export const WAKING_AFTER_MS = 4_000;
+
 export const FACILITIES = [
   { id: "minto", name: "Minto" },
   { id: "montpetit", name: "Montpetit" },

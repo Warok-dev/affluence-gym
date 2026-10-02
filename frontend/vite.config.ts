@@ -30,8 +30,8 @@ export default defineConfig({
         start_url: "/",
         display: "standalone",
         orientation: "portrait",
-        background_color: "#111827",
-        theme_color: "#111827",
+        background_color: "#f3f6f8",
+        theme_color: "#13213c",
         icons: [
           { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
           { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
@@ -39,6 +39,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Self-hosted fonts are part of the app shell, so they work offline too.
+        globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
         // Never serve live occupancy data from the cache.
         navigateFallbackDenylist: [/^\/api/],
       },

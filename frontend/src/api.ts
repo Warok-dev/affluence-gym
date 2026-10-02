@@ -80,3 +80,15 @@ export async function fetchForecast(facility: FacilityId): Promise<Forecast> {
   if (!res.ok) throw new Error(`GET /forecast/${facility} failed: ${res.status}`);
   return (await res.json()) as Forecast;
 }
+
+export interface Health {
+  status: string;
+  /** True when the API serves the synthetic demo database. */
+  demo?: boolean;
+}
+
+export async function fetchHealth(): Promise<Health> {
+  const res = await fetch(`${API_BASE}/health`);
+  if (!res.ok) throw new Error(`GET /health failed: ${res.status}`);
+  return (await res.json()) as Health;
+}

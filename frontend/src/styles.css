@@ -1,327 +1,582 @@
+/*
+ * Affluence Gym: the daylight arena scoreboard.
+ * Ice ground, boards-navy ink, the rink's blue line as the only structure,
+ * a thin centre-red line for "now", and one amber reserved for the best move.
+ * Three text sizes: --fs-s, --fs-m, --fs-score. Blue is structure only; red is "now" only.
+ */
 :root {
-  --bg: #f3f4f6;
-  --surface: #ffffff;
-  --text: #111827;
-  --muted: #4b5563;
-  --border: #d1d5db;
-  --accent: #1d4ed8;
-  --accent-text: #ffffff;
-  --track: #e5e7eb;
-  --ok: #166534;
-  --warn: #92400e;
-  --err: #b91c1c;
-  /* Level colours are used as backgrounds under dark text (contrast >= 4.5:1 in both themes);
-     the label is always written out, so colour is never the only cue. */
-  --l1: #4ade80;
-  --l2: #a3e635;
-  --l3: #fbbf24;
-  --l4: #f87171;
-  --l-none: #d1d5db;
-  --on-level: #111827;
-  --on-none: #111827;
+  --ground: #f3f6f8;
+  --ground-2: #e3eaf1;
+  --ink: #13213c;
+  --ink-2: #48586f;
+  --board: #13213c;
+  --board-2: #1d2f52;
+  --board-rule: #31456d;
+  --on-board: #f3f6f8;
+  --on-board-2: #b4c1d4;
+  --lamp-off: #2c3f66;
+  --blue: #1f5faf;
+  --on-blue: #ffffff;
+  --blue-board: #4a86e0;
+  --red: #c8102e;
+  --amber: #e8a317;
+  --on-amber: #13213c;
+  --bar: #c3cedb;
+  --calm: #13213c;
+
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-score: "Barlow Condensed", system-ui, sans-serif;
+  --fs-s: 0.8125rem;
+  --fs-m: 1rem;
+  --fs-score: 6rem;
+
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --corner: 14px; /* the rink's rounded boards */
+  --corner-s: 8px;
+
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
+  /* The arena at night: navy boards, ice numerals, never black or neon. */
   :root {
-    --bg: #0b1120;
-    --surface: #111827;
-    --text: #f9fafb;
-    --muted: #9ca3af;
-    --border: #374151;
-    --accent: #60a5fa;
-    --accent-text: #0b1120;
-    --track: #1f2937;
-    --ok: #4ade80;
-    --warn: #fbbf24;
-    --err: #f87171;
-    --l-none: #374151;
-    --on-none: #f9fafb;
+    --ground: #13213c;
+    --ground-2: #1b2b4d;
+    --ink: #eaf0f6;
+    --ink-2: #a9b6c9;
+    --board: #1d2e52;
+    --board-2: #283d68;
+    --board-rule: #3a5185;
+    --lamp-off: #34497a;
+    --blue: #6ea2e8;
+    --blue-board: #5b92e5;
+    --red: #ff5a6b;
+    --amber: #f2b53a;
+    --bar: #34497a;
+    --calm: #eaf0f6;
   }
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--fs-m);
+  line-height: 1.45;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--blue);
+  color: var(--on-blue);
 }
 
 #root {
-  max-width: 34rem;
+  max-width: 32rem;
   margin: 0 auto;
-  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));
+  padding: max(var(--s4), env(safe-area-inset-top)) var(--s4) max(var(--s5), env(safe-area-inset-bottom));
 }
 
-.app-header h1 {
-  margin: 0.25rem 0 0;
-  font-size: 1.6rem;
-}
-.app-header p {
-  margin: 0 0 1rem;
-  color: var(--muted);
-}
-
-.cards {
-  display: grid;
-  gap: 1rem;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  padding: 1rem;
-}
-
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-.card-head h2 {
+h1,
+h2,
+p,
+figure,
+ul {
   margin: 0;
-  font-size: 1.3rem;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  font-weight: 700;
-}
-.badge .dot {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
-}
-
-.level-none {
-  background: var(--l-none);
-  color: var(--on-none);
-}
-.level-1 {
-  background: var(--l1);
-  color: var(--on-level);
-}
-.level-2 {
-  background: var(--l2);
-  color: var(--on-level);
-}
-.level-3 {
-  background: var(--l3);
-  color: var(--on-level);
-}
-.level-4 {
-  background: var(--l4);
-  color: var(--on-level);
-}
-
-.meter {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.3rem;
-  margin: 0.9rem 0 0.4rem;
-}
-.meter span {
-  height: 0.5rem;
-  border-radius: 999px;
-}
-/* Unfilled segments; filled ones get their colour from the .level-N class. */
-.meter span:not([class]) {
-  background: var(--track);
-}
-
-.meta {
-  margin: 0.25rem 0 0.75rem;
-  color: var(--muted);
-  font-size: 0.95rem;
 }
 
 button {
   font: inherit;
+  color: inherit;
   cursor: pointer;
 }
-button:focus-visible {
-  outline: 3px solid var(--accent);
+button:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+:focus-visible {
+  outline: 3px solid var(--blue);
   outline-offset: 2px;
 }
-button:disabled {
-  opacity: 0.6;
-  cursor: progress;
+
+.icon {
+  flex: none;
 }
 
-.primary-btn {
-  width: 100%;
-  min-height: 48px;
-  border: 0;
-  border-radius: 0.75rem;
-  background: var(--accent);
-  color: var(--accent-text);
+/* ---------- Header ---------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s2) 0 var(--s4);
+}
+.app-header h1,
+.gym-head h2,
+.day-title {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-
-.prompt {
-  margin: 0 0 0.5rem;
+/* The game clock: a small lit board element. */
+.clock {
+  padding: 2px var(--s2);
+  border-radius: 6px;
+  background: var(--board);
+  color: var(--on-board);
+  font-family: var(--font-score);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
-.level-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-}
-.level-btn {
-  min-height: 56px;
-  border: 0;
-  border-radius: 0.75rem;
-  font-weight: 700;
-  font-size: 1.05rem;
-}
+/* ---------- Connection banners ---------- */
 
-.link-btn {
-  display: block;
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s4);
+  margin-bottom: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--corner-s);
+  background: var(--ground-2);
+  font-size: var(--fs-s);
+}
+.banner.is-error {
+  border: 2px solid var(--ink);
+  background: transparent;
+}
+.banner .text-button {
   min-height: 44px;
-  margin: 0.25rem auto 0;
-  padding: 0 1rem;
-  background: none;
-  border: 0;
-  color: var(--accent);
-  text-decoration: underline;
 }
 
-.status {
-  min-height: 1.5rem;
-  margin: 0.5rem 0 0;
+/* ---------- Scoreboard ---------- */
+
+/* The two teams sit on the board; the 2px gap shows the blue line between them. */
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  border-radius: var(--corner);
+  background: var(--blue-board);
+  color: var(--on-board);
+  overflow: hidden;
+}
+
+.gym {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--s4) var(--s4) var(--s3);
+  background: var(--board);
+}
+
+/* Same head height in both columns (name + tag slot), so the two scores share a baseline. */
+.gym-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s1);
+  min-height: calc(1.45em + var(--s1) + 1.45 * var(--fs-s) + 2px);
+}
+.quieter-tag {
+  padding: 1px var(--s2);
+  border-radius: 4px;
+  background: var(--amber);
+  color: var(--on-amber);
+  font-family: var(--font-score);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--s2);
+}
+.score-digit {
+  font-family: var(--font-score);
+  font-size: var(--fs-score);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.9;
+  min-height: 0.9em;
+}
+.score-digit:empty::before {
+  content: "";
+  display: block;
+  width: 0.55em;
+  height: 0.8em;
+  border-radius: var(--corner-s);
+  background: var(--lamp-off);
+}
+.score-label {
+  margin-top: var(--s1);
+  font-family: var(--font-score);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* No level: an unlit digit, dimmer than any data, distinct from the pulsing skeleton. */
+.level-none .score-digit {
+  color: var(--board-rule);
   font-weight: 600;
 }
-.status-ok {
-  color: var(--ok);
+
+/* Four discrete lamps, lit up to the level, like a scoreboard's period lights. */
+.lamps {
+  display: flex;
+  gap: 6px;
+  margin-top: var(--s3);
 }
-.status-cooldown {
-  color: var(--warn);
+.lamps span {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--lamp-off);
 }
-.status-error {
-  color: var(--err);
+.lamps .lit {
+  background: var(--on-board);
 }
 
-.app-footer {
-  margin-top: 1.5rem;
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
+.evidence-line {
+  display: block;
+}
+.evidence {
+  min-height: calc(2 * 1.4em);
+  margin-top: var(--s3);
+  color: var(--on-board-2);
+  font-size: var(--fs-s);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Phase 3: typical day chart */
-:root {
-  --bar: #9ca3af;
-  --calm: #15803d;
+.gym-action {
+  margin-top: auto;
+  padding-top: var(--s3);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bar: #4b5563;
-    --calm: #4ade80;
-  }
+/* Secondary to the score: the answer before the action. */
+.report-button {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--board-rule);
+  border-radius: var(--corner-s);
+  background: var(--board-2);
+  font-weight: 600;
+}
+.report-button:hover {
+  border-color: var(--on-board-2);
+}
+.board :focus-visible {
+  outline-color: var(--on-board);
 }
 
-.typical {
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+.picker {
+  display: grid;
+  gap: 6px;
 }
-.typical h3 {
-  margin: 0.25rem 0 0.5rem;
-  font-size: 1rem;
+.picker-prompt {
+  color: var(--on-board-2);
+  font-size: var(--fs-s);
 }
-.hours-line,
-.muted {
+.picker-option {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 44px;
+  padding: 0 var(--s3);
+  border: 1px solid var(--board-rule);
+  border-radius: var(--corner-s);
+  background: var(--board-2);
+  text-align: left;
+}
+.picker-option:hover:not(:disabled) {
+  border-color: var(--on-board);
+}
+.picker-digit {
+  width: 1ch;
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 44px;
+  padding: 0 var(--s2);
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* States stamp themselves on the column instead of vanishing. */
+/* The stamp is printed in reverse on the column: ice block, boards ink. */
+.stamp {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  padding: var(--s2) var(--s3);
+  border-radius: var(--corner-s);
+  background: var(--on-board);
+  color: var(--board);
+}
+.stamp-title {
+  display: block;
+  font-family: var(--font-score);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.stamp-clock {
+  display: block;
+  color: var(--board);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.gym-status {
+  margin-top: var(--s2);
+  color: var(--on-board-2);
+  font-size: var(--fs-s);
+}
+.gym-status:empty {
+  display: none;
+}
+/* The stamp already shows success; the sentence stays for screen readers only. */
+.gym-status.status-ok {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
+/* ---------- When to go today ---------- */
+
+.day {
+  margin-top: var(--s6);
+}
+.tabs {
+  display: flex;
+  margin-top: var(--s2);
+  border-bottom: 2px solid var(--blue);
+}
+.tab {
+  min-height: 44px;
+  margin-bottom: -2px;
+  padding: 0 var(--s4);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.tab[aria-selected="true"] {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
+}
+.day-panel {
+  padding-top: var(--s4);
+}
+
+.day-answer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  font-weight: 700;
+}
+.calm-mark {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--amber);
+  transform: translateY(1px);
+}
+.day-basis {
+  margin-top: var(--s1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
+
+.day-chart {
+  margin-top: var(--s5);
+}
+.day-caption {
+  margin-bottom: var(--s2);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
 .chart {
+  position: relative;
   display: flex;
   align-items: flex-end;
   gap: 2px;
-  height: 72px;
-  border-bottom: 1px solid var(--border);
+  height: 96px;
+  border-bottom: 1px solid var(--ink-2);
 }
 .bar {
   flex: 1;
   min-width: 0;
-  min-height: 4px;
+  min-height: 3px;
   padding: 0;
   border: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
   background: var(--bar);
 }
 .bar.calm {
   background: var(--calm);
 }
+.bar.forecast {
+  background: var(--amber);
+}
 .bar.empty {
-  height: 4px;
-  background: transparent;
+  height: 3px;
   border-top: 2px dashed var(--bar);
   border-radius: 0;
+  background: transparent;
 }
+/* Offset clear of the bar, so the outline stays visible around ink (calm) bars too. */
 .bar.selected {
-  outline: 2px solid var(--text);
-  outline-offset: 1px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
-
+/* The centre red line marks the current time. */
+.now-line {
+  position: absolute;
+  top: -6px;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--red);
+  pointer-events: none;
+}
 .axis {
   display: flex;
   gap: 2px;
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 0.75rem;
+  margin-top: var(--s1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
 }
 .axis span {
   flex: 1;
   min-width: 0;
-  overflow: visible;
   white-space: nowrap;
 }
-.axis .now {
-  color: var(--text);
-  font-weight: 700;
-}
-
 .chart-detail {
-  min-height: 1.5rem;
-  margin: 0.4rem 0 0;
-  font-size: 0.95rem;
+  min-height: 1.45em;
+  margin-top: var(--s3);
+  font-variant-numeric: tabular-nums;
 }
 .legend {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0.25rem 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s4);
+  margin-top: var(--s2);
+  padding: 0;
+  list-style: none;
+  color: var(--ink-2);
+  font-size: var(--fs-s);
 }
-.legend .swatch {
-  width: 0.75rem;
-  height: 0.75rem;
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.key {
+  width: 12px;
+  height: 12px;
   border-radius: 2px;
+}
+.key-calm {
   background: var(--calm);
 }
-.calm-later {
-  margin: 0.4rem 0 0;
-  font-weight: 600;
+.key-forecast {
+  background: var(--amber);
+}
+.key-now {
+  width: 2px;
+  height: 14px;
+  border-radius: 0;
+  background: var(--red);
+}
+.day-hours {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 2px solid var(--blue);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
+
+/* ---------- Loading ---------- */
+
+.skeleton-line,
+.skeleton-chart {
+  display: block;
+  border-radius: 4px;
+  background: currentColor;
+  opacity: 0.16;
+}
+.skeleton-line {
+  width: 80%;
+  height: 0.8em;
+  margin-top: 0.3em;
+}
+.skeleton-line.wide {
+  width: 65%;
+  height: 1em;
+}
+.skeleton-chart {
+  height: 96px;
+  margin-top: var(--s5);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [aria-busy="true"] .skeleton-line,
+  [aria-busy="true"] .skeleton-chart,
+  [aria-busy="true"] .score-digit:empty::before {
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.08;
+  }
+}
+
+/* ---------- Footer & utilities ---------- */
+
+.app-footer {
+  margin-top: var(--s6);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  text-align: center;
 }
 
 .sr-only {
@@ -331,19 +586,4 @@ button:disabled {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-}
-.axis .now {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.legend .now-key {
-  margin-left: 0.75rem;
-  color: var(--text);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.muted.small {
-  margin-top: 0.15rem;
-  font-size: 0.8rem;
 }

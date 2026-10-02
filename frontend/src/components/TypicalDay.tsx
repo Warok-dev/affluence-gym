@@ -1,24 +1,8 @@
-import { useId, useState } from "react";
+import { useState } from "react";
 import type { Forecast, HourProfile, Profile } from "../api";
-import type { Level } from "../config";
 import { useT } from "../i18n";
-
-/** Hour and minutes of `nowMs` in the gym's time zone (the phone may be elsewhere). */
-export function localTime(nowMs: number, timeZone: string): { hour: number; minutes: number } {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone,
-    hour: "numeric",
-    minute: "numeric",
-    hourCycle: "h23",
-  }).formatToParts(nowMs);
-  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
-  return { hour: get("hour"), minutes: get("hour") * 60 + get("minute") };
-}
-
-const toMinutes = (hhmm: string) => {
-  const [h, m] = hhmm.split(":").map(Number);
-  return h * 60 + m;
-};
+import { levelFromAverage } from "../levels";
+import { localDate, localTime, toMinutes } from "../time";
 
 interface Props {
   profile: Profile;
@@ -28,47 +12,60 @@ interface Props {
 
 export function TypicalDay({ profile, forecast, now }: Props) {
   const t = useT();
-  const titleId = useId();
-  const { hour: currentHour, minutes } = localTime(now, profile.timezone);
+  const { hour: currentHour, minute, minutes } = localTime(now, profile.timezone);
   const hours = profile.hours;
-  const inRange = hours.some((h) => h.hour === currentHour);
+  const currentIndex = hours.findIndex((h) => h.hour === currentHour);
   const [selected, setSelected] = useState<number | null>(null);
 
   if (!profile.opening_hours) {
-    return <p className="hours-line">{t.closedToday}</p>;
+    return <p className="day-answer">{t.closedToday}</p>;
   }
   const { open, close } = profile.opening_hours;
   const isOpen = minutes >= toMinutes(open) && minutes < toMinutes(close);
-  const levelLabel = (avg: number) => t.levels[Math.min(4, Math.max(1, Math.round(avg))) as Level];
+  const levelLabel = (avg: number) => t.levels[levelFromAverage(avg)];
   const detail = (h: HourProfile) =>
     h.level === null ? t.hourNoData(t.hour(h.hour)) : t.hourDetail(t.hour(h.hour), levelLabel(h.level), h.samples);
 
   const hasHistory = hours.some((h) => h.level !== null);
-  const calmLater = hours.filter((h) => h.calm && h.hour > currentHour).slice(0, 3);
-  const shown = hours.find((h) => h.hour === (selected ?? (inRange ? currentHour : hours[0]?.hour)));
+  const shown = hours.find((h) => h.hour === (selected ?? (currentIndex >= 0 ? currentHour : hours[0]?.hour)));
 
-  // The model's forecast takes precedence over the plain historical average.
+  // The answer comes first: the model's forecast when there is one, else the historical average.
   const upcoming = forecast?.available ? forecast.hours : [];
-  let outlook: string | null = null;
-  if (forecast?.next_calm) {
-    outlook = t.forecastCalm(t.hour(forecast.next_calm.hour));
+  const nextCalm = forecast?.next_calm ?? null;
+  // The forecast can point at tomorrow morning; only today's slot is marked on today's chart.
+  const calmIsToday = nextCalm !== null && localDate(nextCalm.ts * 1000, profile.timezone) === localDate(now, profile.timezone);
+  const forecastHour = nextCalm !== null && calmIsToday ? nextCalm.hour : null;
+  let answer: string;
+  let basis: string | null = null;
+  let calmFound = false;
+  if (nextCalm !== null) {
+    answer = calmIsToday ? t.forecastCalm(t.hour(nextCalm.hour)) : t.forecastCalmTomorrow(t.hour(nextCalm.hour));
+    basis = t.forecastBasis(forecast!.training_samples);
+    calmFound = true;
   } else if (upcoming.length) {
     const quietest = upcoming.reduce((a, b) => (b.level < a.level ? b : a));
-    outlook = t.forecastNoCalm(t.hour(quietest.hour), levelLabel(quietest.level));
+    answer = t.forecastNoCalm(t.hour(quietest.hour), levelLabel(quietest.level));
+    basis = t.forecastBasis(forecast!.training_samples);
+  } else if (hasHistory) {
+    const calmLater = hours.filter((h) => h.calm && h.hour > currentHour).slice(0, 3);
+    calmFound = calmLater.length > 0;
+    answer = calmFound ? t.calmLater(t.list(calmLater.map((h) => t.hour(h.hour)))) : t.noCalmLater;
+    basis = t.historyBasis(profile.weeks);
+  } else {
+    answer = t.notEnoughHistory;
   }
 
   return (
-    <section className="typical" aria-labelledby={titleId}>
-      <p className="hours-line">
-        {t.openToday(t.time(open), t.time(close))}
-        {!isOpen && <strong> · {t.closedNow}</strong>}
+    <>
+      <p className={`day-answer${calmFound ? " is-calm" : ""}`} data-testid={upcoming.length ? "forecast" : undefined}>
+        {calmFound && <span className="calm-mark" aria-hidden="true" />}
+        {answer}
       </p>
-      <h3 id={titleId}>{t.typicalDay}</h3>
+      {basis && <p className="day-basis">{basis}</p>}
 
-      {!hasHistory ? (
-        <p className="muted">{t.notEnoughHistory}</p>
-      ) : (
-        <>
+      {hasHistory && (
+        <figure className="day-chart">
+          <figcaption className="day-caption">{t.typicalDay}</figcaption>
           <div className="chart" data-testid="chart">
             {hours.map((h) => (
               <button
@@ -76,8 +73,7 @@ export function TypicalDay({ profile, forecast, now }: Props) {
                 type="button"
                 className={[
                   "bar",
-                  h.level === null ? "empty" : h.calm ? "calm" : "",
-                  h.hour === currentHour ? "current" : "",
+                  h.level === null ? "empty" : h.hour === forecastHour ? "forecast" : h.calm ? "calm" : "",
                   shown?.hour === h.hour ? "selected" : "",
                 ].join(" ")}
                 style={{ height: h.level === null ? undefined : `${(h.level / 4) * 100}%` }}
@@ -87,32 +83,37 @@ export function TypicalDay({ profile, forecast, now }: Props) {
                 onMouseEnter={() => setSelected(h.hour)}
               />
             ))}
+            {currentIndex >= 0 && (
+              <span
+                className="now-line"
+                aria-hidden="true"
+                style={{ left: `${((currentIndex + minute / 60) / hours.length) * 100}%` }}
+              />
+            )}
           </div>
           <div className="axis" aria-hidden="true">
             {hours.map((h) => (
-              <span key={h.hour} className={h.hour === currentHour ? "now" : ""}>
-                {h.hour === currentHour
-                  ? h.hour
-                  : (h.hour - hours[0].hour) % 3 === 0 && Math.abs(h.hour - currentHour) > 1
-                    ? h.hour
-                    : ""}
-              </span>
+              <span key={h.hour}>{(h.hour - hours[0].hour) % 3 === 0 ? h.hour : ""}</span>
             ))}
           </div>
           <p className="chart-detail" aria-live="polite">
             {shown && detail(shown)}
           </p>
-          <p className="legend">
-            <span className="swatch" aria-hidden="true" /> {t.calmLegend}
-            {inRange && (
-              <>
-                <span className="now-key" aria-hidden="true">
-                  {currentHour}
-                </span>{" "}
-                {t.now}
-              </>
+          <ul className="legend" aria-hidden="true">
+            <li>
+              <span className="key key-calm" /> {t.calmLegend}
+            </li>
+            {forecastHour !== null && (
+              <li>
+                <span className="key key-forecast" /> {t.forecastLegend}
+              </li>
             )}
-          </p>
+            {currentIndex >= 0 && (
+              <li>
+                <span className="key key-now" /> {t.nowLegend}
+              </li>
+            )}
+          </ul>
           <table className="sr-only">
             <caption>{t.chartTableCaption}</caption>
             <thead>
@@ -130,23 +131,13 @@ export function TypicalDay({ profile, forecast, now }: Props) {
               ))}
             </tbody>
           </table>
-        </>
+        </figure>
       )}
 
-      {outlook ? (
-        <>
-          <p className="calm-later" data-testid="forecast">
-            {outlook}
-          </p>
-          <p className="muted small">{t.forecastBasis(forecast!.training_samples)}</p>
-        </>
-      ) : (
-        hasHistory && (
-          <p className="calm-later">
-            {calmLater.length ? t.calmLater(t.list(calmLater.map((h) => t.hour(h.hour)))) : t.noCalmLater}
-          </p>
-        )
-      )}
-    </section>
+      <p className="day-hours">
+        {t.openToday(t.time(open), t.time(close))}
+        {!isOpen && <strong> · {t.closedNow}</strong>}
+      </p>
+    </>
   );
 }
