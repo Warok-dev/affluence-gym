@@ -1,18 +1,24 @@
 # Affluence Gym
 
-Application web mobile (PWA) qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, à partir de **signalements anonymes** des étudiants. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
+[![CI](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml/badge.svg)](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml)
 
-Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes et les phases.
+Application web mobile (PWA) qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, à partir de **signalements anonymes** des étudiants, avec l'affluence typique heure par heure pour savoir quand y aller. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
+
+Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes, les phases et les décisions d'architecture.
 
 | Dossier | Contenu |
 |---|---|
-| `backend/` | API FastAPI + SQLite (`POST /reports`, `GET /occupancy/{facility}`, `GET /health`) |
+| `backend/` | API FastAPI, SQLAlchemy 2 + Alembic, SQLite (dev) ou PostgreSQL (prod) |
 | `frontend/` | PWA React + Vite + TypeScript (mobile first, mode sombre, i18n fr/en) |
+| `docker-compose.yml` | Stack locale identique à la prod : PostgreSQL + API + PWA servie par nginx |
+| `.github/workflows/ci.yml` | CI : lint, tests (SQLite et PostgreSQL), build, images Docker et test de bout en bout |
+| `render.yaml` | Déploiement Render (blueprint) |
 
 ## Prérequis
 
 - Python 3.12 ou plus récent
 - Node.js 20 ou plus récent (npm inclus)
+- Optionnel : Docker Desktop (pour `docker compose`)
 
 Les commandes ci-dessous sont pour **PowerShell** (Windows), depuis le dossier `affluence-gym`. Sous macOS/Linux, remplace `.venv\Scripts\python` par `.venv/bin/python`.
 
@@ -21,13 +27,15 @@ Les commandes ci-dessous sont pour **PowerShell** (Windows), depuis le dossier `
 ```powershell
 cd backend
 python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m pip install -r requirements-dev.txt
 ```
 
 ```powershell
 cd frontend
 npm install
 ```
+
+`requirements.txt` contient les dépendances d'exécution (utilisées par l'image Docker) ; `requirements-dev.txt` y ajoute pytest, httpx et ruff.
 
 ## Lancer en développement (ordinateur)
 
@@ -45,56 +53,64 @@ cd frontend
 npm run dev
 ```
 
-Le frontend appelle `/api/...` et Vite redirige ces requêtes vers le backend (proxy). L'appli reste ainsi sur une seule origine, ce qui fonctionne aussi depuis un téléphone.
+Le frontend appelle `/api/...` et Vite redirige ces requêtes vers le backend (proxy). L'appli reste ainsi sur une seule origine, ce qui fonctionne aussi depuis un téléphone. Au démarrage, l'API applique automatiquement les migrations de la base.
 
-## Tester sur un téléphone (même Wi-Fi)
+## Lancer avec Docker (stack de production en local)
 
-1. Lance le backend comme ci-dessus (il peut rester sur `127.0.0.1` : c'est Vite qui le contacte).
-2. Lance le frontend : `npm run dev` (ou `npm run build` puis `npm run preview` pour la version PWA, port 4173).
-3. Vite affiche une adresse `Network: http://192.168.x.x:5173`. Ouvre-la sur le téléphone.
-4. Si la page ne charge pas, autorise Node.js dans le pare-feu Windows (réseau privé).
+```powershell
+docker compose up --build
+```
 
-> **Installation PWA sur téléphone :** les navigateurs n'activent le service worker qu'en **HTTPS** (ou sur `localhost`). En `http://192.168.x.x`, l'appli fonctionne mais n'est pas installable comme une vraie PWA. Sur ordinateur, `http://localhost:4173` est installable. Pour le téléphone, voir la section suivante.
+Ouvre http://localhost:8080. La stack lance PostgreSQL 17, l'API (image `backend/Dockerfile`) et la PWA servie par nginx (image `frontend/Dockerfile`), qui redirige `/api` vers l'API. Pour arrêter et effacer les données : `docker compose down -v`.
 
-## Installer la PWA sur un téléphone (HTTPS via un tunnel)
+## Tester sur un téléphone
 
-On utilise un « quick tunnel » Cloudflare : gratuit, sans compte, avec une URL HTTPS temporaire.
+### Même Wi-Fi (sans installation)
 
-1. Installe `cloudflared` une fois (Windows : `winget install --id Cloudflare.cloudflared`).
+1. Lance le backend et `npm run dev`.
+2. Vite affiche une adresse `Network: http://192.168.x.x:5173`. Ouvre-la sur le téléphone.
+3. Si la page ne charge pas, autorise Node.js dans le pare-feu Windows (réseau privé).
+
+En `http://192.168.x.x`, l'appli fonctionne mais ne s'installe pas comme une PWA : les navigateurs exigent le **HTTPS**. Une fois l'appli déployée (voir « Déploiement »), utilise son URL `https://…onrender.com`. Avant ça, passe par un tunnel :
+
+### Tunnel HTTPS temporaire (PWA installable)
+
+1. Installe `cloudflared` une fois : `winget install --id Cloudflare.cloudflared`.
 2. Lance le backend, puis `npm run build` et `npm run preview` dans `frontend/`.
 3. Dans un autre terminal : `cloudflared tunnel --url http://localhost:4173`
 4. Ouvre sur le téléphone l'URL `https://xxxx.trycloudflare.com` affichée, puis « Ajouter à l'écran d'accueil » (Chrome Android) ou Partager > « Sur l'écran d'accueil » (Safari iOS).
 
-L'URL change à chaque lancement du tunnel, et le tunnel ne sert qu'à tester. Pendant qu'il tourne, ton serveur local est joignable depuis Internet : coupe-le (Ctrl+C) après tes tests. L'URL définitive viendra avec le déploiement (phase 4).
+Pendant que le tunnel tourne, ton PC est joignable depuis Internet : coupe-le (Ctrl+C) après tes tests.
 
-## Tester la PWA (installable, hors ligne)
-
-```powershell
-cd frontend
-npm run build
-npm run preview        # http://localhost:4173
-```
-
-Dans Chrome ou Edge : icône « Installer » dans la barre d'adresse. DevTools > Application > Manifest / Service workers pour vérifier.
-
-## Tests
+## Tests et qualité
 
 ```powershell
 cd backend
 .venv\Scripts\python -m pytest
+.venv\Scripts\python -m ruff check .
+.venv\Scripts\python -m ruff format --check .
 ```
 
 ```powershell
 cd frontend
 npm test
+npm run build
 ```
 
-Lint et format du backend (config dans `backend/pyproject.toml`) :
+La CI GitHub Actions lance tout ça à chaque push et à chaque PR, avec en plus :
+- les tests backend **sur PostgreSQL** ;
+- `alembic check`, qui vérifie que les modèles et les migrations correspondent ;
+- la construction des deux images Docker, avec un test de bout en bout de la stack compose (signalement, puis lecture via nginx).
+
+## Base de données et migrations (Alembic)
+
+- **Dev** : SQLite (`backend/affluence.db`). **Prod** : PostgreSQL via `DATABASE_URL`. Les URL `postgres://` et `postgresql://` sont acceptées.
+- Les migrations s'appliquent **au démarrage de l'API**. Une base créée avant Alembic (phases 2-3) est complétée, puis marquée à la révision `0001`, sans perte de données.
+- Après une modification de `app/db.py`, génère une migration puis relis-la :
 
 ```powershell
 cd backend
-.venv\Scripts\python -m pip install ruff
-.venv\Scripts\python -m ruff check app tests scripts
+.venv\Scripts\python -m alembic revision --autogenerate -m "describe the change"
 ```
 
 ## Voir le graphique « affluence typique » avec des données de démo
@@ -112,27 +128,23 @@ Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH`) pour revenir à la vraie 
 
 ## Historique : tâche des snapshots
 
-Toutes les 15 min, l'API enregistre l'affluence de chaque salle dans `occupancy_snapshots` (seulement s'il y a des signalements récents). Cette tâche tourne dans le processus de l'API. Pour la confier plutôt à un cron externe, mets `SNAPSHOT_ENABLED=false` et planifie :
-
-```powershell
-.venv\Scripts\python -m app.snapshot
-```
-
-Lancer la commande deux fois dans le même quart d'heure ne crée pas de doublon.
+Toutes les 15 min, l'API enregistre l'affluence de chaque salle dans `occupancy_snapshots` (seulement s'il y a des signalements récents). Cette tâche tourne dans le processus de l'API. Pour la confier plutôt à un cron externe, mets `SNAPSHOT_ENABLED=false` et planifie `python -m app.snapshot`. Lancer la commande deux fois dans le même quart d'heure ne crée pas de doublon.
 
 ## Configuration
 
+Toutes les variables sont listées dans [`.env.example`](.env.example).
+
 | Variable | Où | Défaut | Rôle |
 |---|---|---|---|
+| `DATABASE_URL` | backend | *(vide)* | PostgreSQL (prod). Si elle est vide, la base SQLite `DB_PATH` est utilisée |
 | `DB_PATH` | backend | `affluence.db` | Fichier SQLite (dev) |
-| `DATABASE_URL` | backend | *(vide)* | URL SQLAlchemy ; si elle est définie, elle remplace `DB_PATH` (PostgreSQL en phase 4) |
+| `ALLOWED_ORIGINS` | backend | `http://localhost:5173,http://127.0.0.1:5173` | Origines autorisées par CORS (séparées par des virgules) |
 | `TIMEZONE` | backend | `America/Toronto` | Fuseau des salles (jours, heures, horaires d'ouverture) |
 | `SNAPSHOT_ENABLED` | backend | `true` | Tâche des snapshots dans le processus de l'API |
-| `ALLOWED_ORIGINS` | backend | `http://localhost:5173,http://127.0.0.1:5173` | Origines autorisées par CORS (séparées par des virgules) |
-| `VITE_API_URL` | frontend | `/api` | URL de l'API. Mets `http://localhost:8000` pour appeler le backend directement (CORS) |
-| `API_PROXY_TARGET` | frontend | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite (dev et preview) |
-
-Voir `frontend/.env.example`.
+| `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
+| `VITE_API_URL` | frontend (build) | *(vide → `/api`)* | URL publique de l'API en prod |
+| `API_PROXY_TARGET` | frontend (dev) | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite |
+| `API_UPSTREAM` | frontend (Docker) | `http://backend:8000` | Cible du proxy `/api` de nginx |
 
 ## API
 
@@ -140,19 +152,38 @@ Voir `frontend/.env.example`.
 |---|---|---|
 | `POST` | `/reports` | Body `{facility, level: 1-4, client_id}` → 201 ; 404 salle inconnue ; 422 invalide ; 429 déjà signalé il y a moins de 15 min |
 | `GET` | `/occupancy/{facility}` | `{facility, level, label, reports, last_report_ts}` (moyenne sur 30 min ; `level`/`last_report_ts` = `null` sans données) |
-| `GET` | `/health` | `{"status": "ok"}` |
 | `GET` | `/history/{facility}?days=7` | `{facility, days, points: [{ts, level, source}]}` (1 à 90 jours) |
 | `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
+| `GET` | `/health` | `{"status": "ok"}`, utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
 
-`last_report_ts` (epoch en secondes du dernier signalement) a été ajouté en phase 2. C'est un champ **additif** : les quatre champs d'origine ne changent pas.
+## Déploiement (gratuit) : Render + Neon
+
+| Brique | Service | Offre gratuite |
+|---|---|---|
+| API (Docker) | Render, web service | 750 h/mois, mise en veille après 15 min sans trafic (réveil en ~30-60 s) |
+| PWA | Render, static site | CDN + HTTPS |
+| PostgreSQL | Neon | Permanente, 1 Go (la base gratuite de Render expire après 30 jours) |
+
+Mise en place, une seule fois (c'est toi qui crées les comptes) :
+
+1. **Neon** : crée un compte sur neon.com, puis un projet `affluence-gym` dans la région **AWS US East 2 (Ohio)**. Copie la *connection string* (`postgresql://…?sslmode=require`).
+2. **Render** : crée un compte sur render.com (connexion avec GitHub), puis **New > Blueprint** et choisis le repo `affluence-gym`. Render lit `render.yaml` et crée `affluence-gym-api` et `affluence-gym`.
+3. Quand Render demande `DATABASE_URL`, colle la connection string Neon. Ne la commite jamais.
+4. Vérifie les URL attribuées. Si Render ajoute un suffixe parce que le nom est pris, mets à jour les deux variables qui pointent l'une vers l'autre :
+   - `ALLOWED_ORIGINS` de l'API = URL du site ;
+   - `VITE_API_URL` du site = URL de l'API, puis redéploie le site.
+5. Teste `https://affluence-gym-api.onrender.com/health`, puis ouvre `https://affluence-gym.onrender.com` sur ton téléphone et « Ajouter à l'écran d'accueil ».
+
+Ensuite, c'est **automatique** : chaque push sur `main` relance la CI, et Render redéploie uniquement si elle passe (`autoDeployTrigger: checksPass`). Les migrations s'appliquent au démarrage de l'API.
+
+Limites de l'offre gratuite :
+- **Réveil lent** : après 15 min sans visite, la première requête attend que l'API redémarre (environ 30 à 60 s).
+- **Snapshots** : la tâche des quarts d'heure ne tourne pas pendant la veille. Ce n'est pas grave, puisque l'API reste éveillée tant que quelqu'un a l'appli ouverte (elle se rafraîchit toutes les 45 s).
 
 ## Respect de la vie privée
 
 - Le seul identifiant est un UUID aléatoire (`client_id`) généré au premier lancement et stocké dans le `localStorage`. Il ne sert qu'au délai anti-spam de 15 min.
 - Aucun cookie, aucun analytics, aucune police ni aucun script tiers.
-
-## Déploiement
-
-Prévu en phase 4 (Docker, PostgreSQL, CI GitHub Actions, hébergeur gratuit).
+- Aucun secret dans le dépôt : `DATABASE_URL` se renseigne dans le tableau de bord Render.
