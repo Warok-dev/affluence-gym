@@ -129,6 +129,34 @@ $env:DEMO_DATA = "true"
 
 `DEMO_DATA=true` affiche dans l'appli le bandeau « Données de démonstration », pour que des chiffres fictifs ne passent jamais pour de vrais. Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH, Env:DEMO_DATA`) pour revenir à la vraie base.
 
+## Compteur officiel des tourniquets (nombre exact de personnes)
+
+L'API peut recevoir les compteurs **agrégés** des tourniquets (entrées au scan de carte, sorties au tourniquet de sortie) et afficher « 47 personnes sur 120 places ». Ce qu'on demande à l'université : [docs/integration-compteurs.md](docs/integration-compteurs.md).
+
+- `POST /official/{salle}/counts` avec l'en-tête `X-Api-Key: <OFFICIAL_API_KEY>` et `{"entries": 412, "exits": 365}` (cumuls depuis minuit ; `exits` absent si la sortie ne compte pas : la présence est alors **estimée**).
+- Si le compteur se tait plus de 10 min, l'appli revient aux signalements des étudiants.
+- Capacité des salles : `backend/app/facilities.py` (**valeurs provisoires**).
+
+### Démo avec le simulateur (chiffres fictifs)
+
+Terminal 1, l'API en mode démo :
+
+```powershell
+cd backend
+$env:DB_PATH = "demo.db"; $env:DEMO_DATA = "true"; $env:OFFICIAL_API_KEY = "demo-key"
+.venv\Scripts\python -m uvicorn app.main:app --port 8000
+```
+
+Terminal 2, le simulateur qui joue le rôle du système de l'université (ajoute `--hour 18` pour montrer l'heure de pointe à n'importe quel moment, `--no-exits` pour le mode estimé) :
+
+```powershell
+cd backend
+$env:OFFICIAL_API_KEY = "demo-key"
+.venv\Scripts\python scripts\simulate_counter.py --hour 18
+```
+
+Terminal 3 : `cd frontend` puis `npm run dev`.
+
 ## Prévision (machine learning)
 
 - Deux modèles sont en concurrence. La **baseline** fait la moyenne par jour de semaine et heure. Le **gradient boosting** (scikit-learn) utilise l'heure, le jour, les jours fériés de l'Ontario et les périodes d'examens.
@@ -162,6 +190,9 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `TIMEZONE` | backend | `America/Toronto` | Fuseau des salles (jours, heures, horaires d'ouverture) |
 | `SNAPSHOT_ENABLED` | backend | `true` | Tâche des snapshots dans le processus de l'API |
 | `DEMO_DATA` | backend | `false` | À mettre à `true` avec `demo.db` : l'appli signale les données fictives |
+| `OFFICIAL_API_KEY` | backend | *(vide)* | Clé secrète du système de compteurs de l'université ; vide = réception désactivée |
+| `OFFICIAL_STALE_SECONDS` | backend | `600` | Au-delà, un compteur silencieux est ignoré (retour aux signalements) |
+| `AVERAGE_STAY_MINUTES` | backend | `75` | Durée moyenne d'une visite, pour l'estimation sans compteur de sortie |
 | `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
 | `VITE_API_URL` | frontend (build) | *(vide → `/api`)* | URL publique de l'API en prod |
 | `API_PROXY_TARGET` | frontend (dev) | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite |
@@ -172,10 +203,11 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | Méthode | Route | Réponse |
 |---|---|---|
 | `POST` | `/reports` | Body `{facility, level: 1-4, client_id}` → 201 ; 404 salle inconnue ; 422 invalide ; 429 déjà signalé il y a moins de 15 min |
-| `GET` | `/occupancy/{facility}` | `{facility, level, label, reports, last_report_ts}` (moyenne sur 30 min ; `level`/`last_report_ts` = `null` sans données) |
+| `GET` | `/occupancy/{facility}` | `{facility, level, label, reports, last_report_ts, source, people, capacity, estimated, updated_ts}` : compteur officiel s'il est frais (`source: "official"`, `people` = présents), sinon moyenne des signalements sur 30 min |
 | `GET` | `/history/{facility}?days=7` | `{facility, days, points: [{ts, level, source}]}` (1 à 90 jours) |
 | `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
 | `GET` | `/forecast/{facility}?hours=12` | Prévision pour les prochaines heures d'ouverture (1 à 48) : `{available, model, trained_at, training_samples, validation_mae, hours: [{ts, hour, level, calm}], next_calm}` |
+| `POST` | `/official/{facility}/counts` | Compteurs des tourniquets (en-tête `X-Api-Key`) : `{entries, exits?, ts?}` → 201 ; 401 clé invalide ; 503 réception non configurée |
 | `GET` | `/health` | `{"status": "ok", "demo": false}` (champ `demo` additif), utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**

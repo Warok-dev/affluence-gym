@@ -21,6 +21,8 @@ services:
         value: https://affluence-gym.onrender.com # URL of the static site below
       - key: TIMEZONE
         value: America/Toronto
+      - key: OFFICIAL_API_KEY
+        sync: false # secret shared with the university's counter system (leave empty until then)
 
   - type: web
     name: affluence-gym

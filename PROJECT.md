@@ -9,12 +9,17 @@ Application web mobile (PWA) qui indique **en temps réel l'affluence dans les c
 
 Deux salles au départ : `minto` et `montpetit`.
 
+**Objectif principal (précisé le 2026-10-02) : afficher le nombre exact de personnes présentes.** À l'entrée, chaque étudiant scanne sa carte (le tourniquet ne s'ouvre qu'au scan) ; la sortie se fait par un tourniquet libre, sans scan (on ignore s'il compte les passages). Présents = entrées − sorties, à partir de **compteurs agrégés fournis par l'université**. Les signalements participatifs restent la solution de repli. Une rencontre avec le service des sports est prévue, démo à l'appui (voir `docs/integration-compteurs.md`).
+
+**Élargissement (2026-10-02) : appli gym complète** : suivi d'entraînements, exercices et programmes, état des équipements, notifications. Les données personnelles (séances) restent **sur le téléphone** (décision de l'auteur), jamais sur le serveur.
+
 L'auteur est étudiant en génie informatique et vise un poste d'ingénieur en déploiement IA/ML. Le projet doit donc démontrer de bonnes pratiques : tests, Docker, CI/CD, architecture propre, et une composante IA (prévision) en dernière phase.
 
 ## 2. Contraintes importantes
 
 - **Aucune donnée personnelle.** Pas de compte, pas d'e-mail, pas de nom. Les utilisateurs sont identifiés par un `client_id` anonyme (UUID généré côté client et stocké dans le navigateur).
-- **Aucun accès au système de cartes de l'université** pour l'instant. Source de données initiale = **signalements participatifs** des utilisateurs. L'architecture doit permettre d'ajouter plus tard une **source officielle** (compteur agrégé entrées/sorties fourni par l'université) sans tout réécrire.
+- **Aucun accès au système de cartes de l'université** sans leur accord. La source officielle (compteur agrégé entrées/sorties) est prête côté code et n'attend que leur feu vert ; en attendant, **signalements participatifs**. On ne demande jamais d'identité : seulement deux totaux.
+- **Séances et progrès : stockés uniquement sur l'appareil** (pas de compte), avec export/import d'une sauvegarde.
 - **Pas de logo ni de nom officiel de l'université** dans l'interface (l'appli n'est pas officielle tant qu'elle n'est pas approuvée).
 - Ne jamais scraper ni contourner un système de l'université.
 - Budget quasi nul : hébergement gratuit ou très peu cher.
@@ -192,8 +197,26 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Endpoint `GET /forecast/{facility}` et affichage « le gym sera probablement calme à 18 h ».
 - Service de prédiction déployable séparément ou en module, avec évaluation hors ligne documentée.
 
+### Compteur officiel (fait, branche `official-counter`)
+- `POST /official/{facility}/counts` (clé `X-Api-Key`), compteurs cumulés depuis minuit ; table `official_counts` (migration 0002).
+- `OfficialCounterSource` : présents = entrées − sorties, ou estimation (entrées des 75 dernières minutes) sans compteur de sortie ; capacité par salle (provisoire : 120) ; niveau = taux d'occupation (< 25 / 50 / 75 %).
+- `PreferOfficialSource` : compteur s'il est frais (< 10 min), sinon signalements. `GET /occupancy` ajoute `source`, `people`, `capacity`, `estimated`, `updated_ts` (additifs).
+- Simulateur `scripts/simulate_counter.py` (données fictives, même canal sécurisé) pour la démo ; document pour l'université `docs/integration-compteurs.md`.
+
+### Phase 6 — Structure et suivi d'entraînements
+- Navigation (Affluence · Séances · Exercices · Salles). Séances : exercices, séries, répétitions, charges ; minuteur de repos ; historique, records. Stockage IndexedDB sur l'appareil, export/import JSON. Hors ligne.
+
+### Phase 7 — Exercices et programmes
+- Bibliothèque d'exercices (muscles, consignes, textes originaux) et programmes prêts à suivre, lançables dans le suivi.
+
+### Phase 8 — État des équipements
+- Signalements participatifs « en panne / réparée » par machine et par salle (liste provisoire à corriger), même anti-abus que l'affluence.
+
+### Phase 9 — Notifications
+- Push PWA : « la salle se vide », rappel du créneau calme. Abonnement push = identifiant technique d'appareil, sans identité. iOS : seulement si l'appli est installée.
+
 ### Idées futures (hors périmètre actuel)
-Notifications (« le gym se vide »), signalement de l'état des équipements, partenaires d'entraînement, suivi d'entraînements. Ne pas les implémenter sans demande explicite.
+Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 
 ## 7. Anti-abus et robustesse
 
@@ -201,9 +224,9 @@ Notifications (« le gym se vide »), signalement de l'état des équipements, p
 - Pistes d'amélioration futures : limitation de débit par IP (rate limiting), pondération des signalements, détection de valeurs aberrantes, éventuellement un code visible uniquement sur place.
 - Valider toutes les entrées (déjà fait avec Pydantic). Configurer CORS pour n'autoriser que l'origine du frontend.
 
-## 8. Intégration future d'une source officielle
+## 8. Source officielle (implémentée, en attente de l'accord de l'université)
 
-Prévoir une abstraction `OccupancySource` avec au moins deux implémentations : `CrowdSource` (signalements) et `OfficialCounterSource` (compteur agrégé fourni par l'université, par exemple via un endpoint ou un webhook qui envoie « entrées moins sorties »). L'API publique ne doit pas changer ; seul `level`/`label` peut être remplacé par un **nombre de personnes** quand la source officielle existe.
+`OccupancySource` a trois implémentations : `CrowdSource` (signalements), `OfficialCounterSource` (compteurs des tourniquets envoyés par l'université) et `PreferOfficialSource` (la seconde si fraîche, sinon la première). L'API publique est inchangée ; `/occupancy` ajoute le **nombre de personnes** et la capacité. Ce qu'on demande à l'université, les modes de transmission et les garanties de vie privée sont dans `docs/integration-compteurs.md`.
 
 ## 9. Qualité attendue
 
