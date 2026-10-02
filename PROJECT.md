@@ -223,8 +223,11 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Liste des machines **provisoire** (`backend/app/equipment.py`), à remplacer par la liste réelle du service des sports.
 - Onglet « Matériel » : onglets par salle, résumé des pannes, machines par catégorie, signalement en un tap, tampon « En panne » (le rouge reste réservé à « maintenant », l'ambre au meilleur choix).
 
-### Phase 9 — Notifications
-- Push PWA : « la salle se vide », rappel du créneau calme. Abonnement push = identifiant technique d'appareil, sans identité. iOS : seulement si l'appli est installée.
+### Phase 9 — Notifications (fait, branche `phase-9-notifications`)
+- **Alerte ponctuelle** « M'avertir quand <salle> sera calme » (panneau « Quand y aller »), valable jusqu'à la fermeture du jour. Le serveur vérifie toutes les 2 min (même source : compteur officiel ou signalements) ; au niveau Calme ou Vide, il envoie **une** notification Web Push puis **efface l'abonnement**. Alertes expirées effacées aussi.
+- Écarté : abonnements permanents et rappels quotidiens (spam, et l'abonnement resterait stocké indéfiniment).
+- `GET /notifications/config`, `POST /alerts` (409 si la salle est fermée), `DELETE /alerts/{id}` (jeton propre à l'appareil). Table `alerts` (migration 0004). Clés VAPID par variables d'environnement ; sans elles, la fonction est désactivée et invisible.
+- Service worker : `public/push-sw.js` importé par Workbox (affiche la notification, ouvre l'appli au clic). iPhone : seulement si l'appli est installée sur l'écran d'accueil (message dans l'interface).
 
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).

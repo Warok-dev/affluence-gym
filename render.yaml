@@ -21,6 +21,12 @@ services:
         value: https://affluence-gym.onrender.com # URL of the static site below
       - key: TIMEZONE
         value: America/Toronto
+      - key: VAPID_PUBLIC_KEY
+        sync: false # Web Push keys (scripts/generate_vapid_keys.py)
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false # mailto:<contact>
       - key: OFFICIAL_API_KEY
         sync: false # secret shared with the university's counter system (leave empty until then)
 
