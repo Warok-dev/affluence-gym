@@ -3,8 +3,10 @@ import {
   type Forecast,
   fetchForecast,
   fetchHealth,
+  fetchNotificationsConfig,
   fetchOccupancy,
   fetchProfile,
+  type NotificationsConfig,
   type Occupancy,
   type Profile,
 } from "../api";
@@ -40,6 +42,7 @@ export function OccupancyScreen() {
   const [slowStart, setSlowStart] = useState(false);
   const [selected, setSelected] = useState<FacilityId | null>(null);
   const [demo, setDemo] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationsConfig | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   const refresh = useCallback(async () => {
@@ -66,6 +69,9 @@ export function OccupancyScreen() {
     fetchHealth()
       .then((h) => setDemo(h.demo === true))
       .catch(() => setDemo(false));
+    fetchNotificationsConfig()
+      .then(setNotifications)
+      .catch(() => setNotifications(null));
   }, []);
 
   useEffect(() => {
@@ -171,6 +177,8 @@ export function OccupancyScreen() {
         forecasts={forecasts}
         settled={profilesSettled}
         now={now}
+        levels={Object.fromEntries(FACILITIES.map((f, i) => [f.id, levels[i]]))}
+        notifications={notifications}
       />
     </>
   );

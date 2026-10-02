@@ -547,3 +547,32 @@
 .machine-actions {
   padding: var(--s2) 0 var(--s3);
 }
+
+/* ---------- Quiet-gym alert ---------- */
+
+.alert-arm,
+.alert-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s5);
+}
+.alert-arm .secondary-button {
+  align-self: flex-start;
+}
+.alert-box {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--corner-s);
+  background: var(--board);
+  color: var(--on-board);
+}
+.alert-box .text-button {
+  align-self: flex-start;
+  padding-left: 0;
+}
+.alert-box :focus-visible {
+  outline-color: var(--on-board);
+}
+.alert-note {
+  margin-top: var(--s4);
+}
