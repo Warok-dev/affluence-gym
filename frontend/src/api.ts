@@ -101,3 +101,47 @@ export async function fetchHealth(): Promise<Health> {
   if (!res.ok) throw new Error(`GET /health failed: ${res.status}`);
   return (await res.json()) as Health;
 }
+
+export type MachineStatus = "broken" | "ok" | "unknown";
+
+export interface Machine {
+  id: string;
+  name: string;
+  category: "cardio" | "free-weights" | "machines";
+  status: MachineStatus;
+  /** Epoch seconds of the report that set the status. */
+  since_ts: number | null;
+  reports: number;
+}
+
+export interface EquipmentList {
+  facility: string;
+  window_days: number;
+  machines: Machine[];
+}
+
+export async function fetchEquipment(facility: FacilityId): Promise<EquipmentList> {
+  const res = await fetch(`${API_BASE}/equipment/${facility}`);
+  if (!res.ok) throw new Error(`GET /equipment/${facility} failed: ${res.status}`);
+  return (await res.json()) as EquipmentList;
+}
+
+export async function postEquipmentReport(
+  facility: FacilityId,
+  machineId: string,
+  status: "broken" | "ok",
+  clientId: string,
+): Promise<ReportResult> {
+  try {
+    const res = await fetch(`${API_BASE}/equipment/${facility}/${encodeURIComponent(machineId)}/reports`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status, client_id: clientId }),
+    });
+    if (res.status === 201) return "ok";
+    if (res.status === 429) return "cooldown";
+    return "error";
+  } catch {
+    return "error";
+  }
+}

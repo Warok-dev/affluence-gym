@@ -4,6 +4,7 @@ import { TIMEZONE } from "./config";
 import { useT } from "./i18n";
 import { ROUTES, useRoute } from "./router";
 import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
+import { EquipmentScreen } from "./screens/EquipmentScreen";
 import { ExerciseDetailScreen } from "./screens/ExerciseDetailScreen";
 import { ExercisesScreen } from "./screens/ExercisesScreen";
 import { OccupancyScreen } from "./screens/OccupancyScreen";
@@ -45,6 +46,7 @@ function Shell() {
     screen = <ExerciseDetailScreen id={decodeURIComponent(route.slice(ROUTES.exercises.length + 1))} />;
   else if (route.startsWith("/programmes/"))
     screen = <ProgramScreen id={decodeURIComponent(route.slice("/programmes/".length))} />;
+  else if (route === ROUTES.equipment) screen = <EquipmentScreen />;
   else screen = <OccupancyScreen />;
 
   return (
