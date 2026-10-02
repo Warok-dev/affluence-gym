@@ -164,6 +164,12 @@ Terminal 3 : `cd frontend` puis `npm run dev`.
 - Historique, détail de chaque séance, records personnels, unité kg ou lb.
 - **Les séances restent sur le téléphone** (aucun compte, rien sur le serveur). L'onglet propose d'exporter et d'importer une sauvegarde JSON : à faire avant de changer d'appareil ou d'effacer les données du navigateur.
 
+## Exercices et programmes (onglet Exercices)
+
+- Bibliothèque de 33 exercices (recherche, filtre par groupe musculaire) avec une fiche : muscles, matériel, étapes d'exécution, erreur à éviter, et ton historique sur l'exercice.
+- 4 programmes prêts à suivre : un tap sur un jour ouvre une séance préremplie avec tes dernières charges.
+- Contenu dans `frontend/src/workouts/guide.ts` et `programs.ts` (textes originaux, à relire et enrichir librement).
+
 ## Prévision (machine learning)
 
 - Deux modèles sont en concurrence. La **baseline** fait la moyenne par jour de semaine et heure. Le **gradient boosting** (scikit-learn) utilise l'heure, le jour, les jours fériés de l'Ontario et les périodes d'examens.
