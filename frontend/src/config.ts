@@ -1,4 +1,6 @@
-export const API_BASE: string = import.meta.env.VITE_API_URL ?? "/api";
+// Empty or unset -> same-origin "/api" (Vite proxy in dev, nginx in Docker).
+// In production on Render: the public URL of the API (trailing slash removed).
+export const API_BASE: string = (import.meta.env.VITE_API_URL || "/api").replace(/\/+$/, "");
 
 /** Refresh period of the occupancy cards (spec: every 30–60 s). */
 export const REFRESH_MS = 45_000;
