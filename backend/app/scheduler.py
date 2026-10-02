@@ -4,7 +4,8 @@ import asyncio
 import logging
 import time
 
-from .config import SNAPSHOT_SECONDS
+from . import notifications
+from .config import ALERT_CHECK_SECONDS, SNAPSHOT_SECONDS
 from .db import SessionLocal
 from .forecast.service import forecast_service
 from .history import take_snapshots
@@ -31,3 +32,22 @@ async def snapshot_loop() -> None:
             log.info("snapshots written: %d", written)
         except Exception:  # keep the loop alive whatever happens
             log.exception("snapshot failed")
+
+
+def check_alerts_once() -> int:
+    with SessionLocal() as session:
+        return notifications.check_alerts(session, source, int(time.time()), notifications.webpush_sender)
+
+
+async def alerts_loop() -> None:
+    """Every couple of minutes, notify the devices waiting for a quiet gym."""
+    while True:
+        await asyncio.sleep(ALERT_CHECK_SECONDS)
+        if not notifications.enabled():
+            continue
+        try:
+            sent = await asyncio.to_thread(check_alerts_once)
+            if sent:
+                log.info("quiet-gym notifications sent: %d", sent)
+        except Exception:  # keep the loop alive whatever happens
+            log.exception("alert check failed")
