@@ -51,6 +51,20 @@ class OccupancySnapshot(Base):
     people: Mapped[int | None] = mapped_column(Integer, nullable=True)  # official source only
 
 
+class EquipmentReport(Base):
+    """A crowd report on one machine: "broken" or "ok" (anonymous client id, like reports)."""
+
+    __tablename__ = "equipment_reports"
+    __table_args__ = (Index("idx_equipment_fac_ts", "facility", "ts"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    facility: Mapped[str] = mapped_column(String(32))
+    equipment_id: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(16))
+    client_id: Mapped[str] = mapped_column(String(64))
+    ts: Mapped[int] = mapped_column(BigInteger)
+
+
 class OfficialCount(Base):
     """A reading of the gym's turnstile counters, as sent by the university's system.
 
