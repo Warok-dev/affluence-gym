@@ -4,7 +4,10 @@ import { TIMEZONE } from "./config";
 import { useT } from "./i18n";
 import { ROUTES, useRoute } from "./router";
 import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
+import { ExerciseDetailScreen } from "./screens/ExerciseDetailScreen";
+import { ExercisesScreen } from "./screens/ExercisesScreen";
 import { OccupancyScreen } from "./screens/OccupancyScreen";
+import { ProgramScreen } from "./screens/ProgramScreen";
 import { WorkoutDetailScreen } from "./screens/WorkoutDetailScreen";
 import { WorkoutsScreen } from "./screens/WorkoutsScreen";
 import { localTime } from "./time";
@@ -37,6 +40,11 @@ function Shell() {
   else if (route === ROUTES.activeWorkout) screen = <ActiveWorkoutScreen />;
   else if (route.startsWith(`${ROUTES.workouts}/`))
     screen = <WorkoutDetailScreen id={decodeURIComponent(route.slice(ROUTES.workouts.length + 1))} />;
+  else if (route === ROUTES.exercises) screen = <ExercisesScreen />;
+  else if (route.startsWith(`${ROUTES.exercises}/`))
+    screen = <ExerciseDetailScreen id={decodeURIComponent(route.slice(ROUTES.exercises.length + 1))} />;
+  else if (route.startsWith("/programmes/"))
+    screen = <ProgramScreen id={decodeURIComponent(route.slice("/programmes/".length))} />;
   else screen = <OccupancyScreen />;
 
   return (

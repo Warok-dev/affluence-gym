@@ -1,6 +1,6 @@
 import { ROUTES } from "../router";
 import { useT } from "../i18n";
-import { BoardIcon, DumbbellIcon } from "./icons";
+import { BoardIcon, BookIcon, DumbbellIcon } from "./icons";
 
 interface Props {
   route: string;
@@ -11,8 +11,9 @@ interface Props {
 export function TabBar({ route, workoutInProgress }: Props) {
   const t = useT();
   const onWorkouts = route.startsWith(ROUTES.workouts);
+  const onLibrary = route.startsWith(ROUTES.exercises) || route.startsWith("/programmes");
   const tabs = [
-    { href: ROUTES.occupancy, label: t.tabOccupancy, icon: <BoardIcon />, current: !onWorkouts },
+    { href: ROUTES.occupancy, label: t.tabOccupancy, icon: <BoardIcon />, current: !onWorkouts && !onLibrary },
     {
       href: workoutInProgress ? ROUTES.activeWorkout : ROUTES.workouts,
       label: t.tabWorkouts,
@@ -20,6 +21,7 @@ export function TabBar({ route, workoutInProgress }: Props) {
       current: onWorkouts,
       badge: workoutInProgress ? t.inProgress : null,
     },
+    { href: ROUTES.exercises, label: t.tabExercises, icon: <BookIcon />, current: onLibrary },
   ];
   return (
     <nav className="tabbar" aria-label={t.navLabel}>

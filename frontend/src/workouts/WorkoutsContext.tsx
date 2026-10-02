@@ -11,6 +11,7 @@ import {
   StorageError,
 } from "./store";
 import { lastPerformance } from "./stats";
+import type { ProgramItem } from "./programs";
 import type { Backup, Settings, Workout, WorkoutSet } from "./types";
 
 interface WorkoutsApi {
@@ -20,6 +21,8 @@ interface WorkoutsApi {
   /** Set when the device refused to save (storage full or blocked). */
   storageError: boolean;
   start: (gym?: string) => void;
+  /** Starts a workout prefilled with a program day (loads from the last performance). */
+  startProgramDay: (items: ProgramItem[]) => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (entryId: string) => void;
   addSet: (entryId: string) => void;
@@ -77,6 +80,19 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
       settings,
       storageError,
       start: (gym) => setActive({ id: newId(), startedAt: Date.now(), gym, exercises: [] }),
+      startProgramDay: (items) =>
+        setActive({
+          id: newId(),
+          startedAt: Date.now(),
+          exercises: items.map((item) => {
+            const weightKg = lastPerformance(workouts, item.exerciseId)?.[0]?.weightKg ?? 0;
+            return {
+              id: newId(),
+              exerciseId: item.exerciseId,
+              sets: Array.from({ length: item.sets }, () => ({ reps: item.reps, weightKg, done: false })),
+            };
+          }),
+        }),
       addExercise: (exerciseId) =>
         editActive((w) => {
           // Start from what was done last time, so logging is mostly ticking boxes.

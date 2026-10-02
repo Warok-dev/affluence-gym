@@ -5,7 +5,7 @@ import { navigate, ROUTES } from "../router";
 import { getExercise } from "../workouts/exercises";
 import { completedSets, durationMs, formatDuration, formatWeight, volumeKg } from "../workouts/stats";
 import { useWorkouts } from "../workouts/WorkoutsContext";
-import { summarizeSets } from "./ActiveWorkoutScreen";
+import { summarizeSets } from "../workouts/format";
 
 const dateFormat = new Intl.DateTimeFormat("fr-CA", {
   weekday: "long",
