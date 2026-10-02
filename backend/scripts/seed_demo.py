@@ -5,7 +5,9 @@ Assumptions baked into the fake data: quiet mornings, lunch bump, evening rush,
 gentler weekends, and much quieter public holidays (to exercise the holiday feature).
 
     python scripts/seed_demo.py                      # writes backend/demo.db
-    $env:DB_PATH="demo.db"; python -m uvicorn app.main:app --port 8000
+    $env:DB_PATH="demo.db"; $env:DEMO_DATA="true"; python -m uvicorn app.main:app --port 8000
+
+DEMO_DATA=true makes the app label every figure as demonstration data.
 
 Never point it at the real database: the values are invented.
 """

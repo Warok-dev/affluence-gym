@@ -70,3 +70,7 @@ def test_cors_allows_dev_origin():
 def test_cors_rejects_unknown_origin():
     r = client.get("/health", headers={"Origin": "https://evil.example"})
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_health_reports_real_data_by_default():
+    assert client.get("/health").json() == {"status": "ok", "demo": False}

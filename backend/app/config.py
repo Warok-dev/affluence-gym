@@ -34,6 +34,10 @@ TIMEZONE = ZoneInfo(os.getenv("TIMEZONE", "America/Toronto"))
 # runs `python -m app.snapshot` instead).
 SNAPSHOT_ENABLED = os.getenv("SNAPSHOT_ENABLED", "true").lower() in {"1", "true", "yes"}
 
+# Set when the database holds the synthetic data of scripts/seed_demo.py: the app then
+# labels every figure as demonstration data (PRODUCT.md: never present it as real).
+DEMO_DATA = os.getenv("DEMO_DATA", "false").lower() in {"1", "true", "yes"}
+
 # Origines autorisées (séparées par des virgules) ; par défaut le serveur de dev Vite.
 ALLOWED_ORIGINS = [
     o.strip()
