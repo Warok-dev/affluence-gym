@@ -174,6 +174,55 @@ describe("tableau", () => {
   });
 });
 
+describe("compteur officiel des tourniquets", () => {
+  const counted = (facility: string, people: number, level: 1 | 2 | 3 | 4, estimated = false): Occupancy => ({
+    facility,
+    level,
+    label: "",
+    reports: 0,
+    last_report_ts: null,
+    source: "official",
+    people,
+    capacity: 120,
+    estimated,
+    updated_ts: nowSec - 60,
+  });
+
+  it("affiche le nombre exact de personnes, la capacité et la source, sans bouton de signalement", async () => {
+    occupancy.minto = counted("minto", 47, 2);
+    renderApp();
+    const minto = screen.getByTestId("card-minto");
+    expect(await within(minto).findByText("personnes · Calme")).toBeInTheDocument();
+    expect(screen.getByTestId("level-minto")).toHaveTextContent("47");
+    expect(within(minto).getByText("sur 120 places")).toBeInTheDocument();
+    expect(within(minto).getByText("compteur des tourniquets, il y a 1 min")).toBeInTheDocument();
+    expect(within(minto).queryByRole("button", { name: /Signaler/ })).not.toBeInTheDocument();
+    // The other gym, without counter, keeps crowd reports.
+    expect(within(screen.getByTestId("card-montpetit")).getByRole("button", { name: /Signaler/ })).toBeInTheDocument();
+  });
+
+  it("indique quand le nombre est estimé d'après les seules entrées", async () => {
+    occupancy.minto = counted("minto", 60, 3, true);
+    renderApp();
+    expect(await screen.findByText("estimé d'après les entrées, il y a 1 min")).toBeInTheDocument();
+  });
+
+  it("compare les salles par taux d'occupation quand les deux ont un compteur", async () => {
+    occupancy.minto = counted("minto", 101, 4);
+    occupancy.montpetit = counted("montpetit", 76, 4);
+    renderApp();
+    expect(await within(screen.getByTestId("card-montpetit")).findByText("Plus calme")).toBeInTheDocument();
+  });
+
+  it("ne désigne pas de salle plus calme pour un écart de moins de 5 points", async () => {
+    occupancy.minto = counted("minto", 50, 2);
+    occupancy.montpetit = counted("montpetit", 53, 2);
+    renderApp();
+    await screen.findAllByText("personnes · Calme");
+    expect(screen.queryByText("Plus calme")).not.toBeInTheDocument();
+  });
+});
+
 describe("signalement", () => {
   it("envoie le niveau en un tap, tamponne la colonne et affiche l'attente", async () => {
     const user = setup();

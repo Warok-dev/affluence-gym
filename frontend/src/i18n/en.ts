@@ -25,6 +25,10 @@ export const en: Messages = {
   noReports: "No report in the last 30 min",
   beFirst: "Be the first to report",
   todayHours: (open: string, close: string) => `Today ${open}–${close}`,
+  people: "people",
+  ofCapacity: (n: number) => `of ${n} places`,
+  officialCounter: (ago: string) => `turnstile counter, ${ago}`,
+  estimatedCounter: (ago: string) => `estimated from entries, ${ago}`,
 
   reportButton: "Report",
   reportButtonFor: (gym: string) => `Report the crowd at ${gym}`,
