@@ -33,7 +33,7 @@ L'auteur est étudiant en génie informatique et vise un poste d'ingénieur en d
 
 ## 4. État actuel du code (déjà fait)
 
-Phases 1 et 2 faites. Backend : 8 tests ; frontend : 14 tests.
+Phases 1, 2 et 3 faites. Backend : 18 tests ; frontend : 22 tests.
 
 ```
 affluence-gym/
@@ -41,9 +41,19 @@ affluence-gym/
 ├── PROJECT.md
 ├── README.md
 ├── backend/
-│   ├── requirements.txt
-│   ├── app/main.py         # FastAPI + sqlite3 (stdlib), CORS, pas encore SQLAlchemy
-│   └── tests/test_api.py
+│   ├── requirements.txt, pyproject.toml (config ruff)
+│   ├── app/
+│   │   ├── main.py         # création de l'app, CORS, tâche périodique (lifespan)
+│   │   ├── config.py       # variables d'environnement
+│   │   ├── db.py           # SQLAlchemy : modèles Report, OccupancySnapshot
+│   │   ├── facilities.py   # salles et horaires d'ouverture (statiques)
+│   │   ├── sources.py      # OccupancySource / CrowdSource (§8)
+│   │   ├── history.py      # snapshots, historique, profil par heure
+│   │   ├── routes.py       # endpoints
+│   │   ├── scheduler.py    # boucle des snapshots toutes les 15 min
+│   │   └── snapshot.py     # `python -m app.snapshot` (pour un cron externe)
+│   ├── scripts/seed_demo.py  # données FICTIVES dans demo.db
+│   └── tests/ (conftest.py, test_api.py, test_history.py)
 └── frontend/               # PWA React + Vite + TypeScript
     ├── index.html
     ├── vite.config.ts      # PWA (vite-plugin-pwa), proxy /api, config Vitest
@@ -51,16 +61,18 @@ affluence-gym/
     ├── scripts/generate-icons.mjs
     └── src/
         ├── App.tsx, main.tsx, api.ts, config.ts, clientId.ts, time.ts, styles.css
-        ├── components/FacilityCard.tsx
+        ├── components/ (FacilityCard.tsx, TypicalDay.tsx)
         ├── i18n/ (fr.ts, en.ts, index.tsx)
         └── __tests__/
 ```
 
-Comportement actuel de `main.py` :
+Comportement actuel de l'API :
 
 - `POST /reports` : body `{facility, level (1-4), client_id}`. Renvoie 201. Renvoie 404 si salle inconnue, 422 si `level` hors 1-4, **429 si le même `client_id` a déjà signalé la même salle dans les 15 dernières minutes**.
 - `GET /occupancy/{facility}` : moyenne arrondie des signalements des **30 dernières minutes**. Renvoie `{facility, level, label, reports, last_report_ts}`. Si aucun signalement : `level: null`, `label: "Pas de données"`, `last_report_ts: null`.
 - `GET /health` : `{"status": "ok"}`.
+- `GET /history/{facility}?days=N` (1-90, défaut 7) : `{facility, days, points: [{ts, level, source}]}`.
+- `GET /profile/{facility}?weekday=0-6&weeks=N` (défaut : aujourd'hui, 8 semaines) : `{facility, weekday, weeks, timezone, opening_hours: {open, close} | null, hours: [{hour, level, samples, calm}]}`. Les heures sont en heure locale (`TIMEZONE`) et limitées aux horaires d'ouverture.
 - Niveaux : 1 = Vide, 2 = Calme, 3 = Modéré, 4 = Bondé.
 - CORS : origines autorisées via `ALLOWED_ORIGINS` (par défaut le serveur de dev Vite).
 
@@ -78,11 +90,23 @@ Comportement actuel de `main.py` :
 - HTTPS sur téléphone en dev : **quick tunnel Cloudflare** (`cloudflared tunnel --url http://localhost:4173`), sans compte ni changement de code. Vite autorise `*.trycloudflare.com`. Écarté : certificat auto-signé (Android refuse le service worker) et déploiement anticipé (c'est la phase 4).
 - Pas de bouton FR/EN pour l'instant : les dictionnaires sont prêts, le sélecteur viendra quand le contenu anglais sera relu.
 
+### Décisions prises (phase 3)
+
+- **SQLAlchemy 2 dès maintenant** (modèles typés), avec un découpage en modules. La nouvelle table l'imposait et ça prépare PostgreSQL (`DATABASE_URL`). Les tables sont créées avec `create_all` ; **Alembic arrive en phase 4**, avec une migration initiale (`alembic stamp` pour les bases existantes).
+- **Tâche périodique dans le processus API** (boucle asyncio dans le `lifespan`, calée sur les quarts d'heure). On peut la désactiver avec `SNAPSHOT_ENABLED=false` et la remplacer par un cron externe qui lance `python -m app.snapshot`. Les snapshots sont **idempotents** grâce à la contrainte unique `(facility, ts, source)` : aucun doublon, même avec plusieurs workers. Écarté : APScheduler/Celery, une dépendance de trop pour un seul job.
+- **Pas de snapshot quand il n'y a aucun signalement** : « personne n'a signalé » ne veut pas dire « vide », et ça fausserait les moyennes.
+- **Abstraction `OccupancySource`** (§8) introduite : `CrowdSource` aujourd'hui. Le snapshot enregistre `source.name`.
+- **Profil calculé en Python** à partir des snapshots des N dernières semaines, en heure locale `America/Toronto` (`TIMEZONE`, avec le paquet `tzdata` pour Windows). C'est plus portable que des fonctions de date SQL propres à SQLite ou PostgreSQL, et le volume reste faible (environ 5 000 lignes par salle sur 8 semaines).
+- **Créneau calme** : moyenne ≤ 2 (« Calme ») sur au moins 2 relevés, défini côté backend (`calm`) pour que la règle soit testée en un seul endroit.
+- **Horaires d'ouverture** dans `app/facilities.py`, renvoyés par `/profile`. Les valeurs actuelles sont des **valeurs provisoires à vérifier** (6 h 30-23 h en semaine, 8 h-20 h le week-end).
+- **Graphique sans bibliothèque** (barres en CSS) : une seule série, créneaux calmes en vert et autres heures en gris. Un tap ou un survol détaille l'heure choisie, et un tableau masqué sert aux lecteurs d'écran. L'heure de la salle est calculée dans son fuseau, même si le téléphone est ailleurs.
+- **Données de démo** : `scripts/seed_demo.py` écrit uniquement dans `demo.db`, jamais dans la vraie base.
+
 ## 5. Modèle de données
 
 Table `reports` : `id`, `facility`, `level`, `client_id`, `ts` (epoch secondes).
 
-À ajouter en phase 3 : table `occupancy_snapshots` (`facility`, `ts` arrondi au quart d'heure, `level`, `source`) alimentée par une tâche périodique, pour l'historique et le futur modèle de prévision. Le champ `source` vaut `crowd` aujourd'hui, `official` plus tard.
+Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure, `level`, `source`) alimentée par une tâche périodique, pour l'historique et le futur modèle de prévision. Contrainte unique `(facility, ts, source)`. Le champ `source` vaut `crowd` aujourd'hui, `official` plus tard.
 
 ## 6. Fonctionnalités par phases
 
@@ -99,7 +123,7 @@ Table `reports` : `id`, `facility`, `level`, `client_id`, `ts` (epoch secondes).
 - PWA : manifeste, icônes, service worker, installable. Mode sombre. Accessibilité de base (contrastes, libellés, tailles de cibles tactiles).
 - UI en français ; prévoir i18n (fr/en).
 
-### Phase 3 — Historique et « meilleur moment pour y aller »
+### Phase 3 — Historique et « meilleur moment pour y aller » (fait)
 - Tâche périodique (toutes les 15 min) qui enregistre un snapshot par salle.
 - Endpoint `GET /history/{facility}?days=N` et endpoint de profil moyen par jour de semaine et heure.
 - Graphique dans l'UI : affluence typique par heure pour le jour courant, avec mise en évidence des créneaux calmes.

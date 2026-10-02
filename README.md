@@ -89,11 +89,45 @@ cd frontend
 npm test
 ```
 
+Lint et format du backend (config dans `backend/pyproject.toml`) :
+
+```powershell
+cd backend
+.venv\Scripts\python -m pip install ruff
+.venv\Scripts\python -m ruff check app tests scripts
+```
+
+## Voir le graphique « affluence typique » avec des données de démo
+
+Le graphique a besoin de plusieurs semaines d'historique. Pour l'essayer tout de suite, on génère 8 semaines de données **fictives** dans une base séparée (`backend/demo.db`, ignorée par git) :
+
+```powershell
+cd backend
+.venv\Scripts\python scripts\seed_demo.py
+$env:DB_PATH = "demo.db"
+.venv\Scripts\python -m uvicorn app.main:app --port 8000
+```
+
+Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH`) pour revenir à la vraie base.
+
+## Historique : tâche des snapshots
+
+Toutes les 15 min, l'API enregistre l'affluence de chaque salle dans `occupancy_snapshots` (seulement s'il y a des signalements récents). Cette tâche tourne dans le processus de l'API. Pour la confier plutôt à un cron externe, mets `SNAPSHOT_ENABLED=false` et planifie :
+
+```powershell
+.venv\Scripts\python -m app.snapshot
+```
+
+Lancer la commande deux fois dans le même quart d'heure ne crée pas de doublon.
+
 ## Configuration
 
 | Variable | Où | Défaut | Rôle |
 |---|---|---|---|
-| `DB_PATH` | backend | `affluence.db` | Fichier SQLite |
+| `DB_PATH` | backend | `affluence.db` | Fichier SQLite (dev) |
+| `DATABASE_URL` | backend | *(vide)* | URL SQLAlchemy ; si elle est définie, elle remplace `DB_PATH` (PostgreSQL en phase 4) |
+| `TIMEZONE` | backend | `America/Toronto` | Fuseau des salles (jours, heures, horaires d'ouverture) |
+| `SNAPSHOT_ENABLED` | backend | `true` | Tâche des snapshots dans le processus de l'API |
 | `ALLOWED_ORIGINS` | backend | `http://localhost:5173,http://127.0.0.1:5173` | Origines autorisées par CORS (séparées par des virgules) |
 | `VITE_API_URL` | frontend | `/api` | URL de l'API. Mets `http://localhost:8000` pour appeler le backend directement (CORS) |
 | `API_PROXY_TARGET` | frontend | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite (dev et preview) |
@@ -107,6 +141,10 @@ Voir `frontend/.env.example`.
 | `POST` | `/reports` | Body `{facility, level: 1-4, client_id}` → 201 ; 404 salle inconnue ; 422 invalide ; 429 déjà signalé il y a moins de 15 min |
 | `GET` | `/occupancy/{facility}` | `{facility, level, label, reports, last_report_ts}` (moyenne sur 30 min ; `level`/`last_report_ts` = `null` sans données) |
 | `GET` | `/health` | `{"status": "ok"}` |
+| `GET` | `/history/{facility}?days=7` | `{facility, days, points: [{ts, level, source}]}` (1 à 90 jours) |
+| `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
+
+Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
 
 `last_report_ts` (epoch en secondes du dernier signalement) a été ajouté en phase 2. C'est un champ **additif** : les quatre champs d'origine ne changent pas.
 
