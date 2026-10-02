@@ -11,7 +11,7 @@ Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes, les phases et les
 | `backend/` | API FastAPI, SQLAlchemy 2 + Alembic, SQLite (dev) ou PostgreSQL (prod) |
 | `backend/app/forecast/` | Prévision : variables, modèles (baseline et gradient boosting), sélection, backtest |
 | `docs/forecast-evaluation.md` | Méthode et résultats de l'évaluation hors ligne du modèle |
-| `frontend/` | PWA React + Vite + TypeScript (mobile first, mode sombre, i18n fr/en) |
+| `frontend/` | PWA React + Vite + TypeScript (mobile first, mode sombre, i18n fr/en) : affluence et suivi d'entraînements |
 | `docker-compose.yml` | Stack locale identique à la prod : PostgreSQL + API + PWA servie par nginx |
 | `.github/workflows/ci.yml` | CI : lint, tests (SQLite et PostgreSQL), build, images Docker et test de bout en bout |
 | `render.yaml` | Déploiement Render (blueprint) |
@@ -156,6 +156,13 @@ $env:OFFICIAL_API_KEY = "demo-key"
 ```
 
 Terminal 3 : `cd frontend` puis `npm run dev`.
+
+## Suivi d'entraînements (onglet Séances)
+
+- Commencer une séance, ajouter des exercices (recherche), noter les séries (répétitions × charge) et les cocher. Cocher une série lance le minuteur de repos (réglable, vibration à la fin).
+- « Dernière fois » rappelle la performance précédente et préremplit les séries.
+- Historique, détail de chaque séance, records personnels, unité kg ou lb.
+- **Les séances restent sur le téléphone** (aucun compte, rien sur le serveur). L'onglet propose d'exporter et d'importer une sauvegarde JSON : à faire avant de changer d'appareil ou d'effacer les données du navigateur.
 
 ## Prévision (machine learning)
 
