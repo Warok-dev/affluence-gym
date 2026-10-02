@@ -170,6 +170,12 @@ Terminal 3 : `cd frontend` puis `npm run dev`.
 - 4 programmes prêts à suivre : un tap sur un jour ouvre une séance préremplie avec tes dernières charges.
 - Contenu dans `frontend/src/workouts/guide.ts` et `programs.ts` (textes originaux, à relire et enrichir librement).
 
+## État des équipements (onglet Matériel)
+
+- Chaque salle liste ses machines avec leur état signalé par les étudiants : « En panne », « Fonctionne » ou « Non signalé » (signalement le plus récent des 7 derniers jours).
+- Un tap sur une machine permet de la signaler en panne ou réparée (une fois par 30 min et par machine).
+- La liste des machines est **provisoire** : `backend/app/equipment.py`.
+
 ## Prévision (machine learning)
 
 - Deux modèles sont en concurrence. La **baseline** fait la moyenne par jour de semaine et heure. Le **gradient boosting** (scikit-learn) utilise l'heure, le jour, les jours fériés de l'Ontario et les périodes d'examens.
@@ -221,6 +227,8 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
 | `GET` | `/forecast/{facility}?hours=12` | Prévision pour les prochaines heures d'ouverture (1 à 48) : `{available, model, trained_at, training_samples, validation_mae, hours: [{ts, hour, level, calm}], next_calm}` |
 | `POST` | `/official/{facility}/counts` | Compteurs des tourniquets (en-tête `X-Api-Key`) : `{entries, exits?, ts?}` → 201 ; 401 clé invalide ; 503 réception non configurée |
+| `GET` | `/equipment/{facility}` | Machines et état signalé : `{window_days, machines: [{id, name, category, status, since_ts, reports}]}` |
+| `POST` | `/equipment/{facility}/{machine}/reports` | `{status: "broken"|"ok", client_id}` → 201 ; 404 ; 422 ; 429 (30 min par machine) |
 | `GET` | `/health` | `{"status": "ok", "demo": false}` (champ `demo` additif), utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
