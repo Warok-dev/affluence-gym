@@ -1,0 +1,16 @@
+import { createContext, useContext, type ReactNode } from "react";
+import { en } from "./en";
+import { fr, type Messages } from "./fr";
+
+export const dictionaries = { fr, en } satisfies Record<string, Messages>;
+export type Locale = keyof typeof dictionaries;
+
+const I18nContext = createContext<Messages>(fr);
+
+export function I18nProvider({ locale = "fr", children }: { locale?: Locale; children: ReactNode }) {
+  return <I18nContext.Provider value={dictionaries[locale]}>{children}</I18nContext.Provider>;
+}
+
+export function useT(): Messages {
+  return useContext(I18nContext);
+}

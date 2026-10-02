@@ -4,6 +4,7 @@ import time
 from contextlib import closing
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 DB_PATH = os.getenv("DB_PATH", "affluence.db")
@@ -11,8 +12,20 @@ WINDOW_SECONDS = 30 * 60      # on moyenne les signalements des 30 dernières mi
 COOLDOWN_SECONDS = 15 * 60    # 1 signalement par personne, par salle, par 15 min
 FACILITIES = {"minto", "montpetit"}
 LABELS = {1: "Vide", 2: "Calme", 3: "Modéré", 4: "Bondé"}
+# Origines autorisées (séparées par des virgules) ; par défaut le serveur de dev Vite.
+ALLOWED_ORIGINS = [
+    o.strip()
+    for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    if o.strip()
+]
 
 app = FastAPI(title="Affluence Gym API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 
 def get_db() -> sqlite3.Connection:
@@ -77,10 +90,23 @@ def get_occupancy(facility: str):
     since = int(time.time()) - WINDOW_SECONDS
     with closing(get_db()) as conn:
         row = conn.execute(
-            "SELECT AVG(level) AS avg_level, COUNT(*) AS n FROM reports WHERE facility=? AND ts>=?",
+            "SELECT AVG(level) AS avg_level, COUNT(*) AS n, MAX(ts) AS last_ts"
+            " FROM reports WHERE facility=? AND ts>=?",
             (facility, since),
         ).fetchone()
     if row["n"] == 0:
-        return {"facility": facility, "level": None, "label": "Pas de données", "reports": 0}
+        return {
+            "facility": facility,
+            "level": None,
+            "label": "Pas de données",
+            "reports": 0,
+            "last_report_ts": None,
+        }
     level = round(row["avg_level"])
-    return {"facility": facility, "level": level, "label": LABELS[level], "reports": row["n"]}
+    return {
+        "facility": facility,
+        "level": level,
+        "label": LABELS[level],
+        "reports": row["n"],
+        "last_report_ts": row["last_ts"],  # champ additif (phase 2) : epoch du dernier signalement
+    }
