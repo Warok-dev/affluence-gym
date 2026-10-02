@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   loadActive,
   loadSettings,
@@ -34,61 +34,49 @@ interface WorkoutsApi {
 
 const Ctx = createContext<WorkoutsApi | null>(null);
 
+/** Persists a value after every change (not on first render), reporting storage failures. */
+function usePersist<T>(value: T, save: (v: T) => void, onError: (failed: boolean) => void) {
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    try {
+      save(value);
+      onError(false);
+    } catch (err) {
+      if (err instanceof StorageError) onError(true);
+      else throw err;
+    }
+  }, [value, save, onError]);
+}
+
 export function WorkoutsProvider({ children }: { children: ReactNode }) {
   const [workouts, setWorkouts] = useState<Workout[]>(loadWorkouts);
   const [active, setActive] = useState<Workout | null>(loadActive);
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const [storageError, setStorageError] = useState(false);
 
-  const persist = useCallback((fn: () => void) => {
-    try {
-      fn();
-      setStorageError(false);
-    } catch (err) {
-      if (err instanceof StorageError) setStorageError(true);
-      else throw err;
-    }
-  }, []);
+  usePersist(workouts, saveWorkouts, setStorageError);
+  usePersist(active, saveActive, setStorageError);
+  usePersist(settings, saveSettings, setStorageError);
 
-  const commitActive = useCallback(
-    (next: Workout | null) => {
-      setActive(next);
-      persist(() => saveActive(next));
-    },
-    [persist],
-  );
-
-  const commitWorkouts = useCallback(
-    (next: Workout[]) => {
-      setWorkouts(next);
-      persist(() => saveWorkouts(next));
-    },
-    [persist],
-  );
-
-  const editActive = useCallback(
-    (fn: (w: Workout) => Workout) => {
-      if (active) commitActive(fn(active));
-    },
-    [active, commitActive],
-  );
-
-  const editEntry = useCallback(
-    (entryId: string, fn: (sets: WorkoutSet[]) => WorkoutSet[]) =>
+  // Every edit is a functional update, so several quick taps never overwrite each other.
+  const api = useMemo<WorkoutsApi>(() => {
+    const editActive = (fn: (w: Workout) => Workout) => setActive((w) => (w ? fn(w) : w));
+    const editEntry = (entryId: string, fn: (sets: WorkoutSet[]) => WorkoutSet[]) =>
       editActive((w) => ({
         ...w,
         exercises: w.exercises.map((e) => (e.id === entryId ? { ...e, sets: fn(e.sets) } : e)),
-      })),
-    [editActive],
-  );
+      }));
 
-  const api = useMemo<WorkoutsApi>(
-    () => ({
+    return {
       workouts,
       active,
       settings,
       storageError,
-      start: (gym) => commitActive({ id: newId(), startedAt: Date.now(), gym, exercises: [] }),
+      start: (gym) => setActive({ id: newId(), startedAt: Date.now(), gym, exercises: [] }),
       addExercise: (exerciseId) =>
         editActive((w) => {
           // Start from what was done last time, so logging is mostly ticking boxes.
@@ -117,25 +105,20 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
             .map((e) => ({ ...e, sets: e.sets.filter((s) => s.done) }))
             .filter((e) => e.sets.length > 0),
         };
-        commitWorkouts([done, ...workouts]);
-        commitActive(null);
+        setWorkouts((list) => [done, ...list]);
+        setActive(null);
         return done;
       },
-      discard: () => commitActive(null),
-      deleteWorkout: (id) => commitWorkouts(workouts.filter((w) => w.id !== id)),
-      updateSettings: (patch) => {
-        const next = { ...settings, ...patch };
-        setSettings(next);
-        persist(() => saveSettings(next));
-      },
+      discard: () => setActive(null),
+      deleteWorkout: (id) => setWorkouts((list) => list.filter((w) => w.id !== id)),
+      updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
       importBackup: (backup) => {
         const merged = mergeWorkouts(workouts, backup.workouts);
-        commitWorkouts(merged);
+        setWorkouts(merged);
         return merged.length - workouts.length;
       },
-    }),
-    [workouts, active, settings, storageError, commitActive, commitWorkouts, editActive, editEntry, persist],
-  );
+    };
+  }, [workouts, active, settings, storageError]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

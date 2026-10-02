@@ -42,8 +42,8 @@ export function WorkoutDetailScreen({ id }: { id: string }) {
       <h2 className="section-title">{dateFormat.format(workout.startedAt)}</h2>
       <p className="workouts-stats">
         {t.duration(formatDuration(durationMs(workout)))} ·{" "}
-        {t.workoutSummary(workout.exercises.length, completedSets(workout))} ·{" "}
-        {t.volume(formatWeight(volumeKg(workout), settings.unit))}
+        {t.workoutSummary(workout.exercises.length, completedSets(workout))}
+        {volumeKg(workout) > 0 && ` · ${t.volume(formatWeight(volumeKg(workout), settings.unit))}`}
       </p>
 
       <ul className="rows">

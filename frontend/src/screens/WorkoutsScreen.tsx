@@ -76,9 +76,11 @@ export function WorkoutsScreen() {
         </button>
       )}
 
-      <p className="workouts-stats">
-        {t.thisWeek(workoutsThisWeek(workouts))} · {t.totalWorkouts(workouts.length)}
-      </p>
+      {workouts.length > 0 && (
+        <p className="workouts-stats">
+          {t.thisWeek(workoutsThisWeek(workouts))} · {t.totalWorkouts(workouts.length)}
+        </p>
+      )}
 
       {bests.length > 0 && (
         <section className="block" aria-labelledby="records-title">
@@ -113,7 +115,9 @@ export function WorkoutsScreen() {
                   </span>
                   <span className="row-figure">
                     {formatDuration(durationMs(w))}
-                    <span className="row-sub">{t.volume(formatWeight(volumeKg(w), settings.unit))}</span>
+                    {volumeKg(w) > 0 && (
+                      <span className="row-sub">{t.volume(formatWeight(volumeKg(w), settings.unit))}</span>
+                    )}
                   </span>
                 </a>
               </li>

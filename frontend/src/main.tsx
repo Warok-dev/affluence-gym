@@ -6,6 +6,7 @@ import { I18nProvider } from "./i18n";
 import "@fontsource/barlow-condensed/latin-600.css";
 import "@fontsource/barlow-condensed/latin-700.css";
 import "./styles.css";
+import "./workouts.css";
 
 registerSW({ immediate: true });
 
