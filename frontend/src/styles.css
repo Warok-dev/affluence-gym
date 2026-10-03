@@ -216,7 +216,8 @@ button:disabled {
 }
 .score-digit {
   font-family: var(--font-score);
-  font-size: var(--fs-score);
+  /* Capped on narrow phones so a three-digit head count fits its column. */
+  font-size: min(var(--fs-score), 24vw);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 0.9;

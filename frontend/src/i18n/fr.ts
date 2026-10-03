@@ -30,6 +30,10 @@ export const fr = {
   noReports: "Aucun signalement depuis 30 min",
   beFirst: "Sois le premier à signaler",
   todayHours: (open: string, close: string) => `Aujourd'hui ${open} – ${close}`,
+  people: "personnes",
+  ofCapacity: (n: number) => `sur ${n} places`,
+  officialCounter: (ago: string) => `compteur des tourniquets, ${ago}`,
+  estimatedCounter: (ago: string) => `estimé d'après les entrées, ${ago}`,
 
   // Reporting
   reportButton: "Signaler",

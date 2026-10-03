@@ -55,23 +55,33 @@ export function GymColumn({ id, name, data, profile, loadError, quieter, now, on
   const loading = !data && !loadError;
   const open = isOpenNow(profile, now);
   const level = open ? (data?.level ?? null) : null;
+  // Exact count from the turnstiles (or an estimate from entries) when the counter feeds the API.
+  const official = open && data?.source === "official" && data.people != null;
+  const ago = (ts: number) => {
+    const m = minutesSince(ts, now);
+    return m === 0 ? t.justNow : t.minutesAgo(m);
+  };
 
   let label: string;
   if (loading) label = t.loading;
   else if (!open) label = t.closed;
   else if (!data) label = t.unavailable; // the banner above explains why
+  else if (official) label = `${t.people} · ${t.levels[level!]}`;
   else label = level ? t.levels[level] : t.noData;
 
   // Evidence reads as two deliberate lines: how many reports, then how fresh.
   let evidence: string[] = [];
   if (!open && profile?.opening_hours) {
     evidence = [t.todayHours(t.time(profile.opening_hours.open), t.time(profile.opening_hours.close))];
+  } else if (official) {
+    const when = data!.updated_ts != null ? ago(data!.updated_ts) : t.justNow;
+    evidence = [
+      t.ofCapacity(data!.capacity ?? 0),
+      data!.estimated ? t.estimatedCounter(when) : t.officialCounter(when),
+    ];
   } else if (data && data.reports > 0) {
     evidence = [t.reportsCount(data.reports)];
-    if (data.last_report_ts != null) {
-      const m = minutesSince(data.last_report_ts, now);
-      evidence.push(t.lastReport(m === 0 ? t.justNow : t.minutesAgo(m)));
-    }
+    if (data.last_report_ts != null) evidence.push(t.lastReport(ago(data.last_report_ts)));
   } else if (data) {
     evidence = open ? [t.noReports, t.beFirst] : [t.noReports];
   }
@@ -91,9 +101,12 @@ export function GymColumn({ id, name, data, profile, loadError, quieter, now, on
         {quieter && <span className="quieter-tag">{t.quieter}</span>}
       </header>
 
-      <div className={`score level-${level ?? "none"}`} data-testid={`level-${id}`}>
+      <div
+        className={`score level-${level ?? "none"}${official ? " is-count" : ""}`}
+        data-testid={`level-${id}`}
+      >
         <span className="score-digit" aria-hidden="true">
-          {loading ? "" : (level ?? "–")}
+          {loading ? "" : official ? data!.people : (level ?? "–")}
         </span>
         <span className="score-label">{label}</span>
       </div>
@@ -116,8 +129,8 @@ export function GymColumn({ id, name, data, profile, loadError, quieter, now, on
         )}
       </p>
 
-      <div className="gym-action">
-        {picking ? (
+      <div className="gym-action" hidden={official}>
+        {official ? null : picking ? (
           <div className="picker" role="group" aria-labelledby={promptId}>
             <p id={promptId} className="picker-prompt">
               {t.reportPrompt}

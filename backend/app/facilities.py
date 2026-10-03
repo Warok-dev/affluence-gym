@@ -1,8 +1,9 @@
-"""Static facility configuration: ids, display names and opening hours.
+"""Static facility configuration: ids, display names, capacity and opening hours.
 
 Opening hours are local times (config.TIMEZONE), one (open, close) pair per weekday,
 0 = Monday ... 6 = Sunday, or None when closed that day.
 VALUES TO CHECK against the official schedules before going live.
+`capacity` (maximum number of people) is PROVISIONAL too: ask Sports Services.
 """
 
 from dataclasses import dataclass
@@ -15,6 +16,7 @@ class Facility:
     id: str
     name: str
     opening_hours: tuple[Hours, Hours, Hours, Hours, Hours, Hours, Hours]
+    capacity: int
 
 
 _WEEK = ("06:30", "23:00")
@@ -23,7 +25,7 @@ _WEEKEND = ("08:00", "20:00")
 FACILITIES: dict[str, Facility] = {
     f.id: f
     for f in (
-        Facility("minto", "Minto", (_WEEK,) * 5 + (_WEEKEND,) * 2),
-        Facility("montpetit", "Montpetit", (_WEEK,) * 5 + (_WEEKEND,) * 2),
+        Facility("minto", "Minto", (_WEEK,) * 5 + (_WEEKEND,) * 2, capacity=120),
+        Facility("montpetit", "Montpetit", (_WEEK,) * 5 + (_WEEKEND,) * 2, capacity=120),
     )
 }

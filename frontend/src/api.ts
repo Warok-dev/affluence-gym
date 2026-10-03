@@ -7,6 +7,15 @@ export interface Occupancy {
   reports: number;
   /** Epoch seconds of the most recent report in the window, or null. */
   last_report_ts: number | null;
+  /** "official" when the gym's turnstile counters feed the API, else "crowd" (reports). */
+  source?: "official" | "crowd";
+  /** People present (official source only). */
+  people?: number | null;
+  capacity?: number | null;
+  /** True when estimated from entries alone (no exit counter). */
+  estimated?: boolean;
+  /** Epoch seconds of the counter reading. */
+  updated_ts?: number | null;
 }
 
 export type ReportResult = "ok" | "cooldown" | "error";

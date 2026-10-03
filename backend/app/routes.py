@@ -1,15 +1,17 @@
+import hmac
 import time
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from . import config
 from . import history as hist
 from .config import COOLDOWN_SECONDS, DEMO_DATA, LABELS, TIMEZONE
-from .db import Report, get_session
+from .db import OfficialCount, Report, get_session
 from .facilities import FACILITIES
 from .forecast.service import forecast, forecast_service
 from .sources import source
@@ -66,6 +68,12 @@ def get_occupancy(facility: FacilityDep, session: SessionDep):
         "label": LABELS[occ.level] if occ.level else "Pas de données",
         "reports": occ.reports,
         "last_report_ts": occ.last_report_ts,  # champ additif (phase 2)
+        # Champs additifs (compteur officiel) :
+        "source": occ.source,  # "official" ou "crowd"
+        "people": occ.people,  # personnes présentes (source officielle), sinon null
+        "capacity": occ.capacity,
+        "estimated": occ.estimated,  # true : estimé à partir des seules entrées
+        "updated_ts": occ.updated_ts,  # heure de la lecture du compteur
     }
 
 
@@ -119,3 +127,30 @@ def get_forecast(facility: FacilityDep, session: SessionDep, hours: Annotated[in
         "hours": [vars(p) for p in points],
         "next_calm": {"ts": next_calm.ts, "hour": next_calm.hour} if next_calm else None,
     }
+
+
+class CountsIn(BaseModel):
+    """Turnstile counters, cumulative since midnight (gym local time). Aggregates only."""
+
+    entries: int = Field(ge=0, le=100_000)
+    exits: int | None = Field(default=None, ge=0, le=100_000)  # null: no exit counter
+    ts: int | None = None  # epoch seconds of the reading; default: reception time
+
+
+def require_api_key(x_api_key: Annotated[str | None, Header()] = None) -> None:
+    if not config.OFFICIAL_API_KEY:
+        raise HTTPException(503, "Réception des compteurs non configurée")
+    if not x_api_key or not hmac.compare_digest(x_api_key, config.OFFICIAL_API_KEY):
+        raise HTTPException(401, "Clé d'API invalide")
+
+
+@router.post("/official/{facility}/counts", status_code=201, dependencies=[Depends(require_api_key)])
+def post_counts(facility: FacilityDep, counts: CountsIn, session: SessionDep):
+    """Endpoint for the university's system: one reading of the entry/exit counters."""
+    now = int(time.time())
+    ts = counts.ts if counts.ts is not None else now
+    if ts > now + 60 or ts < now - 86_400:
+        raise HTTPException(422, "Horodatage hors de la fenêtre acceptée (dernières 24 h)")
+    session.add(OfficialCount(facility=facility, ts=ts, entries=counts.entries, exits=counts.exits))
+    session.commit()
+    return {"status": "enregistré"}

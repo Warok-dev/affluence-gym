@@ -12,11 +12,13 @@ University students who train at the campus gyms (two facilities: Minto and Mont
 
 ## Product Purpose
 
-Show, in real time, how busy each campus gym is, so students pick the best moment and place to train. Success: a student knows within seconds which gym is quieter right now, and when it will probably be calm today.
+Show, in real time, how many people are in each campus gym, so students pick the best moment and place to train. The target is the **exact head count** from the turnstiles (card scan to enter, free exit turnstile): people present = entries − exits, from aggregated counters the university would provide (pending agreement; a demo with simulated counters is prepared for Sports Services). Success: a student knows within seconds which gym is quieter right now, and when it will probably be calm today.
+
+Scope widened (confirmed 2026-10-02) to a complete gym companion: workout logging, exercise library and programs, equipment status, notifications. Personal workout data stays **on the device**, never on the server.
 
 ## Positioning
 
-Crowd levels come from anonymous reports by students themselves (no card-access data, no official source yet), complemented by the typical day computed from history and a forecast model. It is a student-made, unofficial tool, not a university service.
+Today, crowd levels come from anonymous reports by students; the app is built to switch to the turnstile counters (aggregates only, never identities) as soon as the university provides them, and falls back to reports when the counter is silent. Complemented by the typical day and a forecast model. It is a student-made, unofficial tool, not a university service.
 
 ## Operating Context
 

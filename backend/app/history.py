@@ -30,7 +30,7 @@ def take_snapshots(session: Session, source: OccupancySource, now: int) -> int:
         occ = source.current(session, facility, now)
         if occ.level is None:
             continue
-        session.add(OccupancySnapshot(facility=facility, ts=ts, level=occ.level, source=source.name))
+        session.add(OccupancySnapshot(facility=facility, ts=ts, level=occ.level, source=occ.source, people=occ.people))
         try:
             session.commit()
             written += 1

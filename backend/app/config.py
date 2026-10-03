@@ -46,3 +46,13 @@ ALLOWED_ORIGINS = [
 ]
 
 LABELS = {1: "Vide", 2: "Calme", 3: "Modéré", 4: "Bondé"}
+
+# --- Official counter (entries at the card-gated turnstile, exits at the exit turnstile) ---
+# Shared secret the university's system sends in the X-Api-Key header. Empty: ingestion disabled.
+OFFICIAL_API_KEY = os.getenv("OFFICIAL_API_KEY", "")
+# A counter silent for longer than this is considered down: the app falls back to crowd reports.
+OFFICIAL_STALE_SECONDS = int(os.getenv("OFFICIAL_STALE_SECONDS", str(10 * 60)))
+# Without exit counts, presence is estimated as the entries of the last AVERAGE_STAY minutes.
+AVERAGE_STAY_SECONDS = int(os.getenv("AVERAGE_STAY_MINUTES", "75")) * 60
+# Occupancy ratio (people / capacity) upper bounds for levels 1-3; above the last one is level 4.
+LEVEL_RATIOS = (0.25, 0.5, 0.75)
