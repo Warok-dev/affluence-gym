@@ -145,7 +145,7 @@ Depuis le dossier `affluence-gym`, après l'installation :
 powershell -ExecutionPolicy Bypass -File .\demo.ps1
 ```
 
-Le script ouvre trois fenêtres (API en mode démo, simulateur des tourniquets, interface), puis le navigateur sur http://localhost:5173, et affiche l'adresse à ouvrir sur un téléphone du même Wi-Fi. Options : `-Hour 9` pour simuler une autre heure, `-NoExits` pour le mode « estimé ». Pour arrêter, ferme les trois fenêtres. Les chiffres sont fictifs et l'appli l'indique par un bandeau.
+Le script ouvre trois fenêtres (API en mode démo, simulateur des tourniquets, interface), puis le navigateur sur http://localhost:5173, et affiche l'adresse à ouvrir sur un téléphone du même Wi-Fi. Options : `-Hour 9` pour simuler une autre heure, `-NoExits` pour le mode « estimé ». Pour arrêter, ferme les trois fenêtres. Les chiffres sont fictifs et l'appli l'indique par un bandeau. À chaque lancement, la base de démo est régénérée par rapport à la date du jour (16 semaines d'historique avec nombre de personnes, quelques machines en panne) : la démo reste fraîche même des semaines plus tard.
 
 Pour la rencontre avec le service des sports : déroulé minute par minute, liste de préparation et réponses aux objections dans [`docs/demo-rencontre.md`](docs/demo-rencontre.md).
 

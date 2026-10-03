@@ -27,11 +27,10 @@ if (-not (Test-Path (Join-Path $frontend "node_modules"))) {
     exit 1
 }
 
-# 1. Base de démonstration (créée une seule fois).
-if (-not (Test-Path (Join-Path $backend "demo.db"))) {
-    Write-Host "Création de la base de démonstration (données fictives)..."
-    & $python (Join-Path $backend "scripts\seed_demo.py")
-}
+# 1. Base de démonstration, régénérée à chaque lancement : l'historique et les pannes
+#    restent récents même si la démo a lieu des semaines plus tard.
+Write-Host "Préparation des données de démonstration (fictives)..."
+& $python (Join-Path $backend "scripts\seed_demo.py")
 
 # 2. API en mode démo.
 $api = "Set-Location '$backend'; `$env:DB_PATH='demo.db'; `$env:DEMO_DATA='true'; `$env:OFFICIAL_API_KEY='demo-key'; & '$python' -m uvicorn app.main:app --port 8000"

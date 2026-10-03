@@ -1,5 +1,7 @@
-"""Fill a SEPARATE demo database with 16 weeks of fake snapshots, to try the
-"typical day" chart and the forecast without waiting for real reports.
+"""Fill a SEPARATE demo database with 16 weeks of fake snapshots (level and head count,
+as if the turnstile counters had been connected), plus a few broken machines, to try the
+charts, the typical week and the forecast without waiting for real data. Safe to re-run:
+it replaces the demo data, relative to now (demo.ps1 runs it at every launch).
 
 Assumptions baked into the fake data: quiet mornings, lunch bump, evening rush,
 gentler weekends, and much quieter public holidays (to exercise the holiday feature).
@@ -27,12 +29,21 @@ sys.path.insert(0, str(BACKEND))
 from sqlalchemy import delete  # noqa: E402
 
 from app.config import SNAPSHOT_SECONDS, TIMEZONE  # noqa: E402
-from app.db import OccupancySnapshot, SessionLocal, init_db  # noqa: E402
+from app.db import EquipmentReport, OccupancySnapshot, SessionLocal, init_db  # noqa: E402
 from app.facilities import FACILITIES  # noqa: E402
 from app.forecast.features import is_holiday  # noqa: E402
 from app.history import opening_hour_range  # noqa: E402
 
 WEEKS = 16
+HOUR = 3600
+
+# Machines reported broken or fixed recently (facility, machine, status, hours ago).
+MACHINES = [
+    ("minto", "treadmill-2", "broken", 3),
+    ("minto", "cable-1", "broken", 20),
+    ("minto", "bike-1", "ok", 26),
+    ("montpetit", "elliptical-1", "broken", 5),
+]
 
 # Typical busyness (1-4) per hour: quiet mornings, lunch bump, evening rush.
 WEEKDAY = {6: 1, 7: 1, 8: 2, 9: 2, 10: 2, 11: 3, 12: 3, 13: 3, 14: 2, 15: 2,
@@ -56,12 +67,20 @@ def main() -> None:
             offset = 0 if fid == "minto" else -1 if local.hour in (17, 18) else 0
             holiday = -2 if is_holiday(local.date()) else 0
             level = min(4, max(1, base + offset + holiday + rng.choice((-1, 0, 0, 0, 1))))
-            rows.append(OccupancySnapshot(facility=fid, ts=ts, level=level, source="crowd"))
+            # A head count inside the level's band of the capacity (<25 %, 25-50 %, 50-75 %, >=75 %).
+            share = (level - 1) * 0.25 + rng.uniform(0.03, 0.22)
+            people = round(share * facility.capacity)
+            rows.append(OccupancySnapshot(facility=fid, ts=ts, level=level, source="official", people=people))
     with SessionLocal() as session:
         session.execute(delete(OccupancySnapshot))
         session.add_all(rows)
+        session.execute(delete(EquipmentReport).where(EquipmentReport.client_id == "demo-seed"))
+        session.add_all(
+            EquipmentReport(facility=f, equipment_id=m, status=st, client_id="demo-seed", ts=now - h * HOUR)
+            for f, m, st, h in MACHINES
+        )
         session.commit()
-    print(f"{len(rows)} demo snapshots written to {os.environ['DB_PATH']}")
+    print(f"{len(rows)} demo snapshots and {len(MACHINES)} machine reports written to {os.environ['DB_PATH']}")
 
 
 if __name__ == "__main__":
