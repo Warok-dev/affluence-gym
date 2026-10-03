@@ -8,6 +8,9 @@ export const REFRESH_MS = 45_000;
 /** Screen mode (entrance TV): nobody can pull to refresh, so it polls a bit faster. */
 export const KIOSK_REFRESH_MS = 30_000;
 
+/** Screen mode alternates French and English, like the campus's bilingual signage. */
+export const KIOSK_LANGUAGE_MS = 12_000;
+
 /**
  * Address the screen-mode QR code points to. Empty -> the address the screen itself uses,
  * which is only right when the TV opens the public URL (not "localhost").

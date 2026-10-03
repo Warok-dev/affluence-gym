@@ -2,8 +2,18 @@ import qrcode from "qrcode-generator";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchHealth, fetchOccupancy, fetchProfile, type Occupancy, type Profile } from "../api";
 import { isOpenNow } from "../components/GymColumn";
-import { FACILITIES, KIOSK_REFRESH_MS, LEVELS, PROFILE_REFRESH_MS, PUBLIC_APP_URL, TIMEZONE, type FacilityId } from "../config";
-import { useT } from "../i18n";
+import {
+  FACILITIES,
+  KIOSK_LANGUAGE_MS,
+  KIOSK_REFRESH_MS,
+  LEVELS,
+  PROFILE_REFRESH_MS,
+  PUBLIC_APP_URL,
+  TIMEZONE,
+  type FacilityId,
+} from "../config";
+import { dictionaries, useLocale, type Locale } from "../i18n";
+import type { Messages } from "../i18n/fr";
 import { quieterIndex } from "../levels";
 import { ROUTES } from "../router";
 import { localTime, minutesSince, toMinutes } from "../time";
@@ -13,9 +23,12 @@ type ByGym<T> = Partial<Record<FacilityId, T>>;
 /**
  * Screen mode: the scoreboard for a TV at the gym entrance, read from across the room.
  * No header, no tabs, no report buttons; it refreshes itself and keeps the screen awake.
+ * The text alternates French and English (the figures stay put), starting with the app's language.
  */
 export function KioskScreen() {
-  const t = useT();
+  const { locale } = useLocale();
+  const [shown, setShown] = useState<Locale>(locale);
+  const t = dictionaries[shown];
   const [occupancy, setOccupancy] = useState<ByGym<Occupancy>>({});
   const [profiles, setProfiles] = useState<ByGym<Profile>>({});
   const [lastSuccess, setLastSuccess] = useState<number | null>(null);
@@ -67,6 +80,11 @@ export function KioskScreen() {
 
   useWakeLock();
 
+  useEffect(() => {
+    const swap = setInterval(() => setShown((l) => (l === "fr" ? "en" : "fr")), KIOSK_LANGUAGE_MS);
+    return () => clearInterval(swap);
+  }, []);
+
   const open = FACILITIES.map((f) => isOpenNow(profiles[f.id], now));
   const quieter = quieterIndex(
     FACILITIES.map((f) => occupancy[f.id]),
@@ -82,7 +100,7 @@ export function KioskScreen() {
   }
 
   return (
-    <div className="kiosk" data-testid="kiosk">
+    <div className="kiosk" data-testid="kiosk" lang={shown}>
       <header className="kiosk-head">
         <h1>
           {t.appTitle} <span className="kiosk-subtitle">· {t.kioskTitle}</span>
@@ -106,6 +124,7 @@ export function KioskScreen() {
             open={open[i]}
             quieter={quieter === i}
             now={now}
+            t={t}
           />
         ))}
       </div>
@@ -136,10 +155,10 @@ interface GymProps {
   open: boolean;
   quieter: boolean;
   now: number;
+  t: Messages;
 }
 
-function KioskGym({ name, data, profile, open, quieter, now }: GymProps) {
-  const t = useT();
+function KioskGym({ name, data, profile, open, quieter, now, t }: GymProps) {
   const level = open ? (data?.level ?? null) : null;
   const official = open && data?.source === "official" && data.people != null;
 

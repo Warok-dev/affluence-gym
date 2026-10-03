@@ -31,7 +31,7 @@ Tout le reste de la démo sert à rendre cette phrase concrète.
 | 0:45 | Scanner le **code QR** avec ton téléphone | « Un étudiant scanne et a la même info dans sa poche. Pas de compte, pas d'inscription. » |
 | 1:15 | Téléphone : onglet **Affluence**, « Plus calme » en ambre | « Il voit tout de suite quelle salle est la moins pleine. » |
 | 1:45 | « Quand y aller aujourd'hui » puis **Voir la semaine type** | « Avec l'historique, on sait quand c'est calme. Cette grille, c'est aussi un outil pour vous : jours et heures de pointe, pour planifier le personnel ou l'entretien. » |
-| 2:45 | Bouton **EN** | « Bilingue, tout le contenu. » |
+| 2:45 | Bouton **EN** (et l'écran de l'ordinateur qui est passé en anglais tout seul) | « Bilingue, tout le contenu. Le mode écran alterne les deux langues. » |
 | 3:15 | Onglet **Matériel** | « Les étudiants signalent une machine en panne. Avec votre liste de machines, on pourrait vous transmettre ces signalements. » |
 | 3:45 | Onglets **Séances** et **Exercices** (courbe de progression) | « C'est aussi une vraie appli d'entraînement, et les séances restent sur le téléphone de l'étudiant. » |
 | 4:30 | Retour au document imprimé | « Ce qu'il nous faut de votre côté : deux nombres par salle, c'est tout. » |

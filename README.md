@@ -171,7 +171,7 @@ Terminal 3 : `cd frontend` puis `npm run dev`.
 
 ## Français / English
 
-Le bouton **EN / FR** en haut à droite change la langue de toute l'appli (contenus des exercices, programmes, machines et notification « salle calme » compris). Le choix reste mémorisé sur le téléphone. Par défaut, l'appli suit la langue du navigateur. Le mode écran utilise la langue choisie sur l'appareil qui l'affiche.
+Le bouton **EN / FR** en haut à droite change la langue de toute l'appli (contenus des exercices, programmes, machines et notification « salle calme » compris). Le choix reste mémorisé sur le téléphone. Par défaut, l'appli suit la langue du navigateur. Le mode écran alterne le français et l'anglais toutes les 12 secondes (les chiffres ne bougent pas).
 
 ## Semaine type
 
