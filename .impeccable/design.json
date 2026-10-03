@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-02T02:06:30+00:00",
+  "generatedAt": "2026-10-02T12:00:00+00:00",
   "title": "Design System: Affluence Gym",
   "extensions": {
     "colorMeta": {
@@ -473,11 +473,11 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "The crowd-level numeral, one per gym column; the only 6rem text."
+        "purpose": "The crowd-level numeral, one per gym column; the only 6rem text, capped at 24vw on narrow phones so a three-digit head count fits."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "App name, gym names, section title; condensed caps."
+        "purpose": "App name, gym names, section and block titles; condensed caps."
       },
       "title": {
         "displayName": "Title",
@@ -506,7 +506,7 @@
       {
         "name": "state-swap",
         "value": "none",
-        "purpose": "State changes swap instantly; the wait clock ticking each second is the only meaningful motion."
+        "purpose": "State changes swap instantly; the wait clock, workout clock and rest countdown ticking each second are the only meaningful motion."
       }
     ],
     "breakpoints": [
@@ -517,6 +517,10 @@
       {
         "name": "target-viewport",
         "value": "375px"
+      },
+      {
+        "name": "tabbar-height",
+        "value": "64px"
       }
     ]
   },
@@ -584,18 +588,67 @@
       "description": "Hour bars: pale ordinary, navy calm, amber forecast calm, dashed no-data; red now-line; selected bar outlined in ink.",
       "html": "<div class=\"ds-chart\"><button class=\"ds-bar ds-calm\" style=\"height:25%\"></button><button class=\"ds-bar\" style=\"height:50%\"></button><button class=\"ds-bar\" style=\"height:75%\"></button><button class=\"ds-bar ds-calm\" style=\"height:40%\"></button><button class=\"ds-bar ds-sel\" style=\"height:60%\"></button><button class=\"ds-bar ds-fc\" style=\"height:25%\"></button><button class=\"ds-bar ds-empty\"></button><span class=\"ds-now\" style=\"left:78%\"></span></div>",
       "css": ".ds-chart{position:relative;display:flex;align-items:flex-end;gap:2px;height:96px;max-width:24rem;border-bottom:1px solid var(--ink-2,#48586f)}.ds-bar{flex:1;min-width:0;min-height:3px;padding:0;border:0;border-radius:3px 3px 0 0;background:var(--bar,#c3cedb);cursor:pointer}.ds-calm{background:var(--calm,#13213c)}.ds-fc{background:var(--amber,#e8a317)}.ds-empty{height:3px;border-top:2px dashed var(--bar,#c3cedb);border-radius:0;background:transparent}.ds-sel{outline:2px solid var(--ink,#13213c);outline-offset:2px}.ds-bar:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}.ds-now{position:absolute;top:-6px;bottom:0;width:2px;margin-left:-1px;background:var(--red,#c8102e);pointer-events:none}"
+    },
+    {
+      "name": "Bottom Tab Bar",
+      "kind": "nav",
+      "refersTo": "tabbar",
+      "description": "Four authored-icon tabs over a 2px blue top rule; the current tab turns ink with a 3px ink line on top; a navy badge marks a running workout.",
+      "html": "<nav class=\"ds-tabbar\"><a class=\"ds-ti\" aria-current=\"page\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"3\"/><path d=\"M12 4v16M7.5 9v6M16.5 9v6\"/></svg><span>Affluence</span></a><a class=\"ds-ti\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12\"/></svg><span>Séances</span><span class=\"ds-badge\">En cours</span></a><a class=\"ds-ti\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5zM12 6v13\"/></svg><span>Exercices</span></a><a class=\"ds-ti\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 6.5a4 4 0 0 0 5 5L20 12l-8.5 8.5a2.1 2.1 0 0 1-3-3L17 9l.5-.5a4 4 0 0 0-3-5z\"/></svg><span>Matériel</span></a></nav>",
+      "css": ".ds-tabbar{display:flex;justify-content:center;gap:8px;height:64px;padding:0 16px;border-top:2px solid var(--blue,#1f5faf);background:var(--ground,#f3f6f8);max-width:24rem}.ds-ti{position:relative;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:44px;color:var(--ink-2,#48586f);font-size:.8125rem;font-weight:600;text-decoration:none}.ds-ti[aria-current=\"page\"]{color:var(--ink,#13213c);box-shadow:inset 0 3px 0 var(--ink,#13213c)}.ds-ti:hover{color:var(--ink,#13213c)}.ds-ti:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}.ds-badge{position:absolute;top:6px;left:calc(50% + 14px);padding:0 6px;border-radius:4px;background:var(--board,#13213c);color:var(--on-board,#f3f6f8);font-family:\"Barlow Condensed\",system-ui,sans-serif;font-size:.8125rem;letter-spacing:.04em;text-transform:uppercase}"
+    },
+    {
+      "name": "Live Workout Card",
+      "kind": "card",
+      "refersTo": "live-card",
+      "description": "A lit board element: workout name, running tabular clock, and an ice action button.",
+      "html": "<a class=\"ds-live\" href=\"#\"><span class=\"ds-lt\">Haut du corps</span><span class=\"ds-lc\">00:42:17</span><span class=\"ds-la\">Reprendre</span></a>",
+      "css": ".ds-live{display:grid;grid-template-columns:1fr auto;grid-template-areas:\"t a\" \"c a\";align-items:center;gap:0 12px;padding:12px 16px;border-radius:var(--corner,14px);background:var(--board,#13213c);color:var(--on-board,#f3f6f8);text-decoration:none;max-width:24rem}.ds-lt{grid-area:t;color:var(--on-board-2,#b4c1d4);font-size:.8125rem}.ds-lc{grid-area:c;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.04em}.ds-la{grid-area:a;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:var(--corner-s,8px);background:var(--on-board,#f3f6f8);color:var(--board,#13213c);font-weight:700}.ds-live:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink fill on the ice: the main action of a workout or library screen.",
+      "html": "<button class=\"ds-primary\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 5v14M5 12h14\"/></svg> Ajouter une série</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border:0;border-radius:var(--corner-s,8px);background:var(--ink,#13213c);color:var(--ground,#f3f6f8);font:inherit;font-weight:700;cursor:pointer}.ds-primary:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A 1px slate outline on the ice, ink text; same shape as the primary.",
+      "html": "<button class=\"ds-secondary\">M’alerter quand c’est calme</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border:1px solid var(--ink-2,#48586f);border-radius:var(--corner-s,8px);background:transparent;color:var(--ink,#13213c);font:inherit;font-weight:700;cursor:pointer}.ds-secondary:hover{border-color:var(--ink,#13213c)}.ds-secondary:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Set Entry",
+      "kind": "input",
+      "refersTo": "set-check",
+      "description": "A sets-table row: condensed set number, 44px number inputs, and a 44px check box that fills ink when done.",
+      "html": "<div class=\"ds-set\"><span class=\"ds-sn\">1</span><input class=\"ds-num\" inputmode=\"decimal\" value=\"60\" aria-label=\"kg\"><input class=\"ds-num\" inputmode=\"numeric\" value=\"8\" aria-label=\"reps\"><button class=\"ds-check\" role=\"checkbox\" aria-checked=\"true\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button></div><div class=\"ds-set\"><span class=\"ds-sn\">2</span><input class=\"ds-num\" placeholder=\"60\" aria-label=\"kg\"><input class=\"ds-num\" placeholder=\"8\" aria-label=\"reps\"><button class=\"ds-check\" role=\"checkbox\" aria-checked=\"false\"></button></div>",
+      "css": ".ds-set{display:flex;align-items:center;gap:4px;max-width:20rem;font-variant-numeric:tabular-nums}.ds-sn{width:2.5rem;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:700}.ds-num{flex:1;min-width:0;min-height:44px;padding:0 8px;border:1px solid var(--ink-2,#48586f);border-radius:var(--corner-s,8px);background:transparent;color:var(--ink,#13213c);font:inherit;font-variant-numeric:tabular-nums}.ds-num::placeholder{color:var(--ink-2,#48586f)}.ds-check{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:2px solid var(--ink-2,#48586f);border-radius:var(--corner-s,8px);background:transparent;color:var(--ground,#f3f6f8);cursor:pointer}.ds-check[aria-checked=\"true\"]{border-color:var(--ink,#13213c);background:var(--ink,#13213c)}.ds-num:focus-visible,.ds-check:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Machine Status Stamp",
+      "kind": "chip",
+      "refersTo": "broken-stamp",
+      "description": "Equipment rows: status in slate; a broken machine is stamped in reverse on navy, never red or amber.",
+      "html": "<div class=\"ds-mrow\"><span>Presse à cuisses</span><span class=\"ds-ms\">En service</span></div><div class=\"ds-mrow\"><span>Tapis 3</span><span class=\"ds-ms ds-broken\">En panne</span></div>",
+      "css": ".ds-mrow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;border-bottom:1px solid var(--ground-2,#e3eaf1);color:var(--ink,#13213c);max-width:24rem}.ds-ms{color:var(--ink-2,#48586f);font-size:.8125rem}.ds-broken{padding:2px 8px;border-radius:4px;background:var(--board,#13213c);color:var(--on-board,#f3f6f8);font-weight:600}"
     }
   ],
   "narrative": {
     "northStar": "The Daylight Arena Scoreboard",
-    "overview": "The two gyms face each other like two teams on a lit scoreboard hung over an ice rink. The crowd level is a giant condensed tabular numeral, one per column, read and compared in a single glance; everything else on the screen (label, lamps, evidence, report action) is subordinate to that pair of numbers. The world is built from the rink's own materials: an ice-white ground, navy boards, the blue line painted on the ice as the only structural rule, a thin centre-red line for \"now\", and one amber reserved for the best move.\n\nDensity is that of an operate tool, not a page: a single 32rem column, one framed board, then a \"when to go today\" strip below. Nothing decorates. There are no shadows, no gradients, no imagery, no decorative motion; state changes swap instantly and the only thing that moves is a clock that ticks. At night the arena keeps its colours: the ground becomes boards navy and the numerals stay ice, never black, never neon.\n\nStates are printed on the column itself rather than shown and withdrawn: a report stamps the column \"Signalé\" with a live wait clock, an unknown level shows an unlit digit, loading shows an unlit lamp-shaped placeholder. Every number carries its evidence line beneath it.",
+    "overview": "The two gyms face each other like two teams on a lit scoreboard hung over an ice rink. The crowd level is a giant condensed tabular numeral, one per column, read and compared in a single glance; everything else on the screen (label, lamps, evidence, report action) is subordinate to that pair of numbers. The world is built from the rink's own materials: an ice-white ground, navy boards, the blue line painted on the ice as the only structural rule, a thin centre-red line for \"now\", and one amber reserved for the best move.\n\nDensity is that of an operate tool, not a page: a single 32rem column, one framed board, then a \"when to go today\" strip below. Nothing decorates. There are no shadows, no gradients, no imagery, no decorative motion; state changes swap instantly and the only thing that moves is a clock that ticks. At night the arena keeps its colours: the ground becomes boards navy and the numerals stay ice, never black, never neon.\n\nStates are printed on the column itself rather than shown and withdrawn: a report stamps the column \"Signalé\" with a live wait clock, an unknown level shows an unlit digit, loading shows an unlit lamp-shaped placeholder. Every number carries its evidence line beneath it.\n\nThe workout, library and equipment screens sit in the same arena, one thumb away through a bottom tab bar ruled in blue. Anything live (a running workout, a rest countdown, an armed alert, a broken machine) is a lit navy board element on the ice; everything the user edits (sets, settings, search, filters) is drawn in slate lines and filled with ink when chosen.",
     "keyCharacteristics": [
       "Two-column scoreboard, columns split by a 2px blue line, framed with rounded boards (14px).",
       "One giant numeral per gym (6rem Barlow Condensed 700, tabular), above a caps label and four discrete lamps.",
       "Three text sizes only: 0.8125rem, 1rem, 6rem.",
       "Colour is reserved: blue is structure, red is now, amber is the best choice. Nothing else is coloured.",
       "Flat throughout; depth comes from the navy board sitting on the ice ground.",
-      "Dark mode is the arena at night: navy ground, ice ink, the same reserved accents brightened."
+      "Dark mode is the arena at night: navy ground, ice ink, the same reserved accents brightened.",
+      "A fixed bottom tab bar (64px, 2px blue top rule) joins the scoreboard to the workout, library and equipment screens."
     ],
     "rules": [
       {
@@ -611,6 +664,11 @@
       {
         "name": "The Night Arena Rule",
         "body": "Dark mode raises the ground to boards navy and keeps numerals ice. No black surfaces, no neon accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lit Board Rule",
+        "body": "Live and system state on the ice ground (running workout, rest timer, armed alert, \"En cours\" badge, a broken machine) is printed as a navy board element with ice text. A fault is a reversed stamp, never red or amber, because those colours are already spoken for.",
         "section": "colors"
       },
       {
@@ -645,7 +703,10 @@
       "**Do** pair every number with its evidence line (report count, freshness, sample count), and write the level as a word under the numeral.",
       "**Do** print states onto the column (stamp, unlit digit, unlit lamps) instead of transient toasts.",
       "**Do** keep touch targets at 44px minimum and the focus ring at 3px blue, 2px offset (ice on the board).",
-      "**Do** move dark mode to boards navy ground with ice ink, swapping each token for its `-night` value."
+      "**Do** move dark mode to boards navy ground with ice ink, swapping each token for its `-night` value.",
+      "**Do** print live state (running workout, rest timer, armed alert, broken machine) as a navy board element with ice text.",
+      "**Do** show a chosen or completed control as an ink fill on the ice, and editable controls as 1px slate outlines with 8px corners.",
+      "**Do** confirm destructive actions inline, in a 2px ink-outlined panel where the action was."
     ],
     "donts": [
       "**Don't** use blue as a fill, a button colour, or a data colour; it is the painted structural line only.",
@@ -653,7 +714,8 @@
       "**Don't** spend amber on anything but the single best choice (quieter gym, next calm hour).",
       "**Don't** add a fourth text size, shadows, gradients, or decorative motion.",
       "**Don't** use black or neon surfaces in either scheme, or the fitness-app neon-on-black look.",
-      "**Don't** set sentences in Barlow Condensed, or numerals in the system face."
+      "**Don't** set sentences in Barlow Condensed, or numerals in the system face.",
+      "**Don't** open modals for confirmation, or colour faults and destructive actions red or amber."
     ]
   }
 }

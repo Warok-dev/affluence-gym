@@ -150,6 +150,13 @@
   background: transparent;
   color: var(--ink);
 }
+/* Hover: the fill or the rule takes the full ink, nothing moves. */
+.primary-button:hover:not(:disabled) {
+  background: var(--board);
+}
+.secondary-button:hover:not(:disabled) {
+  border-color: var(--ink);
+}
 .button-row {
   display: flex;
   flex-wrap: wrap;
@@ -460,10 +467,10 @@
   margin-top: var(--s3);
 }
 .chip {
-  min-height: 36px;
+  min-height: 44px;
   padding: 0 var(--s3);
   border: 1px solid var(--ink-2);
-  border-radius: 999px;
+  border-radius: var(--corner-s);
   background: transparent;
   font-size: var(--fs-s);
   font-weight: 600;
