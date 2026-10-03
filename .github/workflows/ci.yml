@@ -76,6 +76,10 @@ jobs:
             sleep 2
           done
           curl -fsS http://localhost:8080/ | grep -q "Affluence Gym"
+          # Security headers on the HTML (served through try_files) and on hashed assets.
+          curl -fsSI http://localhost:8080/ | grep -qi "content-security-policy: default-src 'self'"
+          curl -fsSI http://localhost:8080/ | grep -qi 'x-content-type-options: nosniff'
+          curl -fsSI http://localhost:8080/sw.js | grep -qi 'content-security-policy'
           curl -fsS -X POST http://localhost:8080/api/reports \
             -H "Content-Type: application/json" \
             -d '{"facility":"minto","level":3,"client_id":"ci-smoke-test"}'

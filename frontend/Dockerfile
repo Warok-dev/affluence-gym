@@ -13,6 +13,7 @@ RUN npm run build
 FROM nginx:1.27-alpine
 # Templates in /etc/nginx/templates are rendered with envsubst at startup.
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 ENV API_UPSTREAM=http://backend:8000
 EXPOSE 80
