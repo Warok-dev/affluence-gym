@@ -496,6 +496,23 @@
   margin: 0;
   font-size: var(--fs-s);
 }
+/* About: longer answers, so each fact stacks (label above, text below). */
+.about-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.about-facts dt {
+  color: var(--ink);
+  font-weight: 700;
+}
+.about-list {
+  margin: var(--s2) 0 0;
+  padding-left: 1.2em;
+}
+.about-list li + li {
+  margin-top: var(--s2);
+}
 .steps {
   margin: var(--s3) 0 0;
   padding-left: 1.4em;

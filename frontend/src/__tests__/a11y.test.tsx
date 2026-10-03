@@ -118,6 +118,7 @@ describe("accessibilité (axe-core)", () => {
     ["programme", "#/programmes/force-5x5", () => screen.findByRole("heading", { name: /5 × 5/ })],
     ["matériel", "#/equipements", () => screen.findByText(/Tapis de course 1/)],
     ["mode écran", "#/ecran", () => screen.findByRole("img", { name: /QR/ })],
+    ["à propos", "#/a-propos", () => screen.findByRole("heading", { name: "À propos" })],
   ];
 
   it.each(screens)("%s : aucune violation", async (_name, route, ready) => {

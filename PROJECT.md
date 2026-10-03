@@ -255,6 +255,10 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - « Refaire cette séance » sur le détail d'une séance passée : nouvelle séance avec les mêmes exercices, séries, répétitions et charges, toutes à cocher (même salle). Si une séance est en cours, lien vers elle à la place.
 - « Télécharger les données (CSV) » sous la semaine type : une ligne par heure d'ouverture (salle, jour, heure, niveau moyen, personnes en moyenne, relevés). Séparateur `;`, BOM UTF-8 et décimales selon la langue, pour qu'Excel l'ouvre directement. Généré dans le navigateur.
 
+### Phase 15 — Minimisation des données et écran « À propos » (fait, branche `a-propos`)
+- **Purge automatique** (toutes les heures, `app/retention.py`) : signalements d'affluence effacés après 24 h, signalements de pannes après 8 jours, relevés des tourniquets après 2 jours, alertes expirées. Chaque durée dépasse l'usage de la donnée (fenêtre de 30 min, cooldowns, statut sur 7 jours), ce que vérifie un test. L'historique agrégé (un niveau par salle et par quart d'heure, sans identifiant) est conservé.
+- **Écran « À propos et confidentialité »** (`#/a-propos`, lien dans le pied de page de chaque écran) : d'où viennent les chiffres, où vit chaque donnée et combien de temps, lien vers le code source.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

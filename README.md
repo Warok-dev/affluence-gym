@@ -322,5 +322,7 @@ Limites de l'offre gratuite :
 - Le seul identifiant est un UUID aléatoire (`client_id`) généré au premier lancement et stocké dans le `localStorage`. Il ne sert qu'au délai anti-spam de 15 min.
 - Aucun cookie, aucun analytics, aucune police ni aucun script tiers.
 - Séances, records et réglages : **uniquement sur le téléphone** (sauvegarde exportable).
+- Purge automatique : signalements d'affluence effacés après 24 h, pannes après 8 jours, relevés des tourniquets après 2 jours. Seul reste l'historique agrégé (un niveau par quart d'heure, sans identifiant).
+- L'écran **« À propos et confidentialité »** de l'appli explique tout cela aux étudiants.
 - Alerte « salle calme » : l'abonnement push n'est gardé que le temps de l'alerte (jusqu'à la notification ou à la fermeture).
 - Aucun secret dans le dépôt : `DATABASE_URL` se renseigne dans le tableau de bord Render.
