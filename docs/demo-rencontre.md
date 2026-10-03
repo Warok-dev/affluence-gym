@@ -15,6 +15,7 @@ Tout le reste de la démo sert à rendre cette phrase concrète.
 - [ ] Sur le téléphone : ouvrir l'adresse, ajouter l'appli à l'écran d'accueil (elle s'ouvre alors en plein écran, comme une vraie appli).
 - [ ] Faire 2 ou 3 séances d'exemple dans l'onglet Séances (développé couché, squat…) pour que la courbe de progression ne soit pas vide.
 - [ ] Imprimer `integration-compteurs.md` (2 pages) en 2 exemplaires.
+- [ ] Répéter **entre 6 h 30 et 23 h** (8 h et 20 h le week-end) : hors des heures d'ouverture, l'appli affiche « Fermé » (`demo.ps1` prévient).
 - [ ] Prévoir un plan B sans Wi-Fi : un partage de connexion du téléphone vers l'ordinateur suffit.
 
 ## Le jour même, 10 minutes avant
