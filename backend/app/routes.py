@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import config, equipment
+from . import config, equipment, notifications
 from . import history as hist
 from .config import COOLDOWN_SECONDS, DEMO_DATA, LABELS, TIMEZONE
 from .db import EquipmentReport, OfficialCount, Report, get_session
@@ -196,3 +196,47 @@ def report_equipment(facility: FacilityDep, machine_id: str, report: EquipmentRe
     )
     session.commit()
     return {"status": "enregistré"}
+
+
+class PushKeys(BaseModel):
+    p256dh: str = Field(min_length=10, max_length=256)
+    auth: str = Field(min_length=8, max_length=64)
+
+
+class PushSubscriptionIn(BaseModel):
+    endpoint: str = Field(min_length=10, max_length=1024, pattern=r"^https://")
+    keys: PushKeys
+
+
+class AlertIn(BaseModel):
+    facility: str
+    subscription: PushSubscriptionIn
+
+
+@router.get("/notifications/config")
+def notifications_config():
+    """Whether push notifications are available, and the public key the browser needs."""
+    on = notifications.enabled()
+    return {"enabled": on, "public_key": config.VAPID_PUBLIC_KEY if on else None}
+
+
+@router.post("/alerts", status_code=201)
+def create_alert(body: AlertIn, session: SessionDep):
+    """Arm a one-shot "tell me when it gets quiet" alert, valid until closing time today."""
+    if not notifications.enabled():
+        raise HTTPException(503, "Notifications non configurées")
+    check_facility(body.facility)
+    now = int(time.time())
+    expires = notifications.closing_ts(body.facility, now)
+    if expires is None:
+        raise HTTPException(409, "La salle est fermée en ce moment")
+    keys = body.subscription.keys
+    sub = notifications.Subscription(body.subscription.endpoint, keys.p256dh, keys.auth)
+    alert, token = notifications.create_alert(session, body.facility, sub, now, expires)
+    return {"id": alert.id, "token": token, "expires_ts": expires}
+
+
+@router.delete("/alerts/{alert_id}", status_code=204)
+def delete_alert(alert_id: str, session: SessionDep, x_alert_token: Annotated[str | None, Header()] = None):
+    if not x_alert_token or not notifications.cancel_alert(session, alert_id, x_alert_token):
+        raise HTTPException(404, "Alerte introuvable")

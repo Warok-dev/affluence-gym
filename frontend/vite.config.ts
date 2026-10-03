@@ -41,6 +41,8 @@ export default defineConfig({
       workbox: {
         // Self-hosted fonts are part of the app shell, so they work offline too.
         globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
+        // Shows quiet-gym notifications (push) and opens the app on tap.
+        importScripts: ["push-sw.js"],
         // Never serve live occupancy data from the cache.
         navigateFallbackDenylist: [/^\/api/],
       },

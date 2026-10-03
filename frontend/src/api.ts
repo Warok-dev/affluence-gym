@@ -145,3 +145,36 @@ export async function postEquipmentReport(
     return "error";
   }
 }
+
+export interface NotificationsConfig {
+  enabled: boolean;
+  public_key: string | null;
+}
+
+export async function fetchNotificationsConfig(): Promise<NotificationsConfig> {
+  const res = await fetch(`${API_BASE}/notifications/config`);
+  if (!res.ok) throw new Error(`GET /notifications/config failed: ${res.status}`);
+  return (await res.json()) as NotificationsConfig;
+}
+
+export interface CreatedAlert {
+  id: string;
+  token: string;
+  expires_ts: number;
+}
+
+/** POST /alerts; returns "closed" when the gym is closed right now. */
+export async function createAlert(facility: FacilityId, subscription: PushSubscriptionJSON): Promise<CreatedAlert | "closed"> {
+  const res = await fetch(`${API_BASE}/alerts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ facility, subscription }),
+  });
+  if (res.status === 409) return "closed";
+  if (!res.ok) throw new Error(`POST /alerts failed: ${res.status}`);
+  return (await res.json()) as CreatedAlert;
+}
+
+export async function deleteAlert(id: string, token: string): Promise<void> {
+  await fetch(`${API_BASE}/alerts/${encodeURIComponent(id)}`, { method: "DELETE", headers: { "X-Alert-Token": token } });
+}

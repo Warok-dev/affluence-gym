@@ -197,6 +197,18 @@ export const fr = {
   exerciseNotFound: "Cet exercice n'existe pas.",
   levelLabel: "Niveau",
   frequencyLabel: "Fréquence",
+  // Quiet-gym alerts
+  alertArm: (gym: string) => `M'avertir quand ${gym} sera calme`,
+  alertActive: (gym: string, until: string) => `Alerte active : on te prévient quand ${gym} sera calme (jusqu'à ${until}).`,
+  alertCancel: "Annuler l'alerte",
+  alertAlreadyQuiet: "C'est déjà calme : pas besoin d'alerte.",
+  alertDenied: "Notifications refusées : autorise-les dans les réglages du navigateur pour utiliser l'alerte.",
+  alertClosed: "La salle est fermée en ce moment.",
+  alertError: "Impossible d'activer l'alerte pour le moment.",
+  alertUnsupported: "Notifications indisponibles ici. Sur iPhone, installe d'abord l'appli sur l'écran d'accueil.",
+  alertPrivacy: "Une seule notification, puis l'abonnement est effacé du serveur.",
+  alertPending: "Activation…",
+
   // Equipment
   tabEquipment: "Matériel",
   equipmentTitle: "Équipements",

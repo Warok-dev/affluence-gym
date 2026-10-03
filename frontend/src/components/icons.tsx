@@ -104,3 +104,11 @@ export function WrenchIcon() {
     </Icon>
   );
 }
+
+export function BellIcon() {
+  return (
+    <Icon size={18}>
+      <path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0" />
+    </Icon>
+  );
+}

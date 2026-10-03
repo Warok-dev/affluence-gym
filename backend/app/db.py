@@ -65,6 +65,25 @@ class EquipmentReport(Base):
     ts: Mapped[int] = mapped_column(BigInteger)
 
 
+class Alert(Base):
+    """A one-shot "tell me when this gym gets quiet" request.
+
+    Holds the browser's push subscription only until the alert fires or expires;
+    no identity. The token lets the device that created it cancel it.
+    """
+
+    __tablename__ = "alerts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    facility: Mapped[str] = mapped_column(String(32))
+    endpoint: Mapped[str] = mapped_column(String(1024))
+    p256dh: Mapped[str] = mapped_column(String(256))
+    auth: Mapped[str] = mapped_column(String(64))
+    token_hash: Mapped[str] = mapped_column(String(64))
+    created_ts: Mapped[int] = mapped_column(BigInteger)
+    expires_ts: Mapped[int] = mapped_column(BigInteger)
+
+
 class OfficialCount(Base):
     """A reading of the gym's turnstile counters, as sent by the university's system.
 

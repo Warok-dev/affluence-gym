@@ -1,7 +1,8 @@
 import { useId, useRef, type KeyboardEvent } from "react";
-import type { Forecast, Profile } from "../api";
+import type { Forecast, NotificationsConfig, Profile } from "../api";
 import { FACILITIES, type FacilityId } from "../config";
 import { useT } from "../i18n";
+import { QuietAlert } from "./QuietAlert";
 import { TypicalDay } from "./TypicalDay";
 
 interface Props {
@@ -12,10 +13,13 @@ interface Props {
   /** True once the first history request has finished (successfully or not). */
   settled: boolean;
   now: number;
+  /** Current level per gym, for the quiet-gym alert. */
+  levels?: Partial<Record<FacilityId, number | null>>;
+  notifications?: NotificationsConfig | null;
 }
 
 /** "When to go today", one gym at a time behind standard tabs. */
-export function DayPanel({ selected, onSelect, profiles, forecasts, settled, now }: Props) {
+export function DayPanel({ selected, onSelect, profiles, forecasts, settled, now, levels, notifications }: Props) {
   const t = useT();
   const titleId = useId();
   const baseId = useId();
@@ -75,6 +79,13 @@ export function DayPanel({ selected, onSelect, profiles, forecasts, settled, now
           </div>
         )}
       </div>
+      <QuietAlert
+        key={selected}
+        facility={selected}
+        name={FACILITIES.find((f) => f.id === selected)!.name}
+        level={levels?.[selected] ?? null}
+        config={notifications ?? null}
+      />
     </section>
   );
 }

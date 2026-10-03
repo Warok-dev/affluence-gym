@@ -54,5 +54,13 @@ OFFICIAL_API_KEY = os.getenv("OFFICIAL_API_KEY", "")
 OFFICIAL_STALE_SECONDS = int(os.getenv("OFFICIAL_STALE_SECONDS", str(10 * 60)))
 # Without exit counts, presence is estimated as the entries of the last AVERAGE_STAY minutes.
 AVERAGE_STAY_SECONDS = int(os.getenv("AVERAGE_STAY_MINUTES", "75")) * 60
+# --- Notifications (Web Push) ---
+# VAPID keys (generate with scripts/generate_vapid_keys.py). Without both, notifications are disabled.
+VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY", "")
+# Contact the push services can reach (required by the Web Push protocol), e.g. mailto:you@example.com
+VAPID_SUBJECT = os.getenv("VAPID_SUBJECT", "")
+ALERT_CHECK_SECONDS = int(os.getenv("ALERT_CHECK_SECONDS", "120"))
+
 # Occupancy ratio (people / capacity) upper bounds for levels 1-3; above the last one is level 4.
 LEVEL_RATIOS = (0.25, 0.5, 0.75)

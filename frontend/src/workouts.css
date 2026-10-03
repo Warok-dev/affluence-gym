@@ -150,6 +150,13 @@
   background: transparent;
   color: var(--ink);
 }
+/* Hover: the fill or the rule takes the full ink, nothing moves. */
+.primary-button:hover:not(:disabled) {
+  background: var(--board);
+}
+.secondary-button:hover:not(:disabled) {
+  border-color: var(--ink);
+}
 .button-row {
   display: flex;
   flex-wrap: wrap;
@@ -460,10 +467,10 @@
   margin-top: var(--s3);
 }
 .chip {
-  min-height: 36px;
+  min-height: 44px;
   padding: 0 var(--s3);
   border: 1px solid var(--ink-2);
-  border-radius: 999px;
+  border-radius: var(--corner-s);
   background: transparent;
   font-size: var(--fs-s);
   font-weight: 600;
@@ -546,4 +553,33 @@
 }
 .machine-actions {
   padding: var(--s2) 0 var(--s3);
+}
+
+/* ---------- Quiet-gym alert ---------- */
+
+.alert-arm,
+.alert-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s5);
+}
+.alert-arm .secondary-button {
+  align-self: flex-start;
+}
+.alert-box {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--corner-s);
+  background: var(--board);
+  color: var(--on-board);
+}
+.alert-box .text-button {
+  align-self: flex-start;
+  padding-left: 0;
+}
+.alert-box :focus-visible {
+  outline-color: var(--on-board);
+}
+.alert-note {
+  margin-top: var(--s4);
 }

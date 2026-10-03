@@ -137,6 +137,16 @@ L'API peut recevoir les compteurs **agrégés** des tourniquets (entrées au sca
 - Si le compteur se tait plus de 10 min, l'appli revient aux signalements des étudiants.
 - Capacité des salles : `backend/app/facilities.py` (**valeurs provisoires**).
 
+### Démo en une commande (Windows)
+
+Depuis le dossier `affluence-gym`, après l'installation :
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\demo.ps1
+```
+
+Le script ouvre trois fenêtres (API en mode démo, simulateur des tourniquets, interface), puis le navigateur sur http://localhost:5173, et affiche l'adresse à ouvrir sur un téléphone du même Wi-Fi. Options : `-Hour 9` pour simuler une autre heure, `-NoExits` pour le mode « estimé ». Pour arrêter, ferme les trois fenêtres. Les chiffres sont fictifs et l'appli l'indique par un bandeau.
+
 ### Démo avec le simulateur (chiffres fictifs)
 
 Terminal 1, l'API en mode démo :
@@ -176,6 +186,24 @@ Terminal 3 : `cd frontend` puis `npm run dev`.
 - Un tap sur une machine permet de la signaler en panne ou réparée (une fois par 30 min et par machine).
 - La liste des machines est **provisoire** : `backend/app/equipment.py`.
 
+## Notifications « salle calme »
+
+Dans « Quand y aller aujourd'hui », le bouton **« M'avertir quand Minto sera calme »** arme une alerte valable jusqu'à la fermeture. Dès que la salle passe à Calme ou Vide, le téléphone reçoit **une** notification, puis l'abonnement est effacé du serveur.
+
+Activer la fonction (une fois) :
+
+```powershell
+cd backend
+.venv\Scripts\python scripts\generate_vapid_keys.py
+```
+
+Mets les deux valeurs affichées dans `VAPID_PUBLIC_KEY` et `VAPID_PRIVATE_KEY`, plus `VAPID_SUBJECT=mailto:<ton adresse>` (variables d'environnement locales ou tableau de bord Render). La clé privée est secrète. Sans ces variables, le bouton n'apparaît pas.
+
+Limites :
+- les notifications web passent par le service push du navigateur (Google, Mozilla ou Apple), comme sur tous les sites ;
+- sur iPhone, elles ne marchent que si l'appli est installée sur l'écran d'accueil ;
+- il faut HTTPS (ou `localhost`), et la version construite (`npm run build` puis `npm run preview`) : le service worker n'est pas actif avec `npm run dev`.
+
 ## Prévision (machine learning)
 
 - Deux modèles sont en concurrence. La **baseline** fait la moyenne par jour de semaine et heure. Le **gradient boosting** (scikit-learn) utilise l'heure, le jour, les jours fériés de l'Ontario et les périodes d'examens.
@@ -212,6 +240,8 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `OFFICIAL_API_KEY` | backend | *(vide)* | Clé secrète du système de compteurs de l'université ; vide = réception désactivée |
 | `OFFICIAL_STALE_SECONDS` | backend | `600` | Au-delà, un compteur silencieux est ignoré (retour aux signalements) |
 | `AVERAGE_STAY_MINUTES` | backend | `75` | Durée moyenne d'une visite, pour l'estimation sans compteur de sortie |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | backend | *(vide)* | Clés Web Push (`scripts/generate_vapid_keys.py`) ; vides = notifications désactivées |
+| `VAPID_SUBJECT` | backend | *(vide)* | Contact exigé par le protocole Web Push, ex. `mailto:toi@exemple.com` |
 | `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
 | `VITE_API_URL` | frontend (build) | *(vide → `/api`)* | URL publique de l'API en prod |
 | `API_PROXY_TARGET` | frontend (dev) | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite |
@@ -229,6 +259,9 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `POST` | `/official/{facility}/counts` | Compteurs des tourniquets (en-tête `X-Api-Key`) : `{entries, exits?, ts?}` → 201 ; 401 clé invalide ; 503 réception non configurée |
 | `GET` | `/equipment/{facility}` | Machines et état signalé : `{window_days, machines: [{id, name, category, status, since_ts, reports}]}` |
 | `POST` | `/equipment/{facility}/{machine}/reports` | `{status: "broken"|"ok", client_id}` → 201 ; 404 ; 422 ; 429 (30 min par machine) |
+| `GET` | `/notifications/config` | `{enabled, public_key}` |
+| `POST` | `/alerts` | `{facility, subscription}` → `{id, token, expires_ts}` ; 409 salle fermée ; 503 notifications non configurées |
+| `DELETE` | `/alerts/{id}` | En-tête `X-Alert-Token` → 204 ; 404 |
 | `GET` | `/health` | `{"status": "ok", "demo": false}` (champ `demo` additif), utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
@@ -261,4 +294,6 @@ Limites de l'offre gratuite :
 
 - Le seul identifiant est un UUID aléatoire (`client_id`) généré au premier lancement et stocké dans le `localStorage`. Il ne sert qu'au délai anti-spam de 15 min.
 - Aucun cookie, aucun analytics, aucune police ni aucun script tiers.
+- Séances, records et réglages : **uniquement sur le téléphone** (sauvegarde exportable).
+- Alerte « salle calme » : l'abonnement push n'est gardé que le temps de l'alerte (jusqu'à la notification ou à la fermeture).
 - Aucun secret dans le dépôt : `DATABASE_URL` se renseigne dans le tableau de bord Render.
