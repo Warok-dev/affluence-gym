@@ -260,6 +260,14 @@ export const fr = {
 
   repeatWorkout: "Refaire cette séance",
 
+  // Install hint
+  installTitle: "Ajoute l'appli à ton écran d'accueil",
+  installWhy: "Elle s'ouvre alors en plein écran, comme une vraie appli, et marche sans connexion pour tes séances.",
+  installIosShare: "Touche le bouton Partager de Safari (le carré avec une flèche).",
+  installIosAdd: "Choisis « Sur l'écran d'accueil ». Les notifications « salle calme » marchent ensuite.",
+  installButton: "Installer",
+  installLater: "Plus tard",
+
   // About & privacy
   aboutLink: "À propos et confidentialité",
   aboutTitle: "À propos",
