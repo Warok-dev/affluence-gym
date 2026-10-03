@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -14,6 +14,7 @@ from .config import COOLDOWN_SECONDS, DEMO_DATA, LABELS, TIMEZONE
 from .db import EquipmentReport, OfficialCount, Report, get_session
 from .facilities import FACILITIES
 from .forecast.service import forecast, forecast_service
+from .ratelimit import limit_writes
 from .sources import source
 
 router = APIRouter()
@@ -41,7 +42,7 @@ def health():
     return {"status": "ok", "demo": DEMO_DATA}
 
 
-@router.post("/reports", status_code=201)
+@router.post("/reports", status_code=201, dependencies=[Depends(limit_writes)])
 def create_report(report: ReportIn, session: SessionDep):
     check_facility(report.facility)
     now = int(time.time())
@@ -202,7 +203,7 @@ def get_equipment(facility: FacilityDep, session: SessionDep):
     }
 
 
-@router.post("/equipment/{facility}/{machine_id}/reports", status_code=201)
+@router.post("/equipment/{facility}/{machine_id}/reports", status_code=201, dependencies=[Depends(limit_writes)])
 def report_equipment(facility: FacilityDep, machine_id: str, report: EquipmentReportIn, session: SessionDep):
     if equipment.find_machine(facility, machine_id) is None:
         raise HTTPException(404, "Machine inconnue")
@@ -227,6 +228,15 @@ class PushSubscriptionIn(BaseModel):
     endpoint: str = Field(min_length=10, max_length=1024, pattern=r"^https://")
     keys: PushKeys
 
+    @field_validator("endpoint")
+    @classmethod
+    def known_push_service(cls, endpoint: str) -> str:
+        # The server will POST to this address: only the browsers' push services are accepted,
+        # otherwise anyone could make it call an arbitrary URL (server-side request forgery).
+        if not notifications.is_push_service(endpoint):
+            raise ValueError("unknown push service")
+        return endpoint
+
 
 class AlertIn(BaseModel):
     facility: str
@@ -242,7 +252,7 @@ def notifications_config():
     return {"enabled": on, "public_key": config.VAPID_PUBLIC_KEY if on else None}
 
 
-@router.post("/alerts", status_code=201)
+@router.post("/alerts", status_code=201, dependencies=[Depends(limit_writes)])
 def create_alert(body: AlertIn, session: SessionDep):
     """Arm a one-shot "tell me when it gets quiet" alert, valid until closing time today."""
     if not notifications.enabled():
@@ -258,7 +268,7 @@ def create_alert(body: AlertIn, session: SessionDep):
     return {"id": alert.id, "token": token, "expires_ts": expires}
 
 
-@router.delete("/alerts/{alert_id}", status_code=204)
+@router.delete("/alerts/{alert_id}", status_code=204, dependencies=[Depends(limit_writes)])
 def delete_alert(alert_id: str, session: SessionDep, x_alert_token: Annotated[str | None, Header()] = None):
     if not x_alert_token or not notifications.cancel_alert(session, alert_id, x_alert_token):
         raise HTTPException(404, "Alerte introuvable")

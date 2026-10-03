@@ -261,7 +261,10 @@ Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 ## 7. Anti-abus et robustesse
 
 - Le `client_id` anonyme se contourne facilement. Pour le prototype c'est accepté.
-- Pistes d'amélioration futures : limitation de débit par IP (rate limiting), pondération des signalements, détection de valeurs aberrantes, éventuellement un code visible uniquement sur place.
+- **Limitation par adresse IP (fait)** : 120 écritures (signalements, pannes, alertes) par IP et par 10 minutes, en mémoire. Volontairement large : tout un campus peut partager une adresse. Réglable par `WRITE_RATE_LIMIT` / `WRITE_RATE_WINDOW_SECONDS`. Les lectures ne sont jamais limitées.
+- **Alertes push (fait)** : le serveur n'envoie qu'aux services push des navigateurs (Google, Mozilla, Apple, Microsoft) ; toute autre adresse est refusée (protection contre la falsification de requête côté serveur, SSRF).
+- **CORS (corrigé)** : l'annulation d'une alerte (DELETE + en-tête `X-Alert-Token`) est autorisée depuis l'origine du site ; elle échouait avant en production, où le site et l'API ont des adresses différentes.
+- Pistes futures : pondération des signalements, détection de valeurs aberrantes, éventuellement un code visible uniquement sur place.
 - Valider toutes les entrées (déjà fait avec Pydantic). Configurer CORS pour n'autoriser que l'origine du frontend.
 
 ## 8. Source officielle (implémentée, en attente de l'accord de l'université)

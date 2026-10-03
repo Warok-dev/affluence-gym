@@ -11,7 +11,7 @@ from app.main import app
 from app.sources import PreferOfficialSource
 
 client = TestClient(app)
-SUB = notifications.Subscription("https://push.example/abc", "p256dh-key-value", "auth-secret")
+SUB = notifications.Subscription("https://fcm.googleapis.com/fcm/send/abc", "p256dh-key-value", "auth-secret")
 
 
 def local_ts(*args: int) -> int:

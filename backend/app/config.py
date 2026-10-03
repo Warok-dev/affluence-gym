@@ -25,6 +25,10 @@ DATABASE_URL = _database_url()
 
 WINDOW_SECONDS = 30 * 60  # on moyenne les signalements des 30 dernières minutes
 COOLDOWN_SECONDS = 15 * 60  # 1 signalement par personne, par salle, par 15 min
+# Anti-abuse: writes (reports, equipment reports, alerts) per IP address and window.
+# Generous, because a whole campus can share one address.
+WRITE_RATE_LIMIT = int(os.getenv("WRITE_RATE_LIMIT", "120"))
+WRITE_RATE_WINDOW_SECONDS = int(os.getenv("WRITE_RATE_WINDOW_SECONDS", str(10 * 60)))
 SNAPSHOT_SECONDS = 15 * 60  # un snapshot par salle tous les quarts d'heure
 
 # Local time of the gyms: weekdays, hours and opening hours are all expressed in it.
