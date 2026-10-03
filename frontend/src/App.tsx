@@ -7,6 +7,7 @@ import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
 import { EquipmentScreen } from "./screens/EquipmentScreen";
 import { ExerciseDetailScreen } from "./screens/ExerciseDetailScreen";
 import { ExercisesScreen } from "./screens/ExercisesScreen";
+import { KioskScreen } from "./screens/KioskScreen";
 import { OccupancyScreen } from "./screens/OccupancyScreen";
 import { ProgramScreen } from "./screens/ProgramScreen";
 import { WorkoutDetailScreen } from "./screens/WorkoutDetailScreen";
@@ -36,6 +37,9 @@ function Shell() {
   const clock = localTime(now, TIMEZONE);
   const clockText = t.time(`${clock.hour}:${String(clock.minute).padStart(2, "0")}`);
 
+  // Screen mode replaces the whole shell: no header, tabs or footer on the entrance TV.
+  if (route === ROUTES.kiosk) return <KioskScreen />;
+
   let screen;
   if (route === ROUTES.workouts) screen = <WorkoutsScreen />;
   else if (route === ROUTES.activeWorkout) screen = <ActiveWorkoutScreen />;
@@ -58,7 +62,15 @@ function Shell() {
         </time>
       </header>
       <main>{screen}</main>
-      <footer className="app-footer">{t.footer}</footer>
+      <footer className="app-footer">
+        {t.footer}
+        {route === ROUTES.occupancy && (
+          <>
+            {" · "}
+            <a href={`#${ROUTES.kiosk}`}>{t.kioskLink}</a>
+          </>
+        )}
+      </footer>
       <TabBar route={route} workoutInProgress={active !== null} />
     </>
   );

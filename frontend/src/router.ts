@@ -11,6 +11,8 @@ export const ROUTES = {
   exercise: (id: string) => `/exercices/${encodeURIComponent(id)}`,
   program: (id: string) => `/programmes/${encodeURIComponent(id)}`,
   equipment: "/equipements",
+  /** Full-screen scoreboard for a TV at the gym entrance. */
+  kiosk: "/ecran",
 } as const;
 
 function current(): string {

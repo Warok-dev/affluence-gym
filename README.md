@@ -167,6 +167,12 @@ $env:OFFICIAL_API_KEY = "demo-key"
 
 Terminal 3 : `cd frontend` puis `npm run dev`.
 
+## Mode écran (télé à l'entrée de la salle)
+
+Ouvre **`#/ecran`** (lien « Mode écran » en bas de l'écran d'affluence) sur la télé ou l'ordinateur branché à l'entrée, puis passe en plein écran (`F11`). Le tableau des deux salles s'affiche en grand, se rafraîchit tout seul toutes les 30 s et empêche l'écran de se mettre en veille. Un code QR permet aux étudiants d'ouvrir l'appli sur leur téléphone.
+
+Le code QR pointe vers l'adresse utilisée par l'écran. Pour la démo, ouvre donc le mode écran avec l'adresse Wi-Fi de l'ordinateur (ex. `http://192.168.x.x:5173/#/ecran`, affichée par `demo.ps1`), pas `localhost`, sinon les téléphones ne pourront pas l'ouvrir. En production, rien à faire ; `VITE_PUBLIC_URL` force une autre adresse si besoin.
+
 ## Suivi d'entraînements (onglet Séances)
 
 - Commencer une séance, ajouter des exercices (recherche), noter les séries (répétitions × charge) et les cocher. Cocher une série lance le minuteur de repos (réglable, vibration à la fin).
@@ -244,6 +250,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `VAPID_SUBJECT` | backend | *(vide)* | Contact exigé par le protocole Web Push, ex. `mailto:toi@exemple.com` |
 | `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
 | `VITE_API_URL` | frontend (build) | *(vide → `/api`)* | URL publique de l'API en prod |
+| `VITE_PUBLIC_URL` | frontend (build) | *(vide → adresse de la page)* | Adresse vers laquelle pointe le code QR du mode écran |
 | `API_PROXY_TARGET` | frontend (dev) | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite |
 | `API_UPSTREAM` | frontend (Docker) | `http://backend:8000` | Cible du proxy `/api` de nginx |
 
