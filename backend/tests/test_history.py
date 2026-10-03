@@ -139,6 +139,37 @@ def test_profile_endpoint_defaults_to_today():
     assert data["hours"][0] == {"hour": data["hours"][0]["hour"], "level": None, "samples": 0, "calm": False}
 
 
+def test_week_trends_cover_every_day_and_average_head_counts(session):
+    monday_18 = local_ts(2026, 9, 21, 18, 0)
+    session.add_all(
+        [
+            OccupancySnapshot(facility="minto", ts=monday_18, level=4, source="official", people=100),
+            OccupancySnapshot(facility="minto", ts=monday_18 + 900, level=3, source="official", people=80),
+            OccupancySnapshot(facility="minto", ts=monday_18 + 7 * 86400, level=4, source="crowd"),
+        ]
+    )
+    session.commit()
+    days = hist.week_trends(session, "minto", 8, NOW)
+    assert [d.weekday for d in days] == list(range(7))
+    monday = days[0]
+    assert monday.opening_hours == ("06:30", "23:00")
+    assert [h.hour for h in monday.hours] == list(range(6, 23))
+    six_pm = next(h for h in monday.hours if h.hour == 18)
+    assert (six_pm.level, six_pm.samples, six_pm.people) == (3.67, 3, 90.0)
+    assert next(h for h in monday.hours if h.hour == 9).level is None
+
+
+def test_trends_endpoint():
+    r = client.get("/trends/minto")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["weeks"] == 8 and len(body["days"]) == 7
+    assert body["days"][0]["opening_hours"] == {"open": "06:30", "close": "23:00"}
+    assert {"hour", "level", "samples", "people"} <= set(body["days"][0]["hours"][0])
+    assert client.get("/trends/minto?weeks=0").status_code == 422
+    assert client.get("/trends/nope").status_code == 404
+
+
 def test_profile_endpoint_validation():
     assert client.get("/profile/nope").status_code == 404
     assert client.get("/profile/minto?weekday=7").status_code == 422

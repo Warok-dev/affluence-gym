@@ -15,6 +15,12 @@ export function localTime(nowMs: number, timeZone: string): { hour: number; minu
   return { hour: get("hour"), minute: get("minute"), minutes: get("hour") * 60 + get("minute") };
 }
 
+/** Day of the week of `nowMs` in the gym's time zone, 0 = Monday (the API's convention). */
+export function localWeekday(nowMs: number, timeZone: string): number {
+  const day = new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short" }).format(nowMs);
+  return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(day);
+}
+
 /** "06:30" -> 390 */
 export function toMinutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);

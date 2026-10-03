@@ -223,4 +223,16 @@ export const en: Messages = {
   kioskScanHint: "Scan the code with your phone's camera.",
   kioskQrLabel: "QR code linking to the app",
   kioskExit: "Leave screen mode",
+
+  // Typical week
+  trendsLink: "See the typical week",
+  trendsTitle: "Typical week",
+  trendsCaption: (gym: string) => `Average occupancy at ${gym} by day and hour`,
+  trendsSlot: (day: string, hour: string) => `${day} around ${hour}`,
+  trendsPeople: (n: number) => `≈ ${n} people`,
+  trendsQuietest: (slot: string) => `Quietest: ${slot}`,
+  trendsBusiest: (slot: string) => `Busiest: ${slot}`,
+  trendsQuietestKey: "Quietest of the week",
+  trendsEmpty: "Not enough history yet to draw the typical week.",
+  trendsUnavailable: "Typical week unavailable right now.",
 };

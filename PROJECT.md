@@ -241,6 +241,11 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Notification « salle calme » dans la langue de l'appli : champ facultatif `lang` (`fr` par défaut) dans `POST /alerts`, colonne `alerts.lang` (migration 0005). Ajout compatible : les anciens clients restent en français.
 - Tests de complétude : tout exercice, guide, programme et jour doit avoir son texte anglais.
 
+### Phase 12 — Semaine type (fait, branche `phase-12-tendances`)
+- `GET /trends/{facility}?weeks=8` : niveau moyen (et nombre moyen de personnes quand le compteur a alimenté l'historique) par jour de la semaine et par heure d'ouverture, calculé en un passage sur les snapshots.
+- Écran `#/tendances/<salle>` (lien « Voir la semaine type » sous « Quand y aller aujourd'hui ») : grille jour × heure, plus foncé = plus chargé (encre mélangée au fond, suit le thème), le créneau le plus calme de la semaine encadré d'ambre, l'heure actuelle encadrée de rouge, phrases « Le plus calme » / « Le plus chargé ». Tableau HTML réel : lisible au lecteur d'écran, cellule par cellule.
+- Argument pour le service des sports : c'est ce que leurs compteurs révéleraient pour planifier le personnel et l'entretien.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

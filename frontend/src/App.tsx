@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TabBar } from "./components/TabBar";
-import { TIMEZONE } from "./config";
+import { FACILITIES, TIMEZONE } from "./config";
 import { useLocale, useT } from "./i18n";
 import { ROUTES, useRoute } from "./router";
 import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
@@ -8,6 +8,7 @@ import { EquipmentScreen } from "./screens/EquipmentScreen";
 import { ExerciseDetailScreen } from "./screens/ExerciseDetailScreen";
 import { ExercisesScreen } from "./screens/ExercisesScreen";
 import { KioskScreen } from "./screens/KioskScreen";
+import { TrendsScreen } from "./screens/TrendsScreen";
 import { OccupancyScreen } from "./screens/OccupancyScreen";
 import { ProgramScreen } from "./screens/ProgramScreen";
 import { WorkoutDetailScreen } from "./screens/WorkoutDetailScreen";
@@ -53,6 +54,11 @@ function Shell() {
   else if (route.startsWith("/programmes/"))
     screen = <ProgramScreen id={decodeURIComponent(route.slice("/programmes/".length))} />;
   else if (route === ROUTES.equipment) screen = <EquipmentScreen />;
+  else if (route.startsWith("/tendances")) {
+    const id = decodeURIComponent(route.slice("/tendances/".length));
+    const gym = FACILITIES.find((f) => f.id === id)?.id ?? FACILITIES[0].id;
+    screen = <TrendsScreen gym={gym} />;
+  }
   else screen = <OccupancyScreen />;
 
   return (

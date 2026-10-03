@@ -90,6 +90,36 @@ export async function fetchForecast(facility: FacilityId): Promise<Forecast> {
   return (await res.json()) as Forecast;
 }
 
+export interface TrendHour {
+  hour: number;
+  /** Average level (1–4) over the sampled weeks, or null without data. */
+  level: number | null;
+  samples: number;
+  /** Average head count, when the turnstile counter fed the history. */
+  people: number | null;
+}
+
+export interface TrendDay {
+  /** 0 = Monday. */
+  weekday: number;
+  opening_hours: { open: string; close: string } | null;
+  hours: TrendHour[];
+}
+
+export interface Trends {
+  facility: string;
+  weeks: number;
+  timezone: string;
+  capacity: number;
+  days: TrendDay[];
+}
+
+export async function fetchTrends(facility: FacilityId): Promise<Trends> {
+  const res = await fetch(`${API_BASE}/trends/${facility}`);
+  if (!res.ok) throw new Error(`GET /trends/${facility} failed: ${res.status}`);
+  return (await res.json()) as Trends;
+}
+
 export interface Health {
   status: string;
   /** True when the API serves the synthetic demo database. */
