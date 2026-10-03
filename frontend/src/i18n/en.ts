@@ -224,6 +224,17 @@ export const en: Messages = {
   kioskQrLabel: "QR code linking to the app",
   kioskExit: "Leave screen mode",
 
+  // Progress chart (exercise screen)
+  progressTitle: "Progress",
+  repsCount: (n: number) => (n === 1 ? `${n} rep` : `${n} reps`),
+  progressLoad: (value: string) => `Estimated 1RM: ${value}`,
+  progressReps: (value: string) => `Best set: ${value}`,
+  progressChange: (delta: string, n: number) => `${delta} over ${n} workouts`,
+  progressHint: "The estimated 1RM (Epley formula) lets you compare sets with different reps.",
+  progressNeedMore: "The chart appears from your 2nd workout with this exercise.",
+  progressChartLabel: (n: number, first: string, last: string, from: string, to: string) =>
+    `Progress over ${n} workouts, ${first} to ${last}: from ${from} to ${to}`,
+
   // Typical week
   trendsLink: "See the typical week",
   trendsTitle: "Typical week",

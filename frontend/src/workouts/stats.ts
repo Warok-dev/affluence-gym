@@ -80,6 +80,44 @@ export function personalBests(workouts: Workout[]): Map<string, PersonalBest> {
   return bests;
 }
 
+export interface ProgressPoint {
+  workoutId: string;
+  at: number;
+  /** Estimated 1RM in kg ("load"), or the most reps in one set ("reps"). */
+  value: number;
+}
+
+export interface Progress {
+  metric: "load" | "reps";
+  /** Oldest first. */
+  points: ProgressPoint[];
+}
+
+/**
+ * One point per finished workout that has completed sets of the exercise, oldest first,
+ * at most `limit` (the most recent). Loaded exercises track the best estimated 1RM;
+ * bodyweight-only histories (no load ever logged) track the most reps in a set.
+ */
+export function progression(workouts: Workout[], exerciseId: string, limit = 12): Progress {
+  const sessions = workouts
+    .filter((w) => w.endedAt !== undefined)
+    .map((w) => ({
+      w,
+      sets: w.exercises.filter((e) => e.exerciseId === exerciseId).flatMap((e) => e.sets.filter((s) => s.done && s.reps > 0)),
+    }))
+    .filter((s) => s.sets.length > 0)
+    .sort((a, b) => a.w.startedAt - b.w.startedAt);
+  const loaded = sessions.some((s) => s.sets.some((set) => set.weightKg > 0));
+  const points: ProgressPoint[] = [];
+  for (const { w, sets } of sessions) {
+    const value = loaded
+      ? Math.max(0, ...sets.filter((s) => s.weightKg > 0).map(estimatedOneRepMax))
+      : Math.max(...sets.map((s) => s.reps));
+    if (value > 0) points.push({ workoutId: w.id, at: w.startedAt, value });
+  }
+  return { metric: loaded ? "load" : "reps", points: points.slice(-limit) };
+}
+
 /** Completed sets of an exercise in the most recent finished workout that has it. */
 export function lastPerformance(workouts: Workout[], exerciseId: string, excludeId?: string): WorkoutSet[] | null {
   for (const w of workouts) {

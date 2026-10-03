@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { BackIcon, PlusIcon } from "../components/icons";
+import { ProgressChart } from "../components/ProgressChart";
 import { useT } from "../i18n";
 import { ROUTES } from "../router";
 import { useContent } from "../workouts/content";
 import { summarizeSets } from "../workouts/format";
-import { formatWeight, personalBests } from "../workouts/stats";
+import { formatWeight, personalBests, progression } from "../workouts/stats";
 import { useWorkouts } from "../workouts/WorkoutsContext";
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
@@ -105,6 +106,7 @@ export function ExerciseDetailScreen({ id }: { id: string }) {
             <strong>{t.recordLine(formatWeight(best.weightKg, settings.unit, t.intl), best.reps)}</strong>
           </p>
         )}
+        {history.length > 0 && <ProgressChart progress={progression(workouts, id)} unit={settings.unit} />}
         {history.length === 0 ? (
           <p className="muted-text">{t.noHistoryYet}</p>
         ) : (

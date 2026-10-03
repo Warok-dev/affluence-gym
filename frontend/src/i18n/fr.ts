@@ -247,6 +247,17 @@ export const fr = {
   kioskQrLabel: "Code QR menant à l'application",
   kioskExit: "Quitter le mode écran",
 
+  // Progress chart (exercise screen)
+  progressTitle: "Progression",
+  repsCount: (n: number) => (n <= 1 ? `${n} répétition` : `${n} répétitions`),
+  progressLoad: (value: string) => `1RM estimé : ${value}`,
+  progressReps: (value: string) => `Meilleure série : ${value}`,
+  progressChange: (delta: string, n: number) => `${delta} en ${n} séances`,
+  progressHint: "Le 1RM estimé (formule d'Epley) permet de comparer des séries aux répétitions différentes.",
+  progressNeedMore: "La courbe apparaît dès ta 2e séance avec cet exercice.",
+  progressChartLabel: (n: number, first: string, last: string, from: string, to: string) =>
+    `Progression sur ${n} séances, du ${first} au ${last} : de ${from} à ${to}`,
+
   // Typical week
   trendsLink: "Voir la semaine type",
   trendsTitle: "Semaine type",

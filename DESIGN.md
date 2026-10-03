@@ -418,6 +418,9 @@ The scoreboard alone, full viewport, for reading across a room. Same board, colu
 ### Week Grid (typical week)
 A real table: weekday abbreviations across (today in ink, bold), hours down (right-aligned, small slate). Cells 22px tall with 2px gaps and 3px corners. Busier is darker: four steps of ink mixed into the ground (12%, 32%, 58%, 88%), so the ramp inverts correctly at night. Closed hours stay blank; open hours without data get a dashed hairline. One amber inset frame marks the week's quietest slot (the only amber, the best choice); a 2px red frame marks the current hour (red is "now"). Summary lines above, legend below.
 
+### Progress Chart
+Above the session list on an exercise screen: a value line (current estimated 1RM in bold, change and workout count in small slate), then a 112px plot: one 2px ink line on a slate hairline base, 8px round dots (open, ground-filled; the latest one filled with ink), start and end dates under the axis. No colour beyond ink: progress is not "now" and not "the best choice".
+
 ### Icons
 Authored inline SVG on a 24-unit grid with 2-unit round strokes in currentColor (check 20px, retry 18px). No icon font, no glyph icons. The set now includes board, dumbbell, book and wrench at 22px for the tab bar, and plus, minus, trash, back and bell at 18px inside buttons.
 
