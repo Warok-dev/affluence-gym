@@ -90,6 +90,8 @@ def send(api: str, key: str, facility: str, entries: int, exits: int | None) -> 
             return response.status
     except urllib.error.HTTPError as err:
         return err.code
+    except (urllib.error.URLError, TimeoutError, ConnectionError):
+        return 0  # API not reachable (yet): keep simulating, the next reading retries
 
 
 def main() -> None:
@@ -117,9 +119,10 @@ def main() -> None:
             counter.step(now, args.interval)
             exits = None if args.no_exits else counter.exits
             status = send(args.api, key, fid, counter.entries, exits)
+            result = f"HTTP {status}" if status else "API injoignable, nouvel essai au prochain tour"
             print(
                 f"{now:%H:%M:%S} {fid:<10} entries={counter.entries:<5} exits={exits!s:<5} "
-                f"present={counter.present:<4} HTTP {status}"
+                f"present={counter.present:<4} {result}"
             )
         if args.once:
             break

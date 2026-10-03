@@ -137,6 +137,16 @@ L'API peut recevoir les compteurs **agrégés** des tourniquets (entrées au sca
 - Si le compteur se tait plus de 10 min, l'appli revient aux signalements des étudiants.
 - Capacité des salles : `backend/app/facilities.py` (**valeurs provisoires**).
 
+### Démo en une commande (Windows)
+
+Depuis le dossier `affluence-gym`, après l'installation :
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\demo.ps1
+```
+
+Le script ouvre trois fenêtres (API en mode démo, simulateur des tourniquets, interface), puis le navigateur sur http://localhost:5173, et affiche l'adresse à ouvrir sur un téléphone du même Wi-Fi. Options : `-Hour 9` pour simuler une autre heure, `-NoExits` pour le mode « estimé ». Pour arrêter, ferme les trois fenêtres. Les chiffres sont fictifs et l'appli l'indique par un bandeau.
+
 ### Démo avec le simulateur (chiffres fictifs)
 
 Terminal 1, l'API en mode démo :
