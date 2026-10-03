@@ -35,6 +35,31 @@ export function weekExtremes(trends: Trends): { quietest: Slot | null; busiest: 
   return { quietest, busiest };
 }
 
+/**
+ * The typical week as CSV, one row per opening hour, for a spreadsheet.
+ * Semicolon-separated with a UTF-8 BOM: what Excel opens correctly in French and English locales.
+ */
+export function trendsCsv(
+  trends: Trends,
+  gym: string,
+  header: readonly string[],
+  dayName: (weekday: number) => string,
+  /** Decimal numbers in the reader's convention (comma in French spreadsheets). */
+  num: (n: number) => string = String,
+): string {
+  const cell = (v: string | number | null) => {
+    const s = v === null ? "" : typeof v === "number" ? num(v) : v;
+    return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = [header.map(cell).join(";")];
+  for (const day of trends.days) {
+    for (const h of day.hours) {
+      rows.push([gym, dayName(day.weekday), h.hour, h.level, h.people, h.samples].map(cell).join(";"));
+    }
+  }
+  return `﻿${rows.join("\r\n")}\r\n`;
+}
+
 /** Every hour that is open on at least one day, in order (the rows of the week grid). */
 export function weekHours(trends: Trends): number[] {
   const hours = new Set<number>();

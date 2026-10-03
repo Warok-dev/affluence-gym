@@ -177,6 +177,8 @@ Le bouton **EN / FR** en haut à droite change la langue de toute l'appli (conte
 
 Sous « Quand y aller aujourd'hui », **« Voir la semaine type »** ouvre la grille jour × heure de chaque salle sur les 8 dernières semaines : le créneau le plus calme (encadré ambre), le plus chargé, et l'heure actuelle (encadré rouge). Avec la base de démo, la grille est remplie dès le départ.
 
+Le bouton **« Télécharger les données (CSV) »** sous la grille produit un fichier qui s'ouvre dans Excel (une ligne par heure d'ouverture) : pratique pour le service des sports.
+
 ## Mode écran (télé à l'entrée de la salle)
 
 Ouvre **`#/ecran`** (lien « Mode écran » en bas de l'écran d'affluence) sur la télé ou l'ordinateur branché à l'entrée, puis passe en plein écran (`F11`). Le tableau des deux salles s'affiche en grand, se rafraîchit tout seul toutes les 30 s et empêche l'écran de se mettre en veille. Un code QR permet aux étudiants d'ouvrir l'appli sur leur téléphone.
@@ -189,6 +191,8 @@ Le code QR pointe vers l'adresse utilisée par l'écran. Pour la démo, ouvre do
 - « Dernière fois » rappelle la performance précédente et préremplit les séries.
 - Historique, détail de chaque séance, records personnels, unité kg ou lb.
 - **Les séances restent sur le téléphone** (aucun compte, rien sur le serveur). L'onglet propose d'exporter et d'importer une sauvegarde JSON : à faire avant de changer d'appareil ou d'effacer les données du navigateur.
+
+Depuis le détail d'une séance passée, **« Refaire cette séance »** en démarre une nouvelle avec les mêmes exercices et charges, il ne reste qu'à cocher.
 
 ## Exercices et programmes (onglet Exercices)
 

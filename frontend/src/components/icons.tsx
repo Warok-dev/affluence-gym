@@ -55,6 +55,24 @@ export function DumbbellIcon() {
   );
 }
 
+/** Two arrows chasing each other: do it again. */
+export function RepeatIcon() {
+  return (
+    <Icon size={18}>
+      <path d="M4 11V9a3 3 0 0 1 3-3h12M16 3l3 3-3 3M20 13v2a3 3 0 0 1-3 3H5M8 21l-3-3 3-3" />
+    </Icon>
+  );
+}
+
+/** Arrow into a tray: save a file. */
+export function DownloadIcon() {
+  return (
+    <Icon size={18}>
+      <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+    </Icon>
+  );
+}
+
 export function PlusIcon() {
   return (
     <Icon size={18}>

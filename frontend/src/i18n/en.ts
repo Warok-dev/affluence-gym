@@ -235,7 +235,11 @@ export const en: Messages = {
   progressChartLabel: (n: number, first: string, last: string, from: string, to: string) =>
     `Progress over ${n} workouts, ${first} to ${last}: from ${from} to ${to}`,
 
+  repeatWorkout: "Repeat this workout",
+
   // Typical week
+  trendsDownload: "Download the data (CSV)",
+  trendsCsvHeader: ["gym", "day", "hour", "average level (1-4)", "average people", "samples"],
   trendsLink: "See the typical week",
   trendsTitle: "Typical week",
   trendsCaption: (gym: string) => `Average occupancy at ${gym} by day and hour`,

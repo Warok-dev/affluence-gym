@@ -649,6 +649,10 @@ button:disabled {
 .trends-empty {
   margin-top: var(--s4);
 }
+.trends-download {
+  align-self: flex-start;
+  margin-top: var(--s4);
+}
 
 /* ---------- Loading ---------- */
 

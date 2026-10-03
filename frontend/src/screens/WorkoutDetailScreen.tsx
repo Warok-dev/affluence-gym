@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BackIcon, TrashIcon } from "../components/icons";
+import { BackIcon, RepeatIcon, TrashIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
 import { useContent } from "../workouts/content";
@@ -19,7 +19,7 @@ export function WorkoutDetailScreen({ id }: { id: string }) {
   const t = useT();
   const content = useContent();
   const dateFormat = new Intl.DateTimeFormat(t.intl, DATE_OPTIONS);
-  const { workouts, settings, deleteWorkout } = useWorkouts();
+  const { workouts, active, settings, deleteWorkout, repeatWorkout } = useWorkouts();
   const [confirming, setConfirming] = useState(false);
   const workout = workouts.find((w) => w.id === id);
 
@@ -56,6 +56,26 @@ export function WorkoutDetailScreen({ id }: { id: string }) {
           </li>
         ))}
       </ul>
+
+      {active ? (
+        <p className="banner" role="status">
+          {t.finishCurrentFirst}{" "}
+          <a href={`#${ROUTES.activeWorkout}`} className="inline-link">
+            {t.goToActive}
+          </a>
+        </p>
+      ) : (
+        <button
+          type="button"
+          className="primary-button"
+          onClick={() => {
+            repeatWorkout(workout);
+            navigate(ROUTES.activeWorkout);
+          }}
+        >
+          <RepeatIcon /> {t.repeatWorkout}
+        </button>
+      )}
 
       {confirming ? (
         <div className="confirm" role="alertdialog" aria-labelledby="delete-text">

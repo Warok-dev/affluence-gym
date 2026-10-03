@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { fetchTrends, type Trends } from "../api";
-import { BackIcon, RetryIcon } from "../components/icons";
+import { BackIcon, DownloadIcon, RetryIcon } from "../components/icons";
 import { FACILITIES, TIMEZONE, type FacilityId } from "../config";
 import { useT } from "../i18n";
 import { levelFromAverage } from "../levels";
 import { navigate, ROUTES } from "../router";
 import { localTime, localWeekday } from "../time";
-import { weekExtremes, weekHours, type Slot } from "../trends";
+import { trendsCsv, weekExtremes, weekHours, type Slot } from "../trends";
 
 // 2026-09-28 is a Monday: weekday names come from Intl, in the app's language.
 const MONDAY_UTC = Date.UTC(2026, 8, 28, 12);
@@ -97,6 +97,23 @@ function WeekGrid({ trends, name, now }: { trends: Trends; name: string; now: nu
   };
   const isSlot = (s: Slot | null, weekday: number, hour: number) => s?.weekday === weekday && s.hour === hour;
 
+  // A file the Sports Services can open in a spreadsheet (nothing leaves the phone otherwise).
+  function download() {
+    const csv = trendsCsv(
+      trends,
+      name,
+      t.trendsCsvHeader,
+      (d) => weekdayName(t.intl, d, "long"),
+      (n) => n.toLocaleString(t.intl, { maximumFractionDigits: 2, useGrouping: false }),
+    );
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `affluence-${trends.facility}-semaine-type-${trends.weeks}sem.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <>
       <div className="trends-summary">
@@ -165,6 +182,10 @@ function WeekGrid({ trends, name, now }: { trends: Trends; name: string; now: nu
           <span className="key key-now-cell" aria-hidden="true" /> {t.nowLegend}
         </li>
       </ul>
+
+      <button type="button" className="secondary-button trends-download" onClick={download}>
+        <DownloadIcon /> {t.trendsDownload}
+      </button>
     </>
   );
 }
