@@ -105,8 +105,10 @@
 }
 .live-title {
   grid-area: title;
+  margin: 0;
   color: var(--on-board-2);
   font-size: var(--fs-s);
+  font-weight: inherit;
 }
 .live-clock {
   grid-area: clock;

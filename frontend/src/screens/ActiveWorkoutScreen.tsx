@@ -44,7 +44,8 @@ export function ActiveWorkoutScreen() {
   return (
     <div className="workouts active-workout">
       <div className="live-card is-static">
-        <span className="live-title">{t.activeWorkoutTitle}</span>
+        {/* The screen's heading (exercises below are h3), styled as the card's small title. */}
+        <h2 className="live-title">{t.activeWorkoutTitle}</h2>
         <span className="live-clock" role="timer">
           {formatDuration(durationMs(active, now))}
         </span>
