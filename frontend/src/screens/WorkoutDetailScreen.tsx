@@ -2,21 +2,23 @@ import { useState } from "react";
 import { BackIcon, TrashIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
-import { getExercise } from "../workouts/exercises";
+import { useContent } from "../workouts/content";
 import { completedSets, durationMs, formatDuration, formatWeight, volumeKg } from "../workouts/stats";
 import { useWorkouts } from "../workouts/WorkoutsContext";
 import { summarizeSets } from "../workouts/format";
 
-const dateFormat = new Intl.DateTimeFormat("fr-CA", {
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   weekday: "long",
   day: "numeric",
   month: "long",
   hour: "numeric",
   minute: "2-digit",
-});
+};
 
 export function WorkoutDetailScreen({ id }: { id: string }) {
   const t = useT();
+  const content = useContent();
+  const dateFormat = new Intl.DateTimeFormat(t.intl, DATE_OPTIONS);
   const { workouts, settings, deleteWorkout } = useWorkouts();
   const [confirming, setConfirming] = useState(false);
   const workout = workouts.find((w) => w.id === id);
@@ -43,14 +45,14 @@ export function WorkoutDetailScreen({ id }: { id: string }) {
       <p className="workouts-stats">
         {t.duration(formatDuration(durationMs(workout)))} ·{" "}
         {t.workoutSummary(workout.exercises.length, completedSets(workout))}
-        {volumeKg(workout) > 0 && ` · ${t.volume(formatWeight(volumeKg(workout), settings.unit))}`}
+        {volumeKg(workout) > 0 && ` · ${t.volume(formatWeight(volumeKg(workout), settings.unit, t.intl))}`}
       </p>
 
       <ul className="rows">
         {workout.exercises.map((e) => (
           <li key={e.id} className="row">
-            <span>{getExercise(e.exerciseId)?.name ?? e.exerciseId}</span>
-            <span className="row-figure">{summarizeSets(e.sets, settings.unit)}</span>
+            <span>{content.exerciseName(e.exerciseId)}</span>
+            <span className="row-figure">{summarizeSets(e.sets, settings.unit, t.intl)}</span>
           </li>
         ))}
       </ul>

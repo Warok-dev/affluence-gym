@@ -3,6 +3,7 @@ import { fetchEquipment, postEquipmentReport, type EquipmentList, type Machine }
 import { getClientId } from "../clientId";
 import { FACILITIES, type FacilityId } from "../config";
 import { useT } from "../i18n";
+import { useContent } from "../workouts/content";
 import { minutesSince } from "../time";
 
 const CATEGORIES: Machine["category"][] = ["cardio", "free-weights", "machines"];
@@ -10,6 +11,7 @@ type Feedback = "ok" | "cooldown" | "error";
 
 export function EquipmentScreen() {
   const t = useT();
+  const content = useContent();
   const [gym, setGym] = useState<FacilityId>(FACILITIES[0].id);
   const [lists, setLists] = useState<Partial<Record<FacilityId, EquipmentList>>>({});
   const [failed, setFailed] = useState(false);
@@ -99,6 +101,7 @@ export function EquipmentScreen() {
                 <ul className="rows">
                   {machines.map((m) => {
                     const key = `${gym}/${m.id}`;
+                    const name = content.machineName(m.id, m.name);
                     const label =
                       m.status === "broken" ? t.statusBroken : m.status === "ok" ? t.statusOk : t.statusUnknown;
                     return (
@@ -107,16 +110,16 @@ export function EquipmentScreen() {
                           type="button"
                           className="row machine-row"
                           aria-expanded={open === m.id}
-                          aria-label={`${m.name} : ${label}`}
+                          aria-label={`${name}${t.colon}${label}`}
                           onClick={() => setOpen(open === m.id ? null : m.id)}
                         >
-                          <span className="row-title">{m.name}</span>
+                          <span className="row-title">{name}</span>
                           <span className={`machine-status is-${m.status}`}>
                             {m.since_ts ? t.statusSince(label, ago(m.since_ts)) : label}
                           </span>
                         </button>
                         {open === m.id && (
-                          <div className="button-row machine-actions" role="group" aria-label={t.machineActions(m.name)}>
+                          <div className="button-row machine-actions" role="group" aria-label={t.machineActions(name)}>
                             <button type="button" className="secondary-button" onClick={() => send(m, "broken")}>
                               {t.reportBroken}
                             </button>

@@ -1,16 +1,17 @@
 import { useId, useState } from "react";
 import { useT } from "../i18n";
 import { ROUTES } from "../router";
-import { MUSCLE_GROUPS, searchExercises, type MuscleGroup } from "../workouts/exercises";
-import { PROGRAMS } from "../workouts/programs";
+import { useContent } from "../workouts/content";
+import { MUSCLE_GROUPS, type MuscleGroup } from "../workouts/exercises";
 
 /** Library tab: ready-made programs first, then every exercise, filterable. */
 export function ExercisesScreen() {
   const t = useT();
+  const content = useContent();
   const [group, setGroup] = useState<MuscleGroup | null>(null);
   const [query, setQuery] = useState("");
   const searchId = useId();
-  const list = searchExercises(query).filter((e) => group === null || e.group === group);
+  const list = content.search(query).filter((e) => group === null || e.group === group);
 
   return (
     <div className="workouts">
@@ -19,7 +20,7 @@ export function ExercisesScreen() {
           {t.programsTitle}
         </h2>
         <ul className="rows">
-          {PROGRAMS.map((p) => (
+          {content.programs.map((p) => (
             <li key={p.id}>
               <a className="row row-link" href={`#${ROUTES.program(p.id)}`}>
                 <span>

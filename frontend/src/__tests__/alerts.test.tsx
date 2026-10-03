@@ -100,6 +100,7 @@ describe("alerte « salle calme »", () => {
     expect(JSON.parse(post[1].body as string)).toEqual({
       facility: "minto",
       subscription: { endpoint: "https://push.example/device", keys: { p256dh: "p256dh-key-value", auth: "auth-secret" } },
+      lang: "fr",
     });
     expect(JSON.parse(localStorage.getItem("affluence-gym.alerts")!).minto.id).toBe("alert-1");
   });

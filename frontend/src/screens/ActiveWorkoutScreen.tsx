@@ -2,7 +2,8 @@ import { useEffect, useId, useRef, useState } from "react";
 import { CheckIcon, PlusIcon, TrashIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
-import { EXERCISES, getExercise, MUSCLE_GROUPS, searchExercises } from "../workouts/exercises";
+import { useContent } from "../workouts/content";
+import { MUSCLE_GROUPS } from "../workouts/exercises";
 import { durationMs, formatDuration, fromUnit, lastPerformance } from "../workouts/stats";
 import { inputValue, summarizeSets } from "../workouts/format";
 import type { WorkoutSet } from "../workouts/types";
@@ -10,6 +11,7 @@ import { useWorkouts } from "../workouts/WorkoutsContext";
 
 export function ActiveWorkoutScreen() {
   const t = useT();
+  const content = useContent();
   const { active, workouts, settings, storageError, addExercise, removeExercise, addSet, updateSet, removeSet, finish, discard } =
     useWorkouts();
   const [picking, setPicking] = useState(false);
@@ -86,7 +88,7 @@ export function ActiveWorkoutScreen() {
       {active.exercises.length === 0 && !picking && <p className="muted-text">{t.emptyWorkout}</p>}
 
       {active.exercises.map((entry) => {
-        const exercise = getExercise(entry.exerciseId);
+        const exercise = content.exercise(entry.exerciseId);
         const name = exercise?.name ?? entry.exerciseId;
         const last = lastPerformance(workouts, entry.exerciseId);
         return (
@@ -96,13 +98,13 @@ export function ActiveWorkoutScreen() {
               <button
                 type="button"
                 className="icon-button"
-                aria-label={`${t.removeExercise} : ${exercise?.name ?? ""}`}
+                aria-label={`${t.removeExercise}${t.colon}${exercise?.name ?? ""}`}
                 onClick={() => removeExercise(entry.id)}
               >
                 <TrashIcon />
               </button>
             </header>
-            <p className="muted-text">{last ? t.lastTime(summarizeSets(last, settings.unit)) : t.firstTime}</p>
+            <p className="muted-text">{last ? t.lastTime(summarizeSets(last, settings.unit, t.intl)) : t.firstTime}</p>
             <table className="sets">
               <thead>
                 <tr>
@@ -241,10 +243,11 @@ function NumberField({
 
 function ExercisePicker({ onPick, onClose }: { onPick: (id: string) => void; onClose: () => void }) {
   const t = useT();
+  const content = useContent();
   const [query, setQuery] = useState("");
   const searchId = useId();
   const input = useRef<HTMLInputElement>(null);
-  const results = searchExercises(query);
+  const results = content.search(query);
 
   useEffect(() => input.current?.focus(), []);
 
@@ -289,7 +292,7 @@ function ExercisePicker({ onPick, onClose }: { onPick: (id: string) => void; onC
         })
       )}
       <p className="sr-only" aria-live="polite">
-        {results.length} / {EXERCISES.length}
+        {results.length} / {content.exercises.length}
       </p>
     </section>
   );

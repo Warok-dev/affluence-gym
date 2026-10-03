@@ -2,7 +2,7 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { MinusIcon, PlusIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
-import { getExercise } from "../workouts/exercises";
+import { useContent } from "../workouts/content";
 import {
   completedSets,
   durationMs,
@@ -16,10 +16,12 @@ import { clampRest, makeBackup, parseBackup } from "../workouts/store";
 import type { WeightUnit } from "../workouts/types";
 import { useWorkouts } from "../workouts/WorkoutsContext";
 
-const dateFormat = new Intl.DateTimeFormat("fr-CA", { weekday: "short", day: "numeric", month: "short" });
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
 
 export function WorkoutsScreen() {
   const t = useT();
+  const content = useContent();
+  const dateFormat = new Intl.DateTimeFormat(t.intl, DATE_OPTIONS);
   const { workouts, active, settings, storageError, start, updateSettings, importBackup } = useWorkouts();
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -90,8 +92,8 @@ export function WorkoutsScreen() {
           <ul className="rows">
             {bests.map((b) => (
               <li key={b.exerciseId} className="row">
-                <span>{getExercise(b.exerciseId)?.name ?? b.exerciseId}</span>
-                <span className="row-figure">{t.recordLine(formatWeight(b.weightKg, settings.unit), b.reps)}</span>
+                <span>{content.exerciseName(b.exerciseId)}</span>
+                <span className="row-figure">{t.recordLine(formatWeight(b.weightKg, settings.unit, t.intl), b.reps)}</span>
               </li>
             ))}
           </ul>
@@ -116,7 +118,7 @@ export function WorkoutsScreen() {
                   <span className="row-figure">
                     {formatDuration(durationMs(w))}
                     {volumeKg(w) > 0 && (
-                      <span className="row-sub">{t.volume(formatWeight(volumeKg(w), settings.unit))}</span>
+                      <span className="row-sub">{t.volume(formatWeight(volumeKg(w), settings.unit, t.intl))}</span>
                     )}
                   </span>
                 </a>

@@ -79,6 +79,8 @@ class Alert(Base):
     endpoint: Mapped[str] = mapped_column(String(1024))
     p256dh: Mapped[str] = mapped_column(String(256))
     auth: Mapped[str] = mapped_column(String(64))
+    # Language of the notification text, as chosen in the app.
+    lang: Mapped[str] = mapped_column(String(2), server_default="fr")
     token_hash: Mapped[str] = mapped_column(String(64))
     created_ts: Mapped[int] = mapped_column(BigInteger)
     expires_ts: Mapped[int] = mapped_column(BigInteger)

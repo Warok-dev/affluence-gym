@@ -167,6 +167,10 @@ $env:OFFICIAL_API_KEY = "demo-key"
 
 Terminal 3 : `cd frontend` puis `npm run dev`.
 
+## Français / English
+
+Le bouton **EN / FR** en haut à droite change la langue de toute l'appli (contenus des exercices, programmes, machines et notification « salle calme » compris). Le choix reste mémorisé sur le téléphone. Par défaut, l'appli suit la langue du navigateur. Le mode écran utilise la langue choisie sur l'appareil qui l'affiche.
+
 ## Mode écran (télé à l'entrée de la salle)
 
 Ouvre **`#/ecran`** (lien « Mode écran » en bas de l'écran d'affluence) sur la télé ou l'ordinateur branché à l'entrée, puis passe en plein écran (`F11`). Le tableau des deux salles s'affiche en grand, se rafraîchit tout seul toutes les 30 s et empêche l'écran de se mettre en veille. Un code QR permet aux étudiants d'ouvrir l'appli sur leur téléphone.
@@ -267,7 +271,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `GET` | `/equipment/{facility}` | Machines et état signalé : `{window_days, machines: [{id, name, category, status, since_ts, reports}]}` |
 | `POST` | `/equipment/{facility}/{machine}/reports` | `{status: "broken"|"ok", client_id}` → 201 ; 404 ; 422 ; 429 (30 min par machine) |
 | `GET` | `/notifications/config` | `{enabled, public_key}` |
-| `POST` | `/alerts` | `{facility, subscription}` → `{id, token, expires_ts}` ; 409 salle fermée ; 503 notifications non configurées |
+| `POST` | `/alerts` | `{facility, subscription, lang?}` (`lang` : `fr` par défaut ou `en`) → `{id, token, expires_ts}` ; 409 salle fermée ; 503 notifications non configurées |
 | `DELETE` | `/alerts/{id}` | En-tête `X-Alert-Token` → 204 ; 404 |
 | `GET` | `/health` | `{"status": "ok", "demo": false}` (champ `demo` additif), utilisé par les health checks (Docker, Render) |
 

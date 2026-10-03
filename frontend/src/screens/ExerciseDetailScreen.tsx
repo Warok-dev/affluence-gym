@@ -2,20 +2,21 @@ import { useState } from "react";
 import { BackIcon, PlusIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { ROUTES } from "../router";
-import { getExercise } from "../workouts/exercises";
+import { useContent } from "../workouts/content";
 import { summarizeSets } from "../workouts/format";
-import { getGuide } from "../workouts/guide";
 import { formatWeight, personalBests } from "../workouts/stats";
 import { useWorkouts } from "../workouts/WorkoutsContext";
 
-const dateFormat = new Intl.DateTimeFormat("fr-CA", { weekday: "short", day: "numeric", month: "short" });
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = { weekday: "short", day: "numeric", month: "short" };
 
 export function ExerciseDetailScreen({ id }: { id: string }) {
   const t = useT();
+  const content = useContent();
+  const dateFormat = new Intl.DateTimeFormat(t.intl, DATE_OPTIONS);
   const { workouts, active, settings, addExercise } = useWorkouts();
   const [added, setAdded] = useState(false);
-  const exercise = getExercise(id);
-  const guide = getGuide(id);
+  const exercise = content.exercise(id);
+  const guide = content.guide(id);
 
   const back = (
     <a className="text-button back-link" href={`#${ROUTES.exercises}`}>
@@ -83,7 +84,10 @@ export function ExerciseDetailScreen({ id }: { id: string }) {
             ))}
           </ol>
           <p className="tip">
-            <strong>{t.tipTitle} : </strong>
+            <strong>
+              {t.tipTitle}
+              {t.colon}
+            </strong>
             {guide.tip}
           </p>
           <p className="muted-text">{t.safetyNote}</p>
@@ -96,7 +100,9 @@ export function ExerciseDetailScreen({ id }: { id: string }) {
         </h3>
         {best && (
           <p className="record">
-            {t.yourRecord} : <strong>{t.recordLine(formatWeight(best.weightKg, settings.unit), best.reps)}</strong>
+            {t.yourRecord}
+            {t.colon}
+            <strong>{t.recordLine(formatWeight(best.weightKg, settings.unit, t.intl), best.reps)}</strong>
           </p>
         )}
         {history.length === 0 ? (
@@ -107,7 +113,7 @@ export function ExerciseDetailScreen({ id }: { id: string }) {
               <li key={w.id}>
                 <a className="row row-link" href={`#${ROUTES.workout(w.id)}`}>
                   <span className="row-title">{dateFormat.format(w.startedAt)}</span>
-                  <span className="row-figure">{summarizeSets(sets, settings.unit)}</span>
+                  <span className="row-figure">{summarizeSets(sets, settings.unit, t.intl)}</span>
                 </a>
               </li>
             ))}
