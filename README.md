@@ -2,7 +2,15 @@
 
 [![CI](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml/badge.svg)](https://github.com/Warok-dev/affluence-gym/actions/workflows/ci.yml)
 
-Application web mobile (PWA) qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, à partir de **signalements anonymes** des étudiants. Elle montre aussi l'affluence typique heure par heure et une **prévision** (« probablement calme vers 18 h ») produite par un modèle de machine learning. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
+Application web mobile (PWA), bilingue français / anglais, qui affiche en temps réel l'affluence des salles d'entraînement d'un campus, et sert aussi à suivre ses séances. Application non officielle : aucun compte, aucune donnée personnelle, aucun service de suivi.
+
+**Ce qu'elle fait**
+
+- **Affluence en direct** : le **nombre exact de personnes** quand le compteur des tourniquets est branché (sinon une estimation à partir des entrées, ou les **signalements anonymes** des étudiants), et la salle la plus calme des deux.
+- **Quand y aller** : affluence typique heure par heure, **prévision** par machine learning, **semaine type** jour × heure (exportable en CSV), alerte push « préviens-moi quand ce sera calme ».
+- **Mode écran** pour une télé à l'entrée (plein écran, bilingue en alternance, code QR vers l'appli).
+- **Entraînement** : séances, séries, minuteur de repos, records, courbe de progression, 33 exercices expliqués, 4 programmes, état des machines signalé par les étudiants. Les séances restent **sur le téléphone**.
+- **Respect de la vie privée** : signalements anonymes effacés après 24 h, en-têtes de sécurité, limitation par adresse IP, écran « À propos et confidentialité ». Accessibilité vérifiée automatiquement (axe-core) sur chaque écran.
 
 Voir [PROJECT.md](PROJECT.md) pour la vision, les contraintes, les phases et les décisions d'architecture.
 
