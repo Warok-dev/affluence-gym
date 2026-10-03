@@ -1,0 +1,441 @@
+/*
+ * Tab bar and workout screens, in the same arena-scoreboard world as styles.css:
+ * navy board elements for live state (workout clock, rest timer), 2px blue lines as
+ * structure, tabular figures, the three text sizes, 44px touch targets.
+ */
+
+/* ---------- Tab bar ---------- */
+
+.tabbar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: var(--s2);
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding: 0 var(--s4) env(safe-area-inset-bottom);
+  border-top: 2px solid var(--blue);
+  background: var(--ground);
+}
+.tabbar-item {
+  position: relative;
+  display: flex;
+  flex: 1;
+  max-width: 12rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 44px;
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-decoration: none;
+}
+.tabbar-item[aria-current="page"] {
+  color: var(--ink);
+  box-shadow: inset 0 3px 0 var(--ink);
+}
+.tabbar-badge {
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 14px);
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--board);
+  color: var(--on-board);
+  font-family: var(--font-score);
+  font-size: var(--fs-s);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- Workouts ---------- */
+
+.workouts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.section-title,
+.block-title {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.block {
+  margin-top: var(--s4);
+}
+.block-title {
+  padding-bottom: var(--s2);
+  border-bottom: 2px solid var(--blue);
+}
+.muted-text {
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
+.workouts-stats {
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The live workout card is a lit board element: name, running clock, action. */
+.live-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "title action"
+    "clock action";
+  align-items: center;
+  gap: 0 var(--s3);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--corner);
+  background: var(--board);
+  color: var(--on-board);
+  text-decoration: none;
+}
+.active-workout .live-card {
+  position: sticky;
+  top: var(--s2);
+  z-index: 5;
+}
+.live-title {
+  grid-area: title;
+  color: var(--on-board-2);
+  font-size: var(--fs-s);
+}
+.live-clock {
+  grid-area: clock;
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.live-action {
+  grid-area: action;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--s4);
+  border: 0;
+  border-radius: var(--corner-s);
+  background: var(--on-board);
+  color: var(--board);
+  font-weight: 700;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 48px;
+  padding: 0 var(--s4);
+  border-radius: var(--corner-s);
+  font-weight: 700;
+}
+.primary-button {
+  border: 0;
+  background: var(--ink);
+  color: var(--ground);
+}
+.secondary-button {
+  border: 1px solid var(--ink-2);
+  background: transparent;
+  color: var(--ink);
+}
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+.text-button.danger {
+  align-self: flex-start;
+  color: var(--ink-2);
+}
+.back-link {
+  align-self: flex-start;
+  padding-left: 0;
+  color: var(--ink);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 48px;
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--ground-2);
+  color: inherit;
+  text-decoration: none;
+}
+.row-link:hover .row-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.row-title,
+.row-sub {
+  display: block;
+}
+.row-title::first-letter {
+  text-transform: uppercase;
+}
+.row-sub {
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
+.row-figure {
+  flex: none;
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.row-figure .row-sub {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 56px;
+  border-bottom: 1px solid var(--ground-2);
+}
+.segmented,
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ink-2);
+  border-radius: var(--corner-s);
+  overflow: hidden;
+}
+.segmented button,
+.stepper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+}
+.segmented button[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--ground);
+}
+.stepper output {
+  min-width: 4ch;
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Inline confirmation, never a modal. */
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4);
+  border: 2px solid var(--ink);
+  border-radius: var(--corner-s);
+}
+
+/* ---------- Active workout ---------- */
+
+.exercise {
+  padding-top: var(--s3);
+  border-top: 2px solid var(--blue);
+}
+.exercise-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+}
+.exercise-head h3 {
+  margin: 0;
+  font-size: var(--fs-m);
+  font-weight: 700;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+}
+.icon-button:hover {
+  color: var(--ink);
+}
+.sets {
+  width: 100%;
+  margin-top: var(--s2);
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.sets th {
+  padding: 0 var(--s1) var(--s1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-align: left;
+}
+.sets td {
+  padding: var(--s1);
+}
+.sets td:first-child,
+.sets th:first-child {
+  width: 2.5rem;
+  padding-left: 0;
+}
+.sets td:nth-last-child(-n + 2),
+.sets th:nth-last-child(-n + 2) {
+  width: 52px;
+}
+.set-number {
+  font-family: var(--font-score);
+  font-weight: 700;
+}
+.num {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--s2);
+  border: 1px solid var(--ink-2);
+  border-radius: var(--corner-s);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.num::placeholder {
+  color: var(--ink-2);
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--ink-2);
+  border-radius: var(--corner-s);
+  background: transparent;
+}
+.check[aria-checked="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--ground);
+}
+.sets .is-done .num {
+  border-color: transparent;
+  background: var(--ground-2);
+}
+
+.picker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-top: 2px solid var(--blue);
+}
+.picker-search {
+  display: flex;
+  gap: var(--s2);
+}
+.picker-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--s3);
+  border: 1px solid var(--ink-2);
+  border-radius: var(--corner-s);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+.picker-group h4 {
+  margin: 0 0 var(--s1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+.picker-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.picker-item {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--ground-2);
+  background: none;
+  text-align: left;
+}
+
+/* Rest timer: a board strip docked above the tab bar. */
+.rest {
+  position: fixed;
+  inset: auto var(--s4) calc(var(--tabbar-h) + var(--s2) + env(safe-area-inset-bottom));
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: var(--s2) var(--s2) var(--s2) var(--s4);
+  border-radius: var(--corner);
+  background: var(--board);
+  color: var(--on-board);
+}
+.rest-label {
+  flex: 1;
+  font-weight: 600;
+}
+.rest-clock {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.rest-adjust,
+.rest-skip {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--board-rule);
+  border-radius: var(--corner-s);
+  background: var(--board-2);
+  font-variant-numeric: tabular-nums;
+}
+.rest-skip {
+  padding: 0 var(--s3);
+  font-weight: 700;
+}
+.rest.is-over .rest-skip {
+  background: var(--on-board);
+  color: var(--board);
+}
+.rest :focus-visible,
+.live-card :focus-visible {
+  outline-color: var(--on-board);
+}

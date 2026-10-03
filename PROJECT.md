@@ -203,8 +203,13 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - `PreferOfficialSource` : compteur s'il est frais (< 10 min), sinon signalements. `GET /occupancy` ajoute `source`, `people`, `capacity`, `estimated`, `updated_ts` (additifs).
 - Simulateur `scripts/simulate_counter.py` (données fictives, même canal sécurisé) pour la démo ; document pour l'université `docs/integration-compteurs.md`.
 
-### Phase 6 — Structure et suivi d'entraînements
-- Navigation (Affluence · Séances · Exercices · Salles). Séances : exercices, séries, répétitions, charges ; minuteur de repos ; historique, records. Stockage IndexedDB sur l'appareil, export/import JSON. Hors ligne.
+### Phase 6 — Structure et suivi d'entraînements (fait, branche `phase-6-workouts`)
+- Barre d'onglets (Affluence · Séances ; Exercices et Salles arriveront avec les phases 7 et 8), routage par l'adresse (`#/seances`, `#/seances/en-cours`, `#/seances/<id>`), sans dépendance.
+- Séance en cours : chronomètre, exercices (catalogue de 33 exercices, recherche sans accents), séries répétitions × charge, « Dernière fois » et préremplissage, minuteur de repos (vibration à la fin), confirmations en ligne (pas de modale).
+- Historique, détail, suppression ; records (meilleur set par 1RM estimé, formule d'Epley) ; séances de la semaine.
+- Réglages : unité kg/lb (charges stockées en kg, 45 lb reste 45 lb), repos par défaut.
+- **Stockage uniquement sur l'appareil** : `localStorage` derrière une petite interface (`workouts/store.ts`), remplaçable par IndexedDB plus tard sans toucher aux écrans. Choisi plutôt qu'IndexedDB pour la simplicité et la testabilité ; le volume reste faible (environ 3 Ko par séance). Sauvegarde export/import JSON validée à l'import, fusion sans doublons, message clair si le stockage est plein ou bloqué.
+- Toutes les modifications de séance sont des mises à jour fonctionnelles : plusieurs taps rapides ne s'écrasent jamais (bug trouvé et corrigé pendant la vérification, test dédié).
 
 ### Phase 7 — Exercices et programmes
 - Bibliothèque d'exercices (muscles, consignes, textes originaux) et programmes prêts à suivre, lançables dans le suivi.
