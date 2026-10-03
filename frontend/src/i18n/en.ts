@@ -2,6 +2,9 @@ import type { Messages } from "./fr";
 
 export const en: Messages = {
   appTitle: "Affluence Gym",
+  intl: "en-CA",
+  colon: ": ",
+  switchLanguage: "Version française",
   levels: { 1: "Empty", 2: "Quiet", 3: "Moderate", 4: "Packed" },
   noData: "No data",
   loading: "Loading…",

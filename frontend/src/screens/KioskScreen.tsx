@@ -163,7 +163,7 @@ function KioskGym({ name, data, profile, open, quieter, now }: GymProps) {
   }
 
   return (
-    <section className={`gym kiosk-gym${quieter ? " is-quieter" : ""}`} aria-label={`${name} : ${digit} ${label}`}>
+    <section className={`gym kiosk-gym${quieter ? " is-quieter" : ""}`} aria-label={`${name}${t.colon}${digit} ${label}`}>
       <header className="kiosk-gym-head">
         <h2>{name}</h2>
         {quieter && <span className="quieter-tag">{t.quieter}</span>}

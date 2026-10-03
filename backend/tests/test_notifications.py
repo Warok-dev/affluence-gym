@@ -78,6 +78,15 @@ def test_alert_fires_once_when_the_gym_gets_quiet(session):
     assert notifications.check_alerts(session, PreferOfficialSource(), NOW + 700, sender) == 0
 
 
+def test_notification_text_follows_the_language_of_the_app(session):
+    notifications.create_alert(session, "minto", SUB, NOW, NOW + 3600, lang="en")
+    quiet(session)
+    sender = FakeSender()
+    assert notifications.check_alerts(session, PreferOfficialSource(), NOW, sender) == 1
+    assert sender.sent[0][1]["title"] == "Minto is quiet"
+    assert sender.sent[0][1]["body"] == "Now is a good time to go."
+
+
 def test_expired_alerts_are_dropped_without_sending(session):
     notifications.create_alert(session, "minto", SUB, NOW, NOW + 60)
     sender = FakeSender()

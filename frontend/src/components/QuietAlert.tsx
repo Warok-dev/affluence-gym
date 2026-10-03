@@ -2,7 +2,7 @@ import { useState } from "react";
 import { armAlert, disarmAlert, loadAlerts, pushSupported } from "../alerts";
 import type { NotificationsConfig } from "../api";
 import { TIMEZONE, type FacilityId } from "../config";
-import { useT } from "../i18n";
+import { useLocale, useT } from "../i18n";
 import { localTime } from "../time";
 import { BellIcon } from "./icons";
 
@@ -19,6 +19,7 @@ type Status = "idle" | "pending" | "denied" | "closed" | "error";
 /** "Tell me when it gets quiet": one push notification, then the subscription is erased. */
 export function QuietAlert({ facility, name, level, config }: Props) {
   const t = useT();
+  const { locale } = useLocale();
   const [alert, setAlert] = useState(() => loadAlerts()[facility] ?? null);
   const [status, setStatus] = useState<Status>("idle");
 
@@ -59,7 +60,7 @@ export function QuietAlert({ facility, name, level, config }: Props) {
         onClick={async () => {
           setStatus("pending");
           try {
-            const result = await armAlert(facility, config.public_key!);
+            const result = await armAlert(facility, config.public_key!, locale);
             if (result === "denied" || result === "closed") setStatus(result);
             else {
               setAlert(result);

@@ -5,6 +5,12 @@ const timeFr = (hhmm: string) => {
 
 export const fr = {
   appTitle: "Affluence Gym",
+  /** Locale for dates and numbers. */
+  intl: "fr-CA",
+  /** French typography puts a space before the colon. */
+  colon: " : ",
+  /** Read in the target language (the button carries lang="en"). */
+  switchLanguage: "English version",
   levels: { 1: "Vide", 2: "Calme", 3: "Modéré", 4: "Bondé" },
   noData: "Pas de données",
   loading: "Chargement…",

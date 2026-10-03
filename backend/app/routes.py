@@ -211,6 +211,8 @@ class PushSubscriptionIn(BaseModel):
 class AlertIn(BaseModel):
     facility: str
     subscription: PushSubscriptionIn
+    # Optional (added with the English UI): language of the notification text.
+    lang: Literal["fr", "en"] = "fr"
 
 
 @router.get("/notifications/config")
@@ -232,7 +234,7 @@ def create_alert(body: AlertIn, session: SessionDep):
         raise HTTPException(409, "La salle est fermée en ce moment")
     keys = body.subscription.keys
     sub = notifications.Subscription(body.subscription.endpoint, keys.p256dh, keys.auth)
-    alert, token = notifications.create_alert(session, body.facility, sub, now, expires)
+    alert, token = notifications.create_alert(session, body.facility, sub, now, expires, body.lang)
     return {"id": alert.id, "token": token, "expires_ts": expires}
 
 

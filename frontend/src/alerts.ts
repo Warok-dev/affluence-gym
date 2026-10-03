@@ -38,7 +38,7 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
 export type ArmResult = CreatedAlert | "denied" | "closed";
 
 /** Asks permission, subscribes this browser to push, and arms the alert on the server. */
-export async function armAlert(facility: FacilityId, publicKey: string): Promise<ArmResult> {
+export async function armAlert(facility: FacilityId, publicKey: string, lang: "fr" | "en" = "fr"): Promise<ArmResult> {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return "denied";
   const registration = await navigator.serviceWorker.ready;
@@ -48,7 +48,7 @@ export async function armAlert(facility: FacilityId, publicKey: string): Promise
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
     }));
-  const result = await createAlert(facility, subscription.toJSON());
+  const result = await createAlert(facility, subscription.toJSON(), lang);
   if (result !== "closed") saveAlerts({ ...loadAlerts(), [facility]: result });
   return result;
 }

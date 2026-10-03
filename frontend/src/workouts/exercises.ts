@@ -55,8 +55,8 @@ export function getExercise(id: string): Exercise | undefined {
   return BY_ID.get(id);
 }
 
-/** Accent- and case-insensitive search on the exercise name. */
-export function searchExercises(query: string): Exercise[] {
+/** Accent- and case-insensitive search on the exercise name (in `list`'s language). */
+export function searchExercises(query: string, list: readonly Exercise[] = EXERCISES): Exercise[] {
   const norm = (s: string) =>
     s
       .normalize("NFD")
@@ -64,5 +64,5 @@ export function searchExercises(query: string): Exercise[] {
       .toLowerCase()
       .trim();
   const q = norm(query);
-  return q ? EXERCISES.filter((e) => norm(e.name).includes(q)) : [...EXERCISES];
+  return q ? list.filter((e) => norm(e.name).includes(q)) : [...list];
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TabBar } from "./components/TabBar";
 import { TIMEZONE } from "./config";
-import { useT } from "./i18n";
+import { useLocale, useT } from "./i18n";
 import { ROUTES, useRoute } from "./router";
 import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
 import { EquipmentScreen } from "./screens/EquipmentScreen";
@@ -25,6 +25,8 @@ export function App() {
 
 function Shell() {
   const t = useT();
+  const { locale, setLocale } = useLocale();
+  const otherLocale = locale === "fr" ? "en" : "fr";
   const route = useRoute();
   const { active } = useWorkouts();
   const [now, setNow] = useState(() => Date.now());
@@ -57,9 +59,20 @@ function Shell() {
     <>
       <header className="app-header">
         <h1>{t.appTitle}</h1>
-        <time className="clock" aria-label={t.clockLabel(clockText)}>
-          {clockText}
-        </time>
+        <div className="header-tools">
+          <button
+            type="button"
+            className="lang-switch"
+            lang={otherLocale}
+            aria-label={t.switchLanguage}
+            onClick={() => setLocale(otherLocale)}
+          >
+            {otherLocale.toUpperCase()}
+          </button>
+          <time className="clock" aria-label={t.clockLabel(clockText)}>
+            {clockText}
+          </time>
+        </div>
       </header>
       <main>{screen}</main>
       <footer className="app-footer">

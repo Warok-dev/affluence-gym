@@ -57,7 +57,9 @@ class Subscription:
     auth: str
 
 
-def create_alert(session: Session, facility: str, sub: Subscription, now: int, expires_ts: int) -> tuple[Alert, str]:
+def create_alert(
+    session: Session, facility: str, sub: Subscription, now: int, expires_ts: int, lang: str = "fr"
+) -> tuple[Alert, str]:
     # One alert per device and gym: re-arming replaces the previous one.
     session.execute(delete(Alert).where(Alert.facility == facility, Alert.endpoint == sub.endpoint))
     token = secrets.token_urlsafe(24)
@@ -70,6 +72,7 @@ def create_alert(session: Session, facility: str, sub: Subscription, now: int, e
         token_hash=hash_token(token),
         created_ts=now,
         expires_ts=expires_ts,
+        lang=lang,
     )
     session.add(alert)
     session.commit()
@@ -83,6 +86,13 @@ def cancel_alert(session: Session, alert_id: str, token: str) -> bool:
     session.delete(alert)
     session.commit()
     return True
+
+
+# Notification text by language: (title with the gym name, body).
+MESSAGES = {
+    "fr": ("{name} est calme", "C'est le bon moment pour y aller."),
+    "en": ("{name} is quiet", "Now is a good time to go."),
+}
 
 
 # A sender returns False when the subscription is gone for good (it is then dropped).
@@ -122,9 +132,10 @@ def check_alerts(session: Session, source: OccupancySource, now: int, send: Send
         if level is None or level > QUIET_MAX_LEVEL:
             continue
         name = FACILITIES[alert.facility].name
+        title, body = MESSAGES.get(alert.lang, MESSAGES["fr"])
         payload = {
-            "title": f"{name} est calme",
-            "body": "C'est le bon moment pour y aller.",
+            "title": title.format(name=name),
+            "body": body,
             "url": "/",
             "tag": f"quiet-{alert.facility}",
         }

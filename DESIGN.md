@@ -356,6 +356,9 @@ After a report the action slot becomes an ice block printed in reverse (navy tex
 ### Chips (status tag)
 - **Quieter tag:** amber fill, navy text, label typography, 4px corners, 1px 8px padding. Appears on one column at most, under the gym name.
 
+### Language Switch
+A quiet text control left of the game clock: the other language's code ("EN" or "FR") in Barlow Condensed 700, slate ink, no fill or border, 44px square tap target, ink on hover. Its accessible name is written in the target language and the button carries that `lang`.
+
 ### Game Clock
 A small lit board element in the header: navy fill, ice text, condensed 600 tabular figures, 6px corners, 2px 8px padding.
 

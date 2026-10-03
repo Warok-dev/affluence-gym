@@ -1,14 +1,14 @@
 import { BackIcon } from "../components/icons";
 import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
-import { getExercise } from "../workouts/exercises";
-import { getProgram } from "../workouts/programs";
+import { useContent } from "../workouts/content";
 import { useWorkouts } from "../workouts/WorkoutsContext";
 
 export function ProgramScreen({ id }: { id: string }) {
   const t = useT();
+  const content = useContent();
   const { active, startProgramDay } = useWorkouts();
-  const program = getProgram(id);
+  const program = content.program(id);
 
   const back = (
     <a className="text-button back-link" href={`#${ROUTES.exercises}`}>
@@ -54,7 +54,7 @@ export function ProgramScreen({ id }: { id: string }) {
             {day.items.map((item) => (
               <li key={item.exerciseId}>
                 <a className="row row-link" href={`#${ROUTES.exercise(item.exerciseId)}`}>
-                  <span className="row-title">{getExercise(item.exerciseId)?.name ?? item.exerciseId}</span>
+                  <span className="row-title">{content.exerciseName(item.exerciseId)}</span>
                   <span className="row-figure">{t.programItem(item.sets, item.reps)}</span>
                 </a>
               </li>

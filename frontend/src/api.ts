@@ -164,11 +164,15 @@ export interface CreatedAlert {
 }
 
 /** POST /alerts; returns "closed" when the gym is closed right now. */
-export async function createAlert(facility: FacilityId, subscription: PushSubscriptionJSON): Promise<CreatedAlert | "closed"> {
+export async function createAlert(
+  facility: FacilityId,
+  subscription: PushSubscriptionJSON,
+  lang: "fr" | "en" = "fr",
+): Promise<CreatedAlert | "closed"> {
   const res = await fetch(`${API_BASE}/alerts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ facility, subscription }),
+    body: JSON.stringify({ facility, subscription, lang }),
   });
   if (res.status === 409) return "closed";
   if (!res.ok) throw new Error(`POST /alerts failed: ${res.status}`);

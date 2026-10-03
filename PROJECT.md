@@ -235,6 +235,12 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Même règle « Plus calme » que l'appli (`quieterIndex` dans `levels.ts`, partagée).
 - Lien discret « Mode écran » dans le pied de page de l'écran d'affluence.
 
+### Phase 11 — Version anglaise (fait, branche `phase-11-bilingue`)
+- Bouton FR / EN dans l'en-tête (cible de 44 px, étiquette lue dans la langue visée). Choix mémorisé sur le téléphone (`affluence-gym.locale`) ; sinon la langue du navigateur si elle est française ou anglaise ; sinon le français. `<html lang>` suit la langue.
+- Tout est traduit : interface, noms et guides des 33 exercices, 4 programmes, noms des machines (traduits côté appli à partir de leur identifiant : l'API garde ses noms français), dates et nombres (`fr-CA` / `en-CA`).
+- Notification « salle calme » dans la langue de l'appli : champ facultatif `lang` (`fr` par défaut) dans `POST /alerts`, colonne `alerts.lang` (migration 0005). Ajout compatible : les anciens clients restent en français.
+- Tests de complétude : tout exercice, guide, programme et jour doit avoir son texte anglais.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

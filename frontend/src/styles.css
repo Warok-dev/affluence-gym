@@ -137,6 +137,28 @@ button:disabled {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+}
+/* Language switch: a quiet text control beside the clock, full 44px tap target. */
+.lang-switch {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--s2);
+  border: 0;
+  border-radius: var(--corner-s);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--font-score);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.lang-switch:hover {
+  color: var(--ink);
+}
+
 /* The game clock: a small lit board element. */
 .clock {
   padding: 2px var(--s2);
