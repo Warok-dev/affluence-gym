@@ -1,10 +1,10 @@
-"""In-process periodic task: one snapshot per facility every quarter hour."""
+"""In-process periodic tasks: snapshots every quarter hour, quiet-gym alerts, data purge."""
 
 import asyncio
 import logging
 import time
 
-from . import notifications
+from . import notifications, retention
 from .config import ALERT_CHECK_SECONDS, SNAPSHOT_SECONDS
 from .db import SessionLocal
 from .forecast.service import forecast_service
@@ -32,6 +32,26 @@ async def snapshot_loop() -> None:
             log.info("snapshots written: %d", written)
         except Exception:  # keep the loop alive whatever happens
             log.exception("snapshot failed")
+
+
+PURGE_SECONDS = 3600
+
+
+def purge_once() -> dict[str, int]:
+    with SessionLocal() as session:
+        return retention.purge(session, int(time.time()))
+
+
+async def purge_loop() -> None:
+    """Every hour, erase the raw inputs past their retention period (app/retention.py)."""
+    while True:
+        try:
+            deleted = await asyncio.to_thread(purge_once)
+            if any(deleted.values()):
+                log.info("purged: %s", deleted)
+        except Exception:  # keep the loop alive whatever happens
+            log.exception("purge failed")
+        await asyncio.sleep(PURGE_SECONDS)
 
 
 def check_alerts_once() -> int:

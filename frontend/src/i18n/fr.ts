@@ -260,6 +260,30 @@ export const fr = {
 
   repeatWorkout: "Refaire cette séance",
 
+  // About & privacy
+  aboutLink: "À propos et confidentialité",
+  aboutTitle: "À propos",
+  aboutIntro:
+    "Affluence Gym est une application étudiante non officielle : l'affluence des salles d'entraînement en direct, et de quoi suivre tes séances.",
+  aboutNumbersTitle: "D'où viennent les chiffres",
+  aboutNumbers: [
+    "Quand le compteur des tourniquets est branché : le nombre exact de personnes (entrées moins sorties), ou une estimation à partir des entrées, signalée comme telle.",
+    "Sinon : la moyenne des signalements des étudiants des 30 dernières minutes.",
+    "La semaine type et les prévisions viennent de l'historique, un relevé par quart d'heure.",
+  ],
+  aboutDataTitle: "Tes données",
+  aboutData: [
+    ["Séances, records, réglages", "Uniquement sur ce téléphone. Rien n'est envoyé ; la sauvegarde exportée reste chez toi."],
+    ["Signalements d'affluence", "Anonymes (identifiant aléatoire de l'appareil), effacés du serveur après 24 h."],
+    ["Signalements de pannes", "Anonymes, effacés après 8 jours."],
+    ["Alerte « salle calme »", "L'abonnement aux notifications est effacé dès l'envoi, ou à la fermeture de la salle."],
+    ["Historique d'affluence", "Un niveau par salle et par quart d'heure, sans aucun identifiant."],
+  ] as [string, string][],
+  aboutNever: "Aucun compte, aucun cookie, aucune statistique de visite, aucun service de suivi.",
+  aboutCodeTitle: "Code source",
+  aboutCode: "Le code est ouvert : chacun peut vérifier ce qui précède.",
+  aboutCodeLink: "Voir le code sur GitHub",
+
   // Typical week
   trendsDownload: "Télécharger les données (CSV)",
   trendsCsvHeader: ["salle", "jour", "heure", "niveau moyen (1-4)", "personnes en moyenne", "relevés"],

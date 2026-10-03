@@ -49,7 +49,7 @@ Ne pas demander d'accès à leur système : c'est eux qui envoient deux nombres.
 ## Objections probables et réponses
 
 **« Et la vie privée ? »**
-Aucun nom, numéro d'étudiant, numéro de carte ni détail par passage. Seulement deux totaux par salle, comme un agent qui compterait à la porte. Pas de compte utilisateur, pas de cookie, pas de statistiques de visite. Les séances d'entraînement restent sur le téléphone.
+Aucun nom, numéro d'étudiant, numéro de carte ni détail par passage. Seulement deux totaux par salle, comme un agent qui compterait à la porte. Pas de compte utilisateur, pas de cookie, pas de statistiques de visite. Les séances d'entraînement restent sur le téléphone. Même les signalements anonymes sont effacés après 24 h. Tout est expliqué dans l'écran « À propos et confidentialité » de l'appli : à montrer.
 
 **« Et la sécurité ? »**
 L'adresse d'envoi n'accepte que deux nombres, en HTTPS, avec une clé secrète propre à leur système, changeable à tout moment. L'appli ne se connecte à rien chez eux. Le code source est ouvert : leur équipe peut le lire.

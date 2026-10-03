@@ -3,6 +3,7 @@ import { TabBar } from "./components/TabBar";
 import { FACILITIES, TIMEZONE } from "./config";
 import { useLocale, useT } from "./i18n";
 import { ROUTES, useRoute } from "./router";
+import { AboutScreen } from "./screens/AboutScreen";
 import { ActiveWorkoutScreen } from "./screens/ActiveWorkoutScreen";
 import { EquipmentScreen } from "./screens/EquipmentScreen";
 import { ExerciseDetailScreen } from "./screens/ExerciseDetailScreen";
@@ -58,7 +59,7 @@ function Shell() {
     const id = decodeURIComponent(route.slice("/tendances/".length));
     const gym = FACILITIES.find((f) => f.id === id)?.id ?? FACILITIES[0].id;
     screen = <TrendsScreen gym={gym} />;
-  }
+  } else if (route === ROUTES.about) screen = <AboutScreen />;
   else screen = <OccupancyScreen />;
 
   return (
@@ -83,6 +84,8 @@ function Shell() {
       <main>{screen}</main>
       <footer className="app-footer">
         {t.footer}
+        {" · "}
+        <a href={`#${ROUTES.about}`}>{t.aboutLink}</a>
         {route === ROUTES.occupancy && (
           <>
             {" · "}

@@ -8,14 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import ALLOWED_ORIGINS, SNAPSHOT_ENABLED
 from .db import init_db
 from .routes import router
-from .scheduler import alerts_loop, snapshot_loop
+from .scheduler import alerts_loop, purge_loop, snapshot_loop
 
 init_db()
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    tasks = [asyncio.create_task(alerts_loop())]
+    tasks = [asyncio.create_task(alerts_loop()), asyncio.create_task(purge_loop())]
     if SNAPSHOT_ENABLED:
         tasks.append(asyncio.create_task(snapshot_loop()))
     yield

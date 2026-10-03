@@ -15,6 +15,7 @@ export const ROUTES = {
   trends: (gym: string) => `/tendances/${encodeURIComponent(gym)}`,
   /** Full-screen scoreboard for a TV at the gym entrance. */
   kiosk: "/ecran",
+  about: "/a-propos",
 } as const;
 
 function current(): string {

@@ -237,6 +237,30 @@ export const en: Messages = {
 
   repeatWorkout: "Repeat this workout",
 
+  // About & privacy
+  aboutLink: "About and privacy",
+  aboutTitle: "About",
+  aboutIntro:
+    "Affluence Gym is an unofficial student app: live occupancy of the gyms, and a way to track your workouts.",
+  aboutNumbersTitle: "Where the numbers come from",
+  aboutNumbers: [
+    "When the turnstile counter is connected: the exact number of people (entries minus exits), or an estimate from entries, labelled as such.",
+    "Otherwise: the average of students' reports over the last 30 minutes.",
+    "The typical week and the forecasts come from the history, one reading per quarter hour.",
+  ],
+  aboutDataTitle: "Your data",
+  aboutData: [
+    ["Workouts, records, settings", "Only on this phone. Nothing is sent; the exported backup stays with you."],
+    ["Occupancy reports", "Anonymous (random device id), erased from the server after 24 h."],
+    ["Broken machine reports", "Anonymous, erased after 8 days."],
+    ["Quiet-gym alert", "The notification subscription is erased as soon as it is sent, or when the gym closes."],
+    ["Occupancy history", "One level per gym and quarter hour, with no id at all."],
+  ] as [string, string][],
+  aboutNever: "No account, no cookies, no visit statistics, no tracking service.",
+  aboutCodeTitle: "Source code",
+  aboutCode: "The code is open: anyone can check the above.",
+  aboutCodeLink: "See the code on GitHub",
+
   // Typical week
   trendsDownload: "Download the data (CSV)",
   trendsCsvHeader: ["gym", "day", "hour", "average level (1-4)", "average people", "samples"],
