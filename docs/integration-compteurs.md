@@ -60,7 +60,9 @@ Les compteurs ne permettent de remonter à personne : ce sont des totaux, comme 
 ## Ce que la salle y gagne
 
 - Des étudiants qui choisissent les heures creuses, donc **moins de cohue aux heures de pointe**.
-- Un historique de fréquentation par quart d'heure, que nous pouvons vous **rendre sous forme de rapport** (jours et heures les plus chargés).
+- Un historique de fréquentation par quart d'heure, visible dans l'application sous forme de **semaine type** (grille jour × heure, créneaux les plus calmes et les plus chargés) : utile pour planifier le personnel et l'entretien.
+- Un **mode écran** prêt à afficher sur une télé à l'entrée ou sur l'écran du comptoir, avec un code QR vers l'application.
+- Une application **bilingue** (français et anglais).
 - Aucun travail de votre côté une fois l'envoi en place, et aucun coût.
 
 ## Questions pour vous
