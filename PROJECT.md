@@ -259,8 +259,12 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - **Purge automatique** (toutes les heures, `app/retention.py`) : signalements d'affluence effacés après 24 h, signalements de pannes après 8 jours, relevés des tourniquets après 2 jours, alertes expirées. Chaque durée dépasse l'usage de la donnée (fenêtre de 30 min, cooldowns, statut sur 7 jours), ce que vérifie un test. L'historique agrégé (un niveau par salle et par quart d'heure, sans identifiant) est conservé.
 - **Écran « À propos et confidentialité »** (`#/a-propos`, lien dans le pied de page de chaque écran) : d'où viennent les chiffres, où vit chaque donnée et combien de temps, lien vers le code source.
 
+### Phase 16 — Illustrations des exercices (fait, branche `illustrations`)
+- Chaque exercice (33) a un dessin original : un personnage en traits, position de départ et d'arrivée (une seule pour le gainage), avec le matériel (banc, barre, haltères, poulie, machine). Sur la fiche de l'exercice, et en vignette dans la bibliothèque.
+- Choix : dessins vectoriels générés à partir d'angles articulaires (`workouts/figures.ts` + `figure-poses.ts`) plutôt que des photos : mêmes proportions et même style partout, thème clair/sombre automatique, quelques Ko, aucun droit d'auteur ni image de l'université. Un test vérifie que chaque exercice a son dessin et que rien ne sort du cadre ; `FIGURE_GALLERY=fichier.html npx vitest run figures` produit une planche de tous les dessins pour les relire.
+
 ### Idées futures (hors périmètre actuel)
-Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
+- **Partenaires d'entraînement** (remis à après la démo, décision du porteur du projet le 2026-10-03). Option retenue pour plus tard : un tableau de créneaux anonyme (« je cherche un partenaire jambes, Minto, 18 h »), « Je viens », rendez-vous sur place avec un mot de code, annonce effacée après le créneau ; pas de compte ni de contact échangé.
 
 ## 7. Anti-abus et robustesse
 

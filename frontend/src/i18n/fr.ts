@@ -247,6 +247,13 @@ export const fr = {
   kioskQrLabel: "Code QR menant à l'application",
   kioskExit: "Quitter le mode écran",
 
+  // Exercise illustrations
+  figureStart: "Départ",
+  figureEnd: "Arrivée",
+  figureHold: "Position à tenir",
+  figureLabel: (name: string, panels: number) =>
+    panels > 1 ? `Illustration : ${name}, position de départ puis d'arrivée` : `Illustration : ${name}, position à tenir`,
+
   // Progress chart (exercise screen)
   progressTitle: "Progression",
   repsCount: (n: number) => (n <= 1 ? `${n} répétition` : `${n} répétitions`),

@@ -198,6 +198,86 @@
 .row-sub {
   display: block;
 }
+.row-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+/*
+ * Exercise illustrations: stick figures in the board's ink on the pale ground panel,
+ * equipment in slate. Themed through the tokens, so they invert at night.
+ */
+.exercise-figure {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--s2);
+  margin: 0;
+}
+.figure-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.figure-drawing,
+.exercise-thumb {
+  display: block;
+  border-radius: var(--corner-s);
+  background: var(--ground-2);
+}
+.figure-drawing {
+  width: 100%;
+  aspect-ratio: 100 / 92;
+}
+.exercise-thumb {
+  flex: none;
+  width: 48px;
+  height: 44px;
+}
+.figure-caption {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+}
+.figure-step {
+  display: inline-grid;
+  place-items: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--font-score);
+  font-weight: 700;
+}
+.fig-gear,
+.fig-limb,
+.fig-torso {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fig-gear {
+  stroke: var(--ink-2);
+  stroke-width: 2.5;
+}
+.fig-limb {
+  stroke: var(--ink);
+  stroke-width: 3.2;
+}
+.fig-torso {
+  stroke: var(--ink);
+  stroke-width: 4.2;
+}
+.fig-far {
+  opacity: 0.4;
+}
+.fig-head {
+  fill: var(--ink);
+}
+.fig-plate {
+  fill: var(--ink-2);
+}
 .row-title::first-letter {
   text-transform: uppercase;
 }

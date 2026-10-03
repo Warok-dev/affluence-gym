@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ExerciseFigure } from "../components/ExerciseFigure";
 import { BackIcon, PlusIcon } from "../components/icons";
 import { ProgressChart } from "../components/ProgressChart";
 import { useT } from "../i18n";
@@ -44,6 +45,7 @@ export function ExerciseDetailScreen({ id }: { id: string }) {
     <div className="workouts">
       {back}
       <h2 className="section-title">{exercise.name}</h2>
+      <ExerciseFigure id={id} name={exercise.name} />
       {guide && (
         <dl className="facts">
           <dt>{t.musclesLabel}</dt>

@@ -421,6 +421,9 @@ A real table: weekday abbreviations across (today in ink, bold), hours down (rig
 ### Progress Chart
 Above the session list on an exercise screen: a value line (current estimated 1RM in bold, change and workout count in small slate), then a 112px plot: one 2px ink line on a slate hairline base, 8px round dots (open, ground-filled; the latest one filled with ink), start and end dates under the axis. No colour beyond ink: progress is not "now" and not "the best choice".
 
+### Exercise Illustrations
+Stick figures drawn from joint angles: one proportion set for every exercise, side view facing right (front view only for the lateral raise). Head and near limbs in ink (torso 4.2, limbs 3.2, round caps), far limbs at 40 % opacity, equipment in slate (2.5, plates filled slate), on a ground-2 panel with 8px corners. The exercise screen shows two panels captioned with an ink-disc step number (1 Départ, 2 Arrivée); lists use the finish pose as a 48 × 44 thumbnail. No colour beyond the ink ramp: they invert at night with the tokens.
+
 ### Icons
 Authored inline SVG on a 24-unit grid with 2-unit round strokes in currentColor (check 20px, retry 18px). No icon font, no glyph icons. The set now includes board, dumbbell, book and wrench at 22px for the tab bar, and plus, minus, trash, back and bell at 18px inside buttons.
 
