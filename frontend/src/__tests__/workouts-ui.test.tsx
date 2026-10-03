@@ -58,14 +58,14 @@ describe("séances", () => {
 
     await addExercise(user, "couché", "Développé couché");
     expect(screen.getByText("Première fois : choisis une charge confortable.")).toBeInTheDocument();
-    const reps = screen.getByRole("spinbutton", { name: "Série 1 · Rép." });
-    const load = screen.getByRole("spinbutton", { name: "Série 1 · Charge (kg)" });
+    const reps = screen.getByRole("spinbutton", { name: "Développé couché · Série 1 · Rép." });
+    const load = screen.getByRole("spinbutton", { name: "Développé couché · Série 1 · Charge (kg)" });
     await user.clear(reps);
     await user.type(reps, "8");
     await user.clear(load);
     await user.type(load, "60");
 
-    await user.click(screen.getByRole("checkbox", { name: "Série 1 faite" }));
+    await user.click(screen.getByRole("checkbox", { name: "Développé couché · Série 1 faite" }));
     expect(screen.getByRole("timer", { name: "Repos restant : 1:30" })).toBeInTheDocument();
     await act(async () => {
       vi.advanceTimersByTime(30_000);
@@ -74,7 +74,7 @@ describe("séances", () => {
 
     // A new set copies the previous one; left unchecked, it is not saved.
     await user.click(screen.getByRole("button", { name: "Ajouter une série" }));
-    expect(screen.getByRole("spinbutton", { name: "Série 2 · Charge (kg)" })).toHaveValue(60);
+    expect(screen.getByRole("spinbutton", { name: "Développé couché · Série 2 · Charge (kg)" })).toHaveValue(60);
 
     await user.click(screen.getByRole("button", { name: "Terminer" }));
     expect(screen.getByText(/Les séries non cochées ne seront pas enregistrées/)).toBeInTheDocument();
@@ -118,7 +118,7 @@ describe("séances", () => {
     await user.click(screen.getByRole("button", { name: "Commencer une séance" }));
     await addExercise(user, "couché", "Développé couché");
     expect(screen.getByText("Dernière fois : 1 × 5 · 80 kg")).toBeInTheDocument();
-    expect(screen.getByRole("spinbutton", { name: "Série 1 · Charge (kg)" })).toHaveValue(80);
+    expect(screen.getByRole("spinbutton", { name: "Développé couché · Série 1 · Charge (kg)" })).toHaveValue(80);
   });
 
   it("affiche les charges en livres quand on choisit lb", async () => {

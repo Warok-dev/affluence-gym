@@ -86,3 +86,12 @@ export function MinusIcon() {
     </Icon>
   );
 }
+
+/** An open book: the exercise library. */
+export function BookIcon() {
+  return (
+    <Icon>
+      <path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5zM12 6v13" />
+    </Icon>
+  );
+}

@@ -7,6 +7,9 @@ export const ROUTES = {
   workouts: "/seances",
   activeWorkout: "/seances/en-cours",
   workout: (id: string) => `/seances/${encodeURIComponent(id)}`,
+  exercises: "/exercices",
+  exercise: (id: string) => `/exercices/${encodeURIComponent(id)}`,
+  program: (id: string) => `/programmes/${encodeURIComponent(id)}`,
 } as const;
 
 function current(): string {

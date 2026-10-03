@@ -211,8 +211,11 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - **Stockage uniquement sur l'appareil** : `localStorage` derrière une petite interface (`workouts/store.ts`), remplaçable par IndexedDB plus tard sans toucher aux écrans. Choisi plutôt qu'IndexedDB pour la simplicité et la testabilité ; le volume reste faible (environ 3 Ko par séance). Sauvegarde export/import JSON validée à l'import, fusion sans doublons, message clair si le stockage est plein ou bloqué.
 - Toutes les modifications de séance sont des mises à jour fonctionnelles : plusieurs taps rapides ne s'écrasent jamais (bug trouvé et corrigé pendant la vérification, test dédié).
 
-### Phase 7 — Exercices et programmes
-- Bibliothèque d'exercices (muscles, consignes, textes originaux) et programmes prêts à suivre, lançables dans le suivi.
+### Phase 7 — Exercices et programmes (fait, branche `phase-7-programs`)
+- Onglet « Exercices » : bibliothèque de 33 exercices filtrable par groupe et par recherche ; fiche (muscles, matériel, 3 à 4 étapes, l'erreur à éviter, rappel de prudence), ton record et tes 5 dernières séances, « Ajouter à la séance en cours ».
+- 4 programmes (débutant corps entier, force 5 × 5, haut/bas 4 jours, poids du corps) ; chaque jour se lance en un tap, séries préremplies avec les dernières charges ; impossible de lancer par-dessus une séance en cours.
+- Textes originaux (`workouts/guide.ts`, `workouts/programs.ts`), aucune image ; test d'intégrité : chaque exercice a sa fiche, chaque programme ne cite que des exercices existants.
+- Accessibilité : les champs de séries portent le nom de l'exercice (« Squat · Série 2 · Charge »), pour rester uniques avec plusieurs exercices.
 
 ### Phase 8 — État des équipements
 - Signalements participatifs « en panne / réparée » par machine et par salle (liste provisoire à corriger), même anti-abus que l'affluence.

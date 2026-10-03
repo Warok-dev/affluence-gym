@@ -4,25 +4,9 @@ import { useT } from "../i18n";
 import { navigate, ROUTES } from "../router";
 import { EXERCISES, getExercise, MUSCLE_GROUPS, searchExercises } from "../workouts/exercises";
 import { durationMs, formatDuration, fromUnit, lastPerformance } from "../workouts/stats";
-import type { WeightUnit, WorkoutSet } from "../workouts/types";
+import { inputValue, summarizeSets } from "../workouts/format";
+import type { WorkoutSet } from "../workouts/types";
 import { useWorkouts } from "../workouts/WorkoutsContext";
-
-/** Precise enough for input fields (no 0.5 rounding while typing). */
-function inputValue(kg: number, unit: WeightUnit): number {
-  return unit === "lb" ? Math.round(kg * 2.2046226218 * 10) / 10 : Math.round(kg * 100) / 100;
-}
-
-/** "3 × 8 · 60 kg" when all sets match, else "8 × 60 kg, 6 × 62,5 kg". */
-export function summarizeSets(sets: WorkoutSet[], unit: WeightUnit): string {
-  const fmt = (s: WorkoutSet) =>
-    s.weightKg > 0 ? `${inputValue(s.weightKg, unit).toLocaleString("fr-CA")} ${unit}` : null;
-  const same = sets.every((s) => s.reps === sets[0].reps && s.weightKg === sets[0].weightKg);
-  if (same) {
-    const w = fmt(sets[0]);
-    return `${sets.length} × ${sets[0].reps}${w ? ` · ${w}` : ""}`;
-  }
-  return sets.map((s) => `${s.reps}${fmt(s) ? ` × ${fmt(s)}` : ""}`).join(", ");
-}
 
 export function ActiveWorkoutScreen() {
   const t = useT();
@@ -103,6 +87,7 @@ export function ActiveWorkoutScreen() {
 
       {active.exercises.map((entry) => {
         const exercise = getExercise(entry.exerciseId);
+        const name = exercise?.name ?? entry.exerciseId;
         const last = lastPerformance(workouts, entry.exerciseId);
         return (
           <section key={entry.id} className="exercise" aria-label={exercise?.name ?? entry.exerciseId}>
@@ -138,7 +123,7 @@ export function ActiveWorkoutScreen() {
                     <td className="set-number">{i + 1}</td>
                     <td>
                       <NumberField
-                        label={`${t.setLabel} ${i + 1} · ${t.repsLabel}`}
+                        label={`${name} · ${t.setLabel} ${i + 1} · ${t.repsLabel}`}
                         value={set.reps}
                         step={1}
                         onChange={(reps) => updateSet(entry.id, i, { reps: Math.round(reps) })}
@@ -146,7 +131,7 @@ export function ActiveWorkoutScreen() {
                     </td>
                     <td>
                       <NumberField
-                        label={`${t.setLabel} ${i + 1} · ${t.weightLabel(settings.unit)}`}
+                        label={`${name} · ${t.setLabel} ${i + 1} · ${t.weightLabel(settings.unit)}`}
                         value={inputValue(set.weightKg, settings.unit)}
                         step={settings.unit === "lb" ? 5 : 2.5}
                         placeholder={exercise?.bodyweight ? t.bodyweight : undefined}
@@ -159,7 +144,7 @@ export function ActiveWorkoutScreen() {
                         className="check"
                         role="checkbox"
                         aria-checked={set.done}
-                        aria-label={t.doneLabel(i + 1)}
+                        aria-label={`${name} · ${t.doneLabel(i + 1)}`}
                         onClick={() => toggleDone(entry.id, i, set)}
                       >
                         {set.done && <CheckIcon />}
@@ -169,7 +154,7 @@ export function ActiveWorkoutScreen() {
                       <button
                         type="button"
                         className="icon-button"
-                        aria-label={t.removeSet(i + 1)}
+                        aria-label={`${name} · ${t.removeSet(i + 1)}`}
                         onClick={() => removeSet(entry.id, i)}
                       >
                         <TrashIcon />
