@@ -16,6 +16,19 @@ const apiProxy = {
 // Hosts of a Cloudflare quick tunnel, used to get HTTPS on a phone (see README).
 const allowedHosts = [".trycloudflare.com"];
 
+// Same security headers as production (render.yaml, nginx.conf.template), so that
+// `npm run preview` shows any break they cause. Inline styles are allowed for React's
+// computed sizes (chart bars, dots); scripts only from the site itself.
+const securityHeaders = {
+  "Content-Security-Policy":
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; " +
+    "font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; " +
+    "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "no-referrer",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+};
+
 export default defineConfig({
   plugins: [
     react(),
@@ -49,7 +62,7 @@ export default defineConfig({
     }),
   ],
   server: { host: true, proxy: apiProxy, allowedHosts },
-  preview: { host: true, proxy: apiProxy, allowedHosts },
+  preview: { host: true, proxy: apiProxy, allowedHosts, headers: securityHeaders },
   test: {
     environment: "jsdom",
     setupFiles: ["./src/setupTests.ts"],
