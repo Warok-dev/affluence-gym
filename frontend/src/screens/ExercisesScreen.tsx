@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { ExerciseThumb } from "../components/ExerciseFigure";
 import { useT } from "../i18n";
 import { ROUTES } from "../router";
 import { useContent } from "../workouts/content";
@@ -72,7 +73,8 @@ export function ExercisesScreen() {
             {list.map((e) => (
               <li key={e.id}>
                 <a className="row row-link" href={`#${ROUTES.exercise(e.id)}`}>
-                  <span className="row-title">{e.name}</span>
+                  <ExerciseThumb id={e.id} />
+                  <span className="row-title row-grow">{e.name}</span>
                   <span className="row-sub">{t.groups[e.group]}</span>
                 </a>
               </li>

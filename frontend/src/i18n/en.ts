@@ -224,6 +224,13 @@ export const en: Messages = {
   kioskQrLabel: "QR code linking to the app",
   kioskExit: "Leave screen mode",
 
+  // Exercise illustrations
+  figureStart: "Start",
+  figureEnd: "Finish",
+  figureHold: "Hold this position",
+  figureLabel: (name: string, panels: number) =>
+    panels > 1 ? `Illustration: ${name}, start then finish position` : `Illustration: ${name}, position to hold`,
+
   // Progress chart (exercise screen)
   progressTitle: "Progress",
   repsCount: (n: number) => (n === 1 ? `${n} rep` : `${n} reps`),

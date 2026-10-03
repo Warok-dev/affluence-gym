@@ -10,3 +10,7 @@ dist/
 # Impeccable session artifacts (decision-page logs, review screenshots)
 .impeccable/questions/
 .impeccable/review/
+
+# Exercise figure review sheet (FIGURE_GALLERY)
+frontend/galerie.html
+frontend/figures-gallery.html

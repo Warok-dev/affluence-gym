@@ -208,6 +208,15 @@ Depuis le détail d'une séance passée, **« Refaire cette séance »** en dém
 - 4 programmes prêts à suivre : un tap sur un jour ouvre une séance préremplie avec tes dernières charges.
 - Contenu dans `frontend/src/workouts/guide.ts` et `programs.ts` (textes originaux, à relire et enrichir librement).
 
+### Illustrations
+
+Chaque exercice est illustré (position de départ et d'arrivée) sur sa fiche, et en vignette dans la bibliothèque. Ce sont des dessins originaux générés par le code (`frontend/src/workouts/figure-poses.ts`) : pour corriger une pose, on modifie ses angles, puis on relit la planche :
+
+```powershell
+cd frontend
+$env:FIGURE_GALLERY="$PWD\galerie.html"; npx vitest run figures
+```
+
 ### Progression
 
 Sur la fiche d'un exercice, une courbe montre l'évolution du **1RM estimé** (ou des répétitions pour les exercices au poids du corps) sur tes 12 dernières séances, avec l'écart depuis la première. Elle apparaît dès la 2e séance avec l'exercice.
