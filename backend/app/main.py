@@ -29,7 +29,8 @@ app = FastAPI(title="Affluence Gym API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    # DELETE + X-Alert-Token: cancelling a quiet-gym alert from the site's own origin.
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Content-Type", "X-Alert-Token"],
 )
 app.include_router(router)

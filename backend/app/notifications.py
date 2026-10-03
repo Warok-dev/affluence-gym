@@ -12,6 +12,7 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
+from urllib.parse import urlsplit
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
@@ -29,6 +30,18 @@ QUIET_MAX_LEVEL = 2  # Calme or Vide
 
 def enabled() -> bool:
     return bool(config.VAPID_PUBLIC_KEY and config.VAPID_PRIVATE_KEY and config.VAPID_SUBJECT)
+
+
+# Push services of the major browsers (Chrome/Android, Firefox, Safari/iOS, Edge).
+PUSH_SERVICE_HOSTS = ("fcm.googleapis.com", "push.services.mozilla.com", "push.apple.com", "notify.windows.com")
+
+
+def is_push_service(endpoint: str) -> bool:
+    parts = urlsplit(endpoint)
+    host = (parts.hostname or "").lower()
+    if parts.scheme != "https" or parts.port not in (None, 443):
+        return False
+    return any(host == h or host.endswith("." + h) for h in PUSH_SERVICE_HOSTS)
 
 
 def hash_token(token: str) -> str:

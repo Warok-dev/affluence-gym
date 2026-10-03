@@ -264,6 +264,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `OFFICIAL_API_KEY` | backend | *(vide)* | Clé secrète du système de compteurs de l'université ; vide = réception désactivée |
 | `OFFICIAL_STALE_SECONDS` | backend | `600` | Au-delà, un compteur silencieux est ignoré (retour aux signalements) |
 | `AVERAGE_STAY_MINUTES` | backend | `75` | Durée moyenne d'une visite, pour l'estimation sans compteur de sortie |
+| `WRITE_RATE_LIMIT` / `WRITE_RATE_WINDOW_SECONDS` | backend | `120` / `600` | Écritures maximales par adresse IP et par fenêtre (anti-abus) |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | backend | *(vide)* | Clés Web Push (`scripts/generate_vapid_keys.py`) ; vides = notifications désactivées |
 | `VAPID_SUBJECT` | backend | *(vide)* | Contact exigé par le protocole Web Push, ex. `mailto:toi@exemple.com` |
 | `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
