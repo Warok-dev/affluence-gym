@@ -246,6 +246,10 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Écran `#/tendances/<salle>` (lien « Voir la semaine type » sous « Quand y aller aujourd'hui ») : grille jour × heure, plus foncé = plus chargé (encre mélangée au fond, suit le thème), le créneau le plus calme de la semaine encadré d'ambre, l'heure actuelle encadrée de rouge, phrases « Le plus calme » / « Le plus chargé ». Tableau HTML réel : lisible au lecteur d'écran, cellule par cellule.
 - Argument pour le service des sports : c'est ce que leurs compteurs révéleraient pour planifier le personnel et l'entretien.
 
+### Phase 13 — Courbe de progression (fait, branche `phase-13-progression`)
+- Sur l'écran d'un exercice, sous « Tes dernières séances » : une courbe par séance terminée (12 dernières), le 1RM estimé (Epley) pour les exercices chargés, sinon la meilleure série en répétitions (poids du corps, cardio). Valeur actuelle et écart depuis la première séance affichée. Calcul local, rien n'est envoyé.
+- Choix : abscisse par séance et non par date (lisible même avec des trous de plusieurs semaines) ; les dates de début et de fin sont sous l'axe.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

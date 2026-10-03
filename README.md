@@ -194,6 +194,10 @@ Le code QR pointe vers l'adresse utilisée par l'écran. Pour la démo, ouvre do
 - 4 programmes prêts à suivre : un tap sur un jour ouvre une séance préremplie avec tes dernières charges.
 - Contenu dans `frontend/src/workouts/guide.ts` et `programs.ts` (textes originaux, à relire et enrichir librement).
 
+### Progression
+
+Sur la fiche d'un exercice, une courbe montre l'évolution du **1RM estimé** (ou des répétitions pour les exercices au poids du corps) sur tes 12 dernières séances, avec l'écart depuis la première. Elle apparaît dès la 2e séance avec l'exercice.
+
 ## État des équipements (onglet Matériel)
 
 - Chaque salle liste ses machines avec leur état signalé par les étudiants : « En panne », « Fonctionne » ou « Non signalé » (signalement le plus récent des 7 derniers jours).
