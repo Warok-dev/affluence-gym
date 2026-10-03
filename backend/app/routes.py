@@ -1,17 +1,17 @@
 import hmac
 import time
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from . import config
+from . import config, equipment
 from . import history as hist
 from .config import COOLDOWN_SECONDS, DEMO_DATA, LABELS, TIMEZONE
-from .db import OfficialCount, Report, get_session
+from .db import EquipmentReport, OfficialCount, Report, get_session
 from .facilities import FACILITIES
 from .forecast.service import forecast, forecast_service
 from .sources import source
@@ -152,5 +152,47 @@ def post_counts(facility: FacilityDep, counts: CountsIn, session: SessionDep):
     if ts > now + 60 or ts < now - 86_400:
         raise HTTPException(422, "Horodatage hors de la fenêtre acceptée (dernières 24 h)")
     session.add(OfficialCount(facility=facility, ts=ts, entries=counts.entries, exits=counts.exits))
+    session.commit()
+    return {"status": "enregistré"}
+
+
+class EquipmentReportIn(BaseModel):
+    status: Literal["broken", "ok"]
+    client_id: str = Field(min_length=8, max_length=64)  # same anonymous id as crowd reports
+
+
+@router.get("/equipment/{facility}")
+def get_equipment(facility: FacilityDep, session: SessionDep):
+    """Each machine with its crowd-reported status (latest report of the last 7 days)."""
+    items = equipment.statuses(session, facility, int(time.time()))
+    return {
+        "facility": facility,
+        "window_days": equipment.STATUS_WINDOW_SECONDS // 86400,
+        "machines": [
+            {
+                "id": s.machine.id,
+                "name": s.machine.name,
+                "category": s.machine.category,
+                "status": s.status,
+                "since_ts": s.since_ts,
+                "reports": s.reports,
+            }
+            for s in items
+        ],
+    }
+
+
+@router.post("/equipment/{facility}/{machine_id}/reports", status_code=201)
+def report_equipment(facility: FacilityDep, machine_id: str, report: EquipmentReportIn, session: SessionDep):
+    if equipment.find_machine(facility, machine_id) is None:
+        raise HTTPException(404, "Machine inconnue")
+    now = int(time.time())
+    if equipment.recently_reported(session, facility, machine_id, report.client_id, now):
+        raise HTTPException(429, "Tu as déjà signalé cette machine récemment")
+    session.add(
+        EquipmentReport(
+            facility=facility, equipment_id=machine_id, status=report.status, client_id=report.client_id, ts=now
+        )
+    )
     session.commit()
     return {"status": "enregistré"}

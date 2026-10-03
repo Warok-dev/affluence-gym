@@ -70,6 +70,7 @@ Les compteurs ne permettent de remonter à personne : ce sont des totaux, comme 
 3. Quelle façon de transmettre les nombres vous convient le mieux (1, 2 ou 3) ?
 4. Quelles sont les heures d'ouverture exactes, et les périodes d'examens à connaître ?
 5. Souhaitez-vous que l'application porte une mention particulière, ou reste clairement « non officielle » ?
+6. Pouvez-vous nous transmettre la **liste des machines** de chaque salle ? L'application permet aux étudiants de signaler une machine en panne ; votre liste remplacerait notre liste provisoire, et nous pouvons vous transmettre ces signalements.
 
 ## Démonstration
 

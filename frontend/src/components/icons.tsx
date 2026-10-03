@@ -95,3 +95,12 @@ export function BookIcon() {
     </Icon>
   );
 }
+
+/** A wrench: equipment status. */
+export function WrenchIcon() {
+  return (
+    <Icon>
+      <path d="M14.5 6.5a4 4 0 0 0 5 5L20 12l-8.5 8.5a2.1 2.1 0 0 1-3-3L17 9l.5-.5a4 4 0 0 0-3-5z" />
+    </Icon>
+  );
+}

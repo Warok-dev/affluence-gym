@@ -517,3 +517,33 @@
 .day-start:disabled {
   cursor: not-allowed;
 }
+
+/* ---------- Equipment ---------- */
+
+.equipment-summary {
+  font-weight: 700;
+}
+.machine-row {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--ground-2);
+  background: none;
+  text-align: left;
+}
+.machine-status {
+  flex: none;
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  text-align: right;
+}
+/* Broken is stamped in reverse (red stays "now", amber stays "best choice"). */
+.machine-status.is-broken {
+  padding: 2px var(--s2);
+  border-radius: 4px;
+  background: var(--board);
+  color: var(--on-board);
+  font-weight: 600;
+}
+.machine-actions {
+  padding: var(--s2) 0 var(--s3);
+}

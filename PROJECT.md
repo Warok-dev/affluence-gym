@@ -217,8 +217,11 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Textes originaux (`workouts/guide.ts`, `workouts/programs.ts`), aucune image ; test d'intégrité : chaque exercice a sa fiche, chaque programme ne cite que des exercices existants.
 - Accessibilité : les champs de séries portent le nom de l'exercice (« Squat · Série 2 · Charge »), pour rester uniques avec plusieurs exercices.
 
-### Phase 8 — État des équipements
-- Signalements participatifs « en panne / réparée » par machine et par salle (liste provisoire à corriger), même anti-abus que l'affluence.
+### Phase 8 — État des équipements (fait, branche `phase-8-equipment`)
+- `GET /equipment/{salle}` (chaque machine : `status` broken/ok/unknown, `since_ts`, `reports`) et `POST /equipment/{salle}/{machine}/reports` (`{status, client_id}` ; 404 machine inconnue, 422, 429 si la même personne a signalé la même machine il y a moins de 30 min). Table `equipment_reports` (migration 0003).
+- Règle : l'état d'une machine est le signalement le plus récent des 7 derniers jours, sinon « non signalé ».
+- Liste des machines **provisoire** (`backend/app/equipment.py`), à remplacer par la liste réelle du service des sports.
+- Onglet « Matériel » : onglets par salle, résumé des pannes, machines par catégorie, signalement en un tap, tampon « En panne » (le rouge reste réservé à « maintenant », l'ambre au meilleur choix).
 
 ### Phase 9 — Notifications
 - Push PWA : « la salle se vide », rappel du créneau calme. Abonnement push = identifiant technique d'appareil, sans identité. iOS : seulement si l'appli est installée.

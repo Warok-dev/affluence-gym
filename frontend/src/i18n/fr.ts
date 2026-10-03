@@ -26,6 +26,8 @@ export const fr = {
   reportsCount: (n: number) => (n <= 1 ? `${n} signalement` : `${n} signalements`),
   justNow: "à l'instant",
   minutesAgo: (m: number) => `il y a ${m} min`,
+  hoursAgo: (h: number) => `il y a ${h} h`,
+  daysAgo: (d: number) => `il y a ${d} j`,
   lastReport: (ago: string) => `dernier ${ago}`,
   noReports: "Aucun signalement depuis 30 min",
   beFirst: "Sois le premier à signaler",
@@ -195,6 +197,24 @@ export const fr = {
   exerciseNotFound: "Cet exercice n'existe pas.",
   levelLabel: "Niveau",
   frequencyLabel: "Fréquence",
+  // Equipment
+  tabEquipment: "Matériel",
+  equipmentTitle: "Équipements",
+  equipmentIntro: (days: number) =>
+    `État signalé par les étudiants : on garde le signalement le plus récent des ${days} derniers jours.`,
+  brokenCount: (n: number) =>
+    n === 0 ? "Aucune machine signalée en panne." : n === 1 ? "1 machine signalée en panne" : `${n} machines signalées en panne`,
+  categories: { cardio: "Cardio", "free-weights": "Poids libres", machines: "Machines" },
+  statusBroken: "En panne",
+  statusOk: "Fonctionne",
+  statusUnknown: "Non signalé",
+  statusSince: (status: string, ago: string) => `${status} · signalé ${ago}`,
+  reportBroken: "Signaler en panne",
+  reportFixed: "Signaler réparée",
+  reportThanks: "Merci, c'est noté.",
+  equipmentCooldown: "Tu as déjà signalé cette machine il y a moins de 30 min.",
+  equipmentUnavailable: "Impossible de charger l'état des machines pour le moment.",
+  machineActions: (name: string) => `Signaler l'état : ${name}`,
 };
 
 export type Messages = typeof fr;
