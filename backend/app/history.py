@@ -82,3 +82,49 @@ def profile(session: Session, facility: str, weekday: int, weeks: int, now: int)
         calm = avg is not None and avg <= CALM_MAX_LEVEL and len(levels) >= MIN_SAMPLES
         result.append(HourProfile(hour=hour, level=avg, samples=len(levels), calm=calm))
     return result
+
+
+@dataclass(frozen=True)
+class TrendHour:
+    hour: int
+    level: float | None  # average level over the sampled weeks
+    samples: int
+    people: float | None  # average head count, when the turnstile counter fed the snapshots
+
+
+@dataclass(frozen=True)
+class TrendDay:
+    weekday: int
+    opening_hours: tuple[str, str] | None
+    hours: list[TrendHour]
+
+
+def week_trends(session: Session, facility: str, weeks: int, now: int) -> list[TrendDay]:
+    """The typical week: average level (and head count) per weekday and opening hour,
+    over the last `weeks` weeks, in one pass over the snapshots."""
+    levels: dict[tuple[int, int], list[int]] = {}
+    people: dict[tuple[int, int], list[int]] = {}
+    for snap in history(session, facility, weeks * 7, now):
+        local = datetime.fromtimestamp(snap.ts, TIMEZONE)
+        key = (local.weekday(), local.hour)
+        levels.setdefault(key, []).append(snap.level)
+        if snap.people is not None:
+            people.setdefault(key, []).append(snap.people)
+    days = []
+    for weekday in range(7):
+        hours = FACILITIES[facility].opening_hours[weekday]
+        row = []
+        if hours is not None:
+            for hour in opening_hour_range(*hours):
+                lv = levels.get((weekday, hour), [])
+                pp = people.get((weekday, hour), [])
+                row.append(
+                    TrendHour(
+                        hour=hour,
+                        level=round(sum(lv) / len(lv), 2) if lv else None,
+                        samples=len(lv),
+                        people=round(sum(pp) / len(pp), 1) if pp else None,
+                    )
+                )
+        days.append(TrendDay(weekday=weekday, opening_hours=hours, hours=row))
+    return days

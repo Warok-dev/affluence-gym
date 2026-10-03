@@ -561,6 +561,95 @@ button:disabled {
   font-size: var(--fs-s);
 }
 
+.trends-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: var(--s2);
+}
+
+/* ---------- Typical week ---------- */
+
+.trends .tabs {
+  margin-top: 0;
+}
+.trends-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.trends-busiest {
+  font-weight: 700;
+}
+/*
+ * Day × hour grid. Busier is darker: the ink mixed into the ground, so the ramp
+ * follows the theme. Amber frames the week's quietest slot; red frames "now".
+ */
+.week-grid {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 2px;
+  font-size: var(--fs-s);
+  font-variant-numeric: tabular-nums;
+}
+.week-grid th {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.week-grid thead th {
+  padding-bottom: var(--s1);
+}
+.week-grid thead th.is-today {
+  color: var(--ink);
+  font-weight: 700;
+}
+.week-grid abbr {
+  text-decoration: none;
+}
+.week-grid tbody th {
+  width: 3.5em;
+  padding-right: var(--s1);
+  text-align: right;
+  white-space: nowrap;
+}
+.week-grid td {
+  height: 22px;
+  padding: 0;
+  border-radius: 3px;
+}
+.week-grid td.is-empty {
+  outline: 1px dashed var(--bar);
+  outline-offset: -1px;
+}
+.lvl-1 {
+  background: color-mix(in srgb, var(--ink) 12%, var(--ground));
+}
+.lvl-2 {
+  background: color-mix(in srgb, var(--ink) 32%, var(--ground));
+}
+.lvl-3 {
+  background: color-mix(in srgb, var(--ink) 58%, var(--ground));
+}
+.lvl-4 {
+  background: color-mix(in srgb, var(--ink) 88%, var(--ground));
+}
+.week-grid td.is-best,
+.key-best {
+  box-shadow: inset 0 0 0 3px var(--amber);
+}
+.week-grid td.is-now,
+.key-now-cell {
+  outline: 2px solid var(--red);
+  outline-offset: -2px;
+}
+.trends-legend .key {
+  width: 14px;
+  height: 14px;
+}
+.trends-empty {
+  margin-top: var(--s4);
+}
+
 /* ---------- Loading ---------- */
 
 .skeleton-line,

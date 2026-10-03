@@ -2,6 +2,7 @@ import { useId, useRef, type KeyboardEvent } from "react";
 import type { Forecast, NotificationsConfig, Profile } from "../api";
 import { FACILITIES, type FacilityId } from "../config";
 import { useT } from "../i18n";
+import { ROUTES } from "../router";
 import { QuietAlert } from "./QuietAlert";
 import { TypicalDay } from "./TypicalDay";
 
@@ -78,6 +79,9 @@ export function DayPanel({ selected, onSelect, profiles, forecasts, settled, now
             <span className="sr-only">{t.loadingHistory}</span>
           </div>
         )}
+        <a className="inline-link trends-link" href={`#${ROUTES.trends(selected)}`}>
+          {t.trendsLink}
+        </a>
       </div>
       <QuietAlert
         key={selected}

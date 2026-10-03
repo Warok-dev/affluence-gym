@@ -246,6 +246,18 @@ export const fr = {
   kioskScanHint: "Scanne le code avec l'appareil photo de ton téléphone.",
   kioskQrLabel: "Code QR menant à l'application",
   kioskExit: "Quitter le mode écran",
+
+  // Typical week
+  trendsLink: "Voir la semaine type",
+  trendsTitle: "Semaine type",
+  trendsCaption: (gym: string) => `Affluence moyenne de ${gym} par jour et par heure`,
+  trendsSlot: (day: string, hour: string) => `${day} vers ${hour}`,
+  trendsPeople: (n: number) => `≈ ${n} personnes`,
+  trendsQuietest: (slot: string) => `Le plus calme : ${slot}`,
+  trendsBusiest: (slot: string) => `Le plus chargé : ${slot}`,
+  trendsQuietestKey: "Le plus calme de la semaine",
+  trendsEmpty: "Pas encore assez d'historique pour dessiner la semaine type.",
+  trendsUnavailable: "Semaine type indisponible pour le moment.",
 };
 
 export type Messages = typeof fr;

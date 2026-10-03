@@ -109,6 +109,26 @@ def get_profile(
     }
 
 
+@router.get("/trends/{facility}")
+def get_trends(facility: FacilityDep, session: SessionDep, weeks: Annotated[int, Query(ge=1, le=52)] = 8):
+    """The typical week: average level per weekday and opening hour over the last `weeks` weeks."""
+    days = hist.week_trends(session, facility, weeks, int(time.time()))
+    return {
+        "facility": facility,
+        "weeks": weeks,
+        "timezone": str(TIMEZONE),
+        "capacity": FACILITIES[facility].capacity,
+        "days": [
+            {
+                "weekday": d.weekday,
+                "opening_hours": {"open": d.opening_hours[0], "close": d.opening_hours[1]} if d.opening_hours else None,
+                "hours": [vars(h) for h in d.hours],
+            }
+            for d in days
+        ],
+    }
+
+
 @router.get("/forecast/{facility}")
 def get_forecast(facility: FacilityDep, session: SessionDep, hours: Annotated[int, Query(ge=1, le=48)] = 12):
     """Predicted level for the next `hours` whole hours when the gym is open."""
