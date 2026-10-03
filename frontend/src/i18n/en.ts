@@ -237,6 +237,14 @@ export const en: Messages = {
 
   repeatWorkout: "Repeat this workout",
 
+  // Install hint
+  installTitle: "Add the app to your home screen",
+  installWhy: "It then opens full screen, like a real app, and your workouts work offline.",
+  installIosShare: "Tap Safari's Share button (the square with an arrow).",
+  installIosAdd: "Choose “Add to Home Screen”. Quiet-gym notifications then work.",
+  installButton: "Install",
+  installLater: "Later",
+
   // About & privacy
   aboutLink: "About and privacy",
   aboutTitle: "About",

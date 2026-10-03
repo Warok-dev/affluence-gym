@@ -13,6 +13,7 @@ import {
 import { DayPanel } from "../components/DayPanel";
 import { GymColumn, isOpenNow } from "../components/GymColumn";
 import { RetryIcon } from "../components/icons";
+import { InstallHint } from "../components/InstallHint";
 import { FACILITIES, PROFILE_REFRESH_MS, REFRESH_MS, WAKING_AFTER_MS, type FacilityId } from "../config";
 import { useT } from "../i18n";
 import { quieterIndex } from "../levels";
@@ -174,6 +175,8 @@ export function OccupancyScreen() {
         levels={Object.fromEntries(FACILITIES.map((f, i) => [f.id, levels[i]]))}
         notifications={notifications}
       />
+
+      <InstallHint />
     </>
   );
 }

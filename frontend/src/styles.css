@@ -568,6 +568,36 @@ button:disabled {
   margin-top: var(--s2);
 }
 
+/* ---------- Install hint ---------- */
+
+/* A quiet block under the day panel: blue rule on top like the other sections, no card. */
+.install {
+  margin-top: var(--s6);
+  padding-top: var(--s3);
+  border-top: 2px solid var(--blue);
+}
+.install-title {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.install p,
+.install-steps {
+  margin: var(--s2) 0 0;
+  font-size: var(--fs-s);
+}
+.install-steps {
+  padding-left: 1.4em;
+}
+.install-steps li + li {
+  margin-top: var(--s1);
+}
+.install .button-row {
+  margin-top: var(--s3);
+}
+
 /* ---------- Typical week ---------- */
 
 .trends .tabs {
