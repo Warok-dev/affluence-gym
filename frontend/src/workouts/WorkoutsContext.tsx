@@ -23,6 +23,8 @@ interface WorkoutsApi {
   start: (gym?: string) => void;
   /** Starts a workout prefilled with a program day (loads from the last performance). */
   startProgramDay: (items: ProgramItem[]) => void;
+  /** Starts a workout with the same exercises, sets, reps and loads as a past one. */
+  repeatWorkout: (workout: Workout) => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (entryId: string) => void;
   addSet: (entryId: string) => void;
@@ -92,6 +94,17 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
               sets: Array.from({ length: item.sets }, () => ({ reps: item.reps, weightKg, done: false })),
             };
           }),
+        }),
+      repeatWorkout: (past) =>
+        setActive({
+          id: newId(),
+          startedAt: Date.now(),
+          gym: past.gym,
+          exercises: past.exercises.map((e) => ({
+            id: newId(),
+            exerciseId: e.exerciseId,
+            sets: e.sets.map((s) => ({ reps: s.reps, weightKg: s.weightKg, done: false })),
+          })),
         }),
       addExercise: (exerciseId) =>
         editActive((w) => {

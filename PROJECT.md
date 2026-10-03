@@ -250,6 +250,10 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Sur l'écran d'un exercice, sous « Tes dernières séances » : une courbe par séance terminée (12 dernières), le 1RM estimé (Epley) pour les exercices chargés, sinon la meilleure série en répétitions (poids du corps, cardio). Valeur actuelle et écart depuis la première séance affichée. Calcul local, rien n'est envoyé.
 - Choix : abscisse par séance et non par date (lisible même avec des trous de plusieurs semaines) ; les dates de début et de fin sont sous l'axe.
 
+### Phase 14 — Refaire une séance, export CSV (fait, branche `phase-14-repeter`)
+- « Refaire cette séance » sur le détail d'une séance passée : nouvelle séance avec les mêmes exercices, séries, répétitions et charges, toutes à cocher (même salle). Si une séance est en cours, lien vers elle à la place.
+- « Télécharger les données (CSV) » sous la semaine type : une ligne par heure d'ouverture (salle, jour, heure, niveau moyen, personnes en moyenne, relevés). Séparateur `;`, BOM UTF-8 et décimales selon la langue, pour qu'Excel l'ouvre directement. Généré dans le navigateur.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

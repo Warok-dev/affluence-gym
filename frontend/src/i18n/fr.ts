@@ -258,7 +258,11 @@ export const fr = {
   progressChartLabel: (n: number, first: string, last: string, from: string, to: string) =>
     `Progression sur ${n} séances, du ${first} au ${last} : de ${from} à ${to}`,
 
+  repeatWorkout: "Refaire cette séance",
+
   // Typical week
+  trendsDownload: "Télécharger les données (CSV)",
+  trendsCsvHeader: ["salle", "jour", "heure", "niveau moyen (1-4)", "personnes en moyenne", "relevés"],
   trendsLink: "Voir la semaine type",
   trendsTitle: "Semaine type",
   trendsCaption: (gym: string) => `Affluence moyenne de ${gym} par jour et par heure`,
