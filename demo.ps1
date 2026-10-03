@@ -59,5 +59,18 @@ if ($ip) {
     Write-Host "  Mode écran (télé, F11) : http://${ip}:5173/#/ecran"
 }
 Write-Host "Pour arrêter : ferme les trois fenêtres PowerShell ouvertes."
+
+# Hors des heures d'ouverture (provisoires, backend/app/facilities.py), l'appli affiche
+# « Fermé » malgré le simulateur : c'est normal, mais déroutant pendant une répétition.
+$local = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, "Eastern Standard Time")
+$weekend = $local.DayOfWeek -in @([DayOfWeek]::Saturday, [DayOfWeek]::Sunday)
+$minutes = $local.Hour * 60 + $local.Minute
+$open = if ($weekend) { 8 * 60 } else { 6 * 60 + 30 }
+$close = if ($weekend) { 20 * 60 } else { 23 * 60 }
+if ($minutes -lt $open -or $minutes -ge $close) {
+    Write-Host ""
+    Write-Host ("Attention : il est {0:HH\:mm} à Toronto, les salles sont fermées. L'appli affichera « Fermé » ;" -f $local) -ForegroundColor Yellow
+    Write-Host "le mode écran, la semaine type, les séances et le matériel restent démontrables." -ForegroundColor Yellow
+}
 Start-Sleep -Seconds 8
 Start-Process "http://localhost:5173"
