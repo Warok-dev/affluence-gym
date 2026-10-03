@@ -105,6 +105,24 @@ describe("mode écran", () => {
     expect(screen.getByRole("region", { name: /^Minto : 94/ })).toBeInTheDocument();
   });
 
+  it("alterne le français et l'anglais sans toucher aux chiffres", async () => {
+    renderApp();
+    await screen.findByRole("region", { name: /^Minto : 94 personnes · Bondé/ });
+    expect(screen.getByTestId("kiosk")).toHaveAttribute("lang", "fr");
+
+    await act(async () => {
+      vi.advanceTimersByTime(12_000);
+    });
+    expect(screen.getByRole("region", { name: /^Minto: 94 people · Packed/ })).toBeInTheDocument();
+    expect(screen.getByText("Gym occupancy in your pocket")).toBeInTheDocument();
+    expect(screen.getByTestId("kiosk")).toHaveAttribute("lang", "en");
+
+    await act(async () => {
+      vi.advanceTimersByTime(12_000);
+    });
+    expect(screen.getByRole("region", { name: /^Minto : 94 personnes/ })).toBeInTheDocument();
+  });
+
   it("est accessible depuis le pied de page de l'écran d'affluence", async () => {
     window.location.hash = "";
     renderApp();

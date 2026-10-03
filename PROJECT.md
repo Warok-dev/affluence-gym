@@ -234,6 +234,7 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - Code QR vers l'appli, généré dans la page (bibliothèque `qrcode-generator` intégrée au build, aucun service externe). Adresse = celle de la page, ou `VITE_PUBLIC_URL` si la télé utilise une autre adresse.
 - Même règle « Plus calme » que l'appli (`quieterIndex` dans `levels.ts`, partagée).
 - Lien discret « Mode écran » dans le pied de page de l'écran d'affluence.
+- Bilingue : le texte alterne français et anglais toutes les 12 s (affichage bilingue du campus), en commençant par la langue de l'appli ; les chiffres restent en place, aucune animation.
 
 ### Phase 11 — Version anglaise (fait, branche `phase-11-bilingue`)
 - Bouton FR / EN dans l'en-tête (cible de 44 px, étiquette lue dans la langue visée). Choix mémorisé sur le téléphone (`affluence-gym.locale`) ; sinon la langue du navigateur si elle est française ou anglaise ; sinon le français. `<html lang>` suit la langue.
