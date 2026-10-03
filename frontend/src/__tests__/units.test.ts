@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { generateUuid, getClientId } from "../clientId";
 import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
-import { minutesSince } from "../time";
+import { COOLDOWN_MS, cooldownRemaining, markReported } from "../cooldown";
+import { levelFromAverage } from "../levels";
+import { formatClock, minutesSince } from "../time";
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
@@ -43,8 +45,32 @@ describe("i18n", () => {
   });
 
   it("gère le pluriel des signalements", () => {
-    expect(fr.reportsCount(1)).toBe("1 signalement récent");
-    expect(fr.reportsCount(3)).toBe("3 signalements récents");
-    expect(en.reportsCount(1)).toBe("1 recent report");
+    expect(fr.reportsCount(1)).toBe("1 signalement");
+    expect(fr.reportsCount(3)).toBe("3 signalements");
+    expect(en.reportsCount(1)).toBe("1 report");
+  });
+});
+
+describe("attente entre deux signalements", () => {
+  it("formate l'horloge en minutes:secondes", () => {
+    expect(formatClock(15 * 60_000)).toBe("15:00");
+    expect(formatClock(61_500)).toBe("1:02");
+    expect(formatClock(-5)).toBe("0:00");
+  });
+
+  it("mémorise l'heure du signalement par salle, sur cet appareil seulement", () => {
+    markReported("minto", 1_000_000);
+    expect(cooldownRemaining("minto", 1_000_000 + 60_000)).toBe(COOLDOWN_MS - 60_000);
+    expect(cooldownRemaining("minto", 1_000_000 + COOLDOWN_MS + 1)).toBe(0);
+    expect(cooldownRemaining("montpetit", 1_000_000)).toBe(0);
+  });
+});
+
+describe("niveau d'une moyenne", () => {
+  it("n'appelle « Calme » que ce que le backend marque calme (moyenne <= 2)", () => {
+    expect(levelFromAverage(1.2)).toBe(1);
+    expect(levelFromAverage(2)).toBe(2);
+    expect(levelFromAverage(2.4)).toBe(3); // was "Calme" by rounding, while the bar was not calm
+    expect(levelFromAverage(3.6)).toBe(4);
   });
 });

@@ -1,0 +1,659 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T02:06:30+00:00",
+  "title": "Design System: Affluence Gym",
+  "extensions": {
+    "colorMeta": {
+      "board": {
+        "role": "primary",
+        "displayName": "Boards Navy",
+        "canonical": "#13213c",
+        "tonalRamp": [
+          "oklch(15% 0.055 262.4)",
+          "oklch(26% 0.055 262.4)",
+          "oklch(38% 0.055 262.4)",
+          "oklch(49% 0.055 262.4)",
+          "oklch(61% 0.055 262.4)",
+          "oklch(72% 0.055 262.4)",
+          "oklch(84% 0.055 262.4)",
+          "oklch(95% 0.055 262.4)"
+        ]
+      },
+      "board-2": {
+        "role": "primary",
+        "displayName": "Raised Board",
+        "canonical": "#1d2f52",
+        "tonalRamp": [
+          "oklch(15% 0.068 262.5)",
+          "oklch(26% 0.068 262.5)",
+          "oklch(38% 0.068 262.5)",
+          "oklch(49% 0.068 262.5)",
+          "oklch(61% 0.068 262.5)",
+          "oklch(72% 0.068 262.5)",
+          "oklch(84% 0.068 262.5)",
+          "oklch(95% 0.068 262.5)"
+        ]
+      },
+      "board-rule": {
+        "role": "primary",
+        "displayName": "Board Seam",
+        "canonical": "#31456d",
+        "tonalRamp": [
+          "oklch(15% 0.073 263.2)",
+          "oklch(26% 0.073 263.2)",
+          "oklch(38% 0.073 263.2)",
+          "oklch(49% 0.073 263.2)",
+          "oklch(61% 0.073 263.2)",
+          "oklch(72% 0.073 263.2)",
+          "oklch(84% 0.073 263.2)",
+          "oklch(95% 0.073 263.2)"
+        ]
+      },
+      "on-board": {
+        "role": "primary",
+        "displayName": "Ice on Board",
+        "canonical": "#f3f6f8",
+        "tonalRamp": [
+          "oklch(15% 0.004 236.5)",
+          "oklch(26% 0.004 236.5)",
+          "oklch(38% 0.004 236.5)",
+          "oklch(49% 0.004 236.5)",
+          "oklch(61% 0.004 236.5)",
+          "oklch(72% 0.004 236.5)",
+          "oklch(84% 0.004 236.5)",
+          "oklch(95% 0.004 236.5)"
+        ]
+      },
+      "on-board-2": {
+        "role": "primary",
+        "displayName": "Frosted Ice",
+        "canonical": "#b4c1d4",
+        "tonalRamp": [
+          "oklch(15% 0.030 257.8)",
+          "oklch(26% 0.030 257.8)",
+          "oklch(38% 0.030 257.8)",
+          "oklch(49% 0.030 257.8)",
+          "oklch(61% 0.030 257.8)",
+          "oklch(72% 0.030 257.8)",
+          "oklch(84% 0.030 257.8)",
+          "oklch(95% 0.030 257.8)"
+        ]
+      },
+      "lamp-off": {
+        "role": "primary",
+        "displayName": "Unlit Lamp",
+        "canonical": "#2c3f66",
+        "tonalRamp": [
+          "oklch(15% 0.072 263.6)",
+          "oklch(26% 0.072 263.6)",
+          "oklch(38% 0.072 263.6)",
+          "oklch(49% 0.072 263.6)",
+          "oklch(61% 0.072 263.6)",
+          "oklch(72% 0.072 263.6)",
+          "oklch(84% 0.072 263.6)",
+          "oklch(95% 0.072 263.6)"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Rink Blue Line",
+        "canonical": "#1f5faf",
+        "tonalRamp": [
+          "oklch(15% 0.143 256.2)",
+          "oklch(26% 0.143 256.2)",
+          "oklch(38% 0.143 256.2)",
+          "oklch(49% 0.143 256.2)",
+          "oklch(61% 0.143 256.2)",
+          "oklch(72% 0.143 256.2)",
+          "oklch(84% 0.143 256.2)",
+          "oklch(95% 0.143 256.2)"
+        ]
+      },
+      "blue-board": {
+        "role": "secondary",
+        "displayName": "Rink Blue Line on Board",
+        "canonical": "#4a86e0",
+        "tonalRamp": [
+          "oklch(15% 0.150 258.4)",
+          "oklch(26% 0.150 258.4)",
+          "oklch(38% 0.150 258.4)",
+          "oklch(49% 0.150 258.4)",
+          "oklch(61% 0.150 258.4)",
+          "oklch(72% 0.150 258.4)",
+          "oklch(84% 0.150 258.4)",
+          "oklch(95% 0.150 258.4)"
+        ]
+      },
+      "red": {
+        "role": "tertiary",
+        "displayName": "Centre-Ice Red",
+        "canonical": "#c8102e",
+        "tonalRamp": [
+          "oklch(15% 0.207 22.3)",
+          "oklch(26% 0.207 22.3)",
+          "oklch(38% 0.207 22.3)",
+          "oklch(49% 0.207 22.3)",
+          "oklch(61% 0.207 22.3)",
+          "oklch(72% 0.207 22.3)",
+          "oklch(84% 0.207 22.3)",
+          "oklch(95% 0.207 22.3)"
+        ]
+      },
+      "amber": {
+        "role": "tertiary",
+        "displayName": "Best-Move Amber",
+        "canonical": "#e8a317",
+        "tonalRamp": [
+          "oklch(15% 0.155 77.3)",
+          "oklch(26% 0.155 77.3)",
+          "oklch(38% 0.155 77.3)",
+          "oklch(49% 0.155 77.3)",
+          "oklch(61% 0.155 77.3)",
+          "oklch(72% 0.155 77.3)",
+          "oklch(84% 0.155 77.3)",
+          "oklch(95% 0.155 77.3)"
+        ]
+      },
+      "on-amber": {
+        "role": "tertiary",
+        "displayName": "Navy on Amber",
+        "canonical": "#13213c",
+        "tonalRamp": [
+          "oklch(15% 0.055 262.4)",
+          "oklch(26% 0.055 262.4)",
+          "oklch(38% 0.055 262.4)",
+          "oklch(49% 0.055 262.4)",
+          "oklch(61% 0.055 262.4)",
+          "oklch(72% 0.055 262.4)",
+          "oklch(84% 0.055 262.4)",
+          "oklch(95% 0.055 262.4)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ice",
+        "canonical": "#f3f6f8",
+        "tonalRamp": [
+          "oklch(15% 0.004 236.5)",
+          "oklch(26% 0.004 236.5)",
+          "oklch(38% 0.004 236.5)",
+          "oklch(49% 0.004 236.5)",
+          "oklch(61% 0.004 236.5)",
+          "oklch(72% 0.004 236.5)",
+          "oklch(84% 0.004 236.5)",
+          "oklch(95% 0.004 236.5)"
+        ]
+      },
+      "ground-2": {
+        "role": "neutral",
+        "displayName": "Frost",
+        "canonical": "#e3eaf1",
+        "tonalRamp": [
+          "oklch(15% 0.012 248.0)",
+          "oklch(26% 0.012 248.0)",
+          "oklch(38% 0.012 248.0)",
+          "oklch(49% 0.012 248.0)",
+          "oklch(61% 0.012 248.0)",
+          "oklch(72% 0.012 248.0)",
+          "oklch(84% 0.012 248.0)",
+          "oklch(95% 0.012 248.0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Boards Ink",
+        "canonical": "#13213c",
+        "tonalRamp": [
+          "oklch(15% 0.055 262.4)",
+          "oklch(26% 0.055 262.4)",
+          "oklch(38% 0.055 262.4)",
+          "oklch(49% 0.055 262.4)",
+          "oklch(61% 0.055 262.4)",
+          "oklch(72% 0.055 262.4)",
+          "oklch(84% 0.055 262.4)",
+          "oklch(95% 0.055 262.4)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#48586f",
+        "tonalRamp": [
+          "oklch(15% 0.043 257.4)",
+          "oklch(26% 0.043 257.4)",
+          "oklch(38% 0.043 257.4)",
+          "oklch(49% 0.043 257.4)",
+          "oklch(61% 0.043 257.4)",
+          "oklch(72% 0.043 257.4)",
+          "oklch(84% 0.043 257.4)",
+          "oklch(95% 0.043 257.4)"
+        ]
+      },
+      "bar": {
+        "role": "neutral",
+        "displayName": "Pale Bar",
+        "canonical": "#c3cedb",
+        "tonalRamp": [
+          "oklch(15% 0.022 252.5)",
+          "oklch(26% 0.022 252.5)",
+          "oklch(38% 0.022 252.5)",
+          "oklch(49% 0.022 252.5)",
+          "oklch(61% 0.022 252.5)",
+          "oklch(72% 0.022 252.5)",
+          "oklch(84% 0.022 252.5)",
+          "oklch(95% 0.022 252.5)"
+        ]
+      },
+      "calm": {
+        "role": "neutral",
+        "displayName": "Calm Bar Ink",
+        "canonical": "#13213c",
+        "tonalRamp": [
+          "oklch(15% 0.055 262.4)",
+          "oklch(26% 0.055 262.4)",
+          "oklch(38% 0.055 262.4)",
+          "oklch(49% 0.055 262.4)",
+          "oklch(61% 0.055 262.4)",
+          "oklch(72% 0.055 262.4)",
+          "oklch(84% 0.055 262.4)",
+          "oklch(95% 0.055 262.4)"
+        ]
+      },
+      "ground-night": {
+        "role": "neutral",
+        "displayName": "Ice (night)",
+        "canonical": "#13213c",
+        "tonalRamp": [
+          "oklch(15% 0.055 262.4)",
+          "oklch(26% 0.055 262.4)",
+          "oklch(38% 0.055 262.4)",
+          "oklch(49% 0.055 262.4)",
+          "oklch(61% 0.055 262.4)",
+          "oklch(72% 0.055 262.4)",
+          "oklch(84% 0.055 262.4)",
+          "oklch(95% 0.055 262.4)"
+        ]
+      },
+      "ground-2-night": {
+        "role": "neutral",
+        "displayName": "Frost (night)",
+        "canonical": "#1b2b4d",
+        "tonalRamp": [
+          "oklch(15% 0.066 263.8)",
+          "oklch(26% 0.066 263.8)",
+          "oklch(38% 0.066 263.8)",
+          "oklch(49% 0.066 263.8)",
+          "oklch(61% 0.066 263.8)",
+          "oklch(72% 0.066 263.8)",
+          "oklch(84% 0.066 263.8)",
+          "oklch(95% 0.066 263.8)"
+        ]
+      },
+      "ink-night": {
+        "role": "neutral",
+        "displayName": "Boards Ink (night)",
+        "canonical": "#eaf0f6",
+        "tonalRamp": [
+          "oklch(15% 0.010 247.9)",
+          "oklch(26% 0.010 247.9)",
+          "oklch(38% 0.010 247.9)",
+          "oklch(49% 0.010 247.9)",
+          "oklch(61% 0.010 247.9)",
+          "oklch(72% 0.010 247.9)",
+          "oklch(84% 0.010 247.9)",
+          "oklch(95% 0.010 247.9)"
+        ]
+      },
+      "ink-2-night": {
+        "role": "neutral",
+        "displayName": "Slate Ink (night)",
+        "canonical": "#a9b6c9",
+        "tonalRamp": [
+          "oklch(15% 0.031 257.8)",
+          "oklch(26% 0.031 257.8)",
+          "oklch(38% 0.031 257.8)",
+          "oklch(49% 0.031 257.8)",
+          "oklch(61% 0.031 257.8)",
+          "oklch(72% 0.031 257.8)",
+          "oklch(84% 0.031 257.8)",
+          "oklch(95% 0.031 257.8)"
+        ]
+      },
+      "board-night": {
+        "role": "primary",
+        "displayName": "Boards Navy (night)",
+        "canonical": "#1d2e52",
+        "tonalRamp": [
+          "oklch(15% 0.069 263.7)",
+          "oklch(26% 0.069 263.7)",
+          "oklch(38% 0.069 263.7)",
+          "oklch(49% 0.069 263.7)",
+          "oklch(61% 0.069 263.7)",
+          "oklch(72% 0.069 263.7)",
+          "oklch(84% 0.069 263.7)",
+          "oklch(95% 0.069 263.7)"
+        ]
+      },
+      "board-2-night": {
+        "role": "primary",
+        "displayName": "Raised Board (night)",
+        "canonical": "#283d68",
+        "tonalRamp": [
+          "oklch(15% 0.079 263.3)",
+          "oklch(26% 0.079 263.3)",
+          "oklch(38% 0.079 263.3)",
+          "oklch(49% 0.079 263.3)",
+          "oklch(61% 0.079 263.3)",
+          "oklch(72% 0.079 263.3)",
+          "oklch(84% 0.079 263.3)",
+          "oklch(95% 0.079 263.3)"
+        ]
+      },
+      "board-rule-night": {
+        "role": "primary",
+        "displayName": "Board Seam (night)",
+        "canonical": "#3a5185",
+        "tonalRamp": [
+          "oklch(15% 0.091 264.9)",
+          "oklch(26% 0.091 264.9)",
+          "oklch(38% 0.091 264.9)",
+          "oklch(49% 0.091 264.9)",
+          "oklch(61% 0.091 264.9)",
+          "oklch(72% 0.091 264.9)",
+          "oklch(84% 0.091 264.9)",
+          "oklch(95% 0.091 264.9)"
+        ]
+      },
+      "lamp-off-night": {
+        "role": "primary",
+        "displayName": "Unlit Lamp (night)",
+        "canonical": "#34497a",
+        "tonalRamp": [
+          "oklch(15% 0.086 265.3)",
+          "oklch(26% 0.086 265.3)",
+          "oklch(38% 0.086 265.3)",
+          "oklch(49% 0.086 265.3)",
+          "oklch(61% 0.086 265.3)",
+          "oklch(72% 0.086 265.3)",
+          "oklch(84% 0.086 265.3)",
+          "oklch(95% 0.086 265.3)"
+        ]
+      },
+      "blue-night": {
+        "role": "secondary",
+        "displayName": "Rink Blue Line (night)",
+        "canonical": "#6ea2e8",
+        "tonalRamp": [
+          "oklch(15% 0.117 256.1)",
+          "oklch(26% 0.117 256.1)",
+          "oklch(38% 0.117 256.1)",
+          "oklch(49% 0.117 256.1)",
+          "oklch(61% 0.117 256.1)",
+          "oklch(72% 0.117 256.1)",
+          "oklch(84% 0.117 256.1)",
+          "oklch(95% 0.117 256.1)"
+        ]
+      },
+      "blue-board-night": {
+        "role": "secondary",
+        "displayName": "Rink Blue Line on Board (night)",
+        "canonical": "#5b92e5",
+        "tonalRamp": [
+          "oklch(15% 0.137 258.4)",
+          "oklch(26% 0.137 258.4)",
+          "oklch(38% 0.137 258.4)",
+          "oklch(49% 0.137 258.4)",
+          "oklch(61% 0.137 258.4)",
+          "oklch(72% 0.137 258.4)",
+          "oklch(84% 0.137 258.4)",
+          "oklch(95% 0.137 258.4)"
+        ]
+      },
+      "red-night": {
+        "role": "tertiary",
+        "displayName": "Centre-Ice Red (night)",
+        "canonical": "#ff5a6b",
+        "tonalRamp": [
+          "oklch(15% 0.200 18.1)",
+          "oklch(26% 0.200 18.1)",
+          "oklch(38% 0.200 18.1)",
+          "oklch(49% 0.200 18.1)",
+          "oklch(61% 0.200 18.1)",
+          "oklch(72% 0.200 18.1)",
+          "oklch(84% 0.200 18.1)",
+          "oklch(95% 0.200 18.1)"
+        ]
+      },
+      "amber-night": {
+        "role": "tertiary",
+        "displayName": "Best-Move Amber (night)",
+        "canonical": "#f2b53a",
+        "tonalRamp": [
+          "oklch(15% 0.149 80.6)",
+          "oklch(26% 0.149 80.6)",
+          "oklch(38% 0.149 80.6)",
+          "oklch(49% 0.149 80.6)",
+          "oklch(61% 0.149 80.6)",
+          "oklch(72% 0.149 80.6)",
+          "oklch(84% 0.149 80.6)",
+          "oklch(95% 0.149 80.6)"
+        ]
+      },
+      "bar-night": {
+        "role": "neutral",
+        "displayName": "Pale Bar (night)",
+        "canonical": "#34497a",
+        "tonalRamp": [
+          "oklch(15% 0.086 265.3)",
+          "oklch(26% 0.086 265.3)",
+          "oklch(38% 0.086 265.3)",
+          "oklch(49% 0.086 265.3)",
+          "oklch(61% 0.086 265.3)",
+          "oklch(72% 0.086 265.3)",
+          "oklch(84% 0.086 265.3)",
+          "oklch(95% 0.086 265.3)"
+        ]
+      },
+      "calm-night": {
+        "role": "neutral",
+        "displayName": "Calm Bar Ink (night)",
+        "canonical": "#eaf0f6",
+        "tonalRamp": [
+          "oklch(15% 0.010 247.9)",
+          "oklch(26% 0.010 247.9)",
+          "oklch(38% 0.010 247.9)",
+          "oklch(49% 0.010 247.9)",
+          "oklch(61% 0.010 247.9)",
+          "oklch(72% 0.010 247.9)",
+          "oklch(84% 0.010 247.9)",
+          "oklch(95% 0.010 247.9)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The crowd-level numeral, one per gym column; the only 6rem text."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "App name, gym names, section title; condensed caps."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Level word under the numeral; game clock."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Sentences, buttons, tabs, next-calm answer, chart detail."
+      },
+      "body-small": {
+        "displayName": "Body small",
+        "purpose": "Evidence lines, banners, captions, axis, legend, hours, footer."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The amber quieter tag."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "pulse-loading",
+        "value": "opacity 0.16 to 0.08, 1.6s ease-in-out infinite",
+        "purpose": "Loading skeletons and the unlit digit placeholder only; off under prefers-reduced-motion."
+      },
+      {
+        "name": "state-swap",
+        "value": "none",
+        "purpose": "State changes swap instantly; the wait clock ticking each second is the only meaningful motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "container-max",
+        "value": "32rem"
+      },
+      {
+        "name": "target-viewport",
+        "value": "375px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Scoreboard Board",
+      "kind": "custom",
+      "refersTo": "scoreboard-column",
+      "description": "Two navy columns split by the 2px blue line; giant tabular numeral, level word, four lamps, evidence.",
+      "html": "<div class=\"ds-board\"><section class=\"ds-gym\"><h2 class=\"ds-head\">Minto</h2><span class=\"ds-digit\">4</span><span class=\"ds-level\">Bondé</span><div class=\"ds-lamps\"><i class=\"ds-lit\"></i><i class=\"ds-lit\"></i><i class=\"ds-lit\"></i><i class=\"ds-lit\"></i></div><p class=\"ds-evidence\">7 signalements<br>dernier à l’instant</p></section><section class=\"ds-gym\"><h2 class=\"ds-head\">Montpetit</h2><span class=\"ds-tag\">Plus calme</span><span class=\"ds-digit\">2</span><span class=\"ds-level\">Calme</span><div class=\"ds-lamps\"><i class=\"ds-lit\"></i><i class=\"ds-lit\"></i><i></i><i></i></div><p class=\"ds-evidence\">3 signalements<br>dernier à l’instant</p></section></div>",
+      "css": ".ds-board{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:var(--corner,14px);background:var(--blue-board,#4a86e0);color:var(--on-board,#f3f6f8);overflow:hidden;max-width:24rem}.ds-gym{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 16px 12px;background:var(--board,#13213c)}.ds-head{margin:0;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.ds-tag{padding:1px 8px;border-radius:4px;background:var(--amber,#e8a317);color:var(--on-amber,#13213c);font-family:\"Barlow Condensed\",system-ui,sans-serif;font-size:.8125rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}.ds-digit{margin-top:8px;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-size:6rem;font-weight:700;line-height:.9;font-variant-numeric:tabular-nums}.ds-level{font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:600;letter-spacing:.04em;text-transform:uppercase}.ds-lamps{display:flex;gap:6px;margin-top:12px}.ds-lamps i{width:14px;height:14px;border-radius:3px;background:var(--lamp-off,#2c3f66)}.ds-lamps i.ds-lit{background:var(--on-board,#f3f6f8)}.ds-evidence{margin:12px 0 0;color:var(--on-board-2,#b4c1d4);font-size:.8125rem;line-height:1.4;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Report Button",
+      "kind": "button",
+      "refersTo": "report-button",
+      "description": "The one action on a column; a fitted panel, deliberately quieter than the score.",
+      "html": "<div class=\"ds-on-board\"><button class=\"ds-report\">Signaler</button></div>",
+      "css": ".ds-on-board{padding:16px;background:var(--board,#13213c);color:var(--on-board,#f3f6f8);max-width:14rem}.ds-report{width:100%;min-height:44px;border:1px solid var(--board-rule,#31456d);border-radius:var(--corner-s,8px);background:var(--board-2,#1d2f52);color:inherit;font:inherit;font-weight:600;cursor:pointer}.ds-report:hover{border-color:var(--on-board-2,#b4c1d4)}.ds-report:focus-visible{outline:3px solid var(--on-board,#f3f6f8);outline-offset:2px}"
+    },
+    {
+      "name": "Level Picker",
+      "kind": "button",
+      "refersTo": "picker-option",
+      "description": "Four 44px fitted rows with a tabular condensed digit and the level word, plus a cancel text button.",
+      "html": "<div class=\"ds-picker\"><p class=\"ds-prompt\">Affluence actuelle ?</p><button class=\"ds-opt\"><span class=\"ds-pd\">1</span>Vide</button><button class=\"ds-opt\"><span class=\"ds-pd\">2</span>Calme</button><button class=\"ds-opt\"><span class=\"ds-pd\">3</span>Modéré</button><button class=\"ds-opt\"><span class=\"ds-pd\">4</span>Bondé</button><button class=\"ds-text\">Annuler</button></div>",
+      "css": ".ds-picker{display:grid;gap:6px;padding:16px;background:var(--board,#13213c);color:var(--on-board,#f3f6f8);max-width:14rem}.ds-prompt{margin:0;color:var(--on-board-2,#b4c1d4);font-size:.8125rem}.ds-opt{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--board-rule,#31456d);border-radius:var(--corner-s,8px);background:var(--board-2,#1d2f52);color:inherit;font:inherit;text-align:left;cursor:pointer}.ds-opt:hover{border-color:var(--on-board,#f3f6f8)}.ds-opt:focus-visible,.ds-text:focus-visible{outline:3px solid var(--on-board,#f3f6f8);outline-offset:2px}.ds-pd{width:1ch;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:700;font-variant-numeric:tabular-nums}.ds-text{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:0;background:none;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}"
+    },
+    {
+      "name": "Reported Stamp",
+      "kind": "custom",
+      "refersTo": "stamp",
+      "description": "After a report the action slot is stamped in reverse with a live mm:ss wait clock.",
+      "html": "<div class=\"ds-on-board\"><div class=\"ds-stamp\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span><strong class=\"ds-st\">Signalé</strong><span class=\"ds-sc\">Prochain dans 14:15</span></span></div></div>",
+      "css": ".ds-on-board{padding:16px;background:var(--board,#13213c);max-width:14rem}.ds-stamp{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-radius:var(--corner-s,8px);background:var(--on-board,#f3f6f8);color:var(--board,#13213c)}.ds-stamp svg{flex:none}.ds-st{display:block;font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase}.ds-sc{display:block;font-size:.8125rem;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Game Clock",
+      "kind": "custom",
+      "refersTo": "clock",
+      "description": "A small lit board element in the header.",
+      "html": "<time class=\"ds-clock\">21 h 58</time>",
+      "css": ".ds-clock{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--board,#13213c);color:var(--on-board,#f3f6f8);font-family:\"Barlow Condensed\",system-ui,sans-serif;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.04em}"
+    },
+    {
+      "name": "Banners",
+      "kind": "card",
+      "refersTo": "banner",
+      "description": "Frost info banner; the offline error is an ink-outlined banner with a retry text button, never red.",
+      "html": "<p class=\"ds-banner\">Données de démonstration : tous les chiffres affichés sont fictifs.</p><div class=\"ds-banner ds-err\"><p>Hors ligne.</p><button class=\"ds-text\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><path d=\"M19 12a7 7 0 1 1-2.05-4.95M19 4.5V9h-4.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg> Réessayer</button></div>",
+      "css": ".ds-banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:0 0 12px;padding:12px 16px;border-radius:var(--corner-s,8px);background:var(--ground-2,#e3eaf1);color:var(--ink,#13213c);font-size:.8125rem;max-width:24rem}.ds-banner p{margin:0}.ds-err{border:2px solid var(--ink,#13213c);background:transparent}.ds-text{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:0;background:none;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.ds-text:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Gym Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Standard tabs over the 2px blue line; the selected tab gets a 3px ink underline.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Minto</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Montpetit</button></div>",
+      "css": ".ds-tabs{display:flex;border-bottom:2px solid var(--blue,#1f5faf);max-width:24rem}.ds-tab{min-height:44px;margin-bottom:-2px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:none;color:var(--ink-2,#48586f);font:inherit;font-weight:600;cursor:pointer}.ds-tab[aria-selected=\"true\"]{border-bottom-color:var(--ink,#13213c);color:var(--ink,#13213c)}.ds-tab:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}"
+    },
+    {
+      "name": "Typical-Day Chart",
+      "kind": "custom",
+      "refersTo": "chart-bar",
+      "description": "Hour bars: pale ordinary, navy calm, amber forecast calm, dashed no-data; red now-line; selected bar outlined in ink.",
+      "html": "<div class=\"ds-chart\"><button class=\"ds-bar ds-calm\" style=\"height:25%\"></button><button class=\"ds-bar\" style=\"height:50%\"></button><button class=\"ds-bar\" style=\"height:75%\"></button><button class=\"ds-bar ds-calm\" style=\"height:40%\"></button><button class=\"ds-bar ds-sel\" style=\"height:60%\"></button><button class=\"ds-bar ds-fc\" style=\"height:25%\"></button><button class=\"ds-bar ds-empty\"></button><span class=\"ds-now\" style=\"left:78%\"></span></div>",
+      "css": ".ds-chart{position:relative;display:flex;align-items:flex-end;gap:2px;height:96px;max-width:24rem;border-bottom:1px solid var(--ink-2,#48586f)}.ds-bar{flex:1;min-width:0;min-height:3px;padding:0;border:0;border-radius:3px 3px 0 0;background:var(--bar,#c3cedb);cursor:pointer}.ds-calm{background:var(--calm,#13213c)}.ds-fc{background:var(--amber,#e8a317)}.ds-empty{height:3px;border-top:2px dashed var(--bar,#c3cedb);border-radius:0;background:transparent}.ds-sel{outline:2px solid var(--ink,#13213c);outline-offset:2px}.ds-bar:focus-visible{outline:3px solid var(--blue,#1f5faf);outline-offset:2px}.ds-now{position:absolute;top:-6px;bottom:0;width:2px;margin-left:-1px;background:var(--red,#c8102e);pointer-events:none}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Daylight Arena Scoreboard",
+    "overview": "The two gyms face each other like two teams on a lit scoreboard hung over an ice rink. The crowd level is a giant condensed tabular numeral, one per column, read and compared in a single glance; everything else on the screen (label, lamps, evidence, report action) is subordinate to that pair of numbers. The world is built from the rink's own materials: an ice-white ground, navy boards, the blue line painted on the ice as the only structural rule, a thin centre-red line for \"now\", and one amber reserved for the best move.\n\nDensity is that of an operate tool, not a page: a single 32rem column, one framed board, then a \"when to go today\" strip below. Nothing decorates. There are no shadows, no gradients, no imagery, no decorative motion; state changes swap instantly and the only thing that moves is a clock that ticks. At night the arena keeps its colours: the ground becomes boards navy and the numerals stay ice, never black, never neon.\n\nStates are printed on the column itself rather than shown and withdrawn: a report stamps the column \"Signalé\" with a live wait clock, an unknown level shows an unlit digit, loading shows an unlit lamp-shaped placeholder. Every number carries its evidence line beneath it.",
+    "keyCharacteristics": [
+      "Two-column scoreboard, columns split by a 2px blue line, framed with rounded boards (14px).",
+      "One giant numeral per gym (6rem Barlow Condensed 700, tabular), above a caps label and four discrete lamps.",
+      "Three text sizes only: 0.8125rem, 1rem, 6rem.",
+      "Colour is reserved: blue is structure, red is now, amber is the best choice. Nothing else is coloured.",
+      "Flat throughout; depth comes from the navy board sitting on the ice ground.",
+      "Dark mode is the arena at night: navy ground, ice ink, the same reserved accents brightened."
+    ],
+    "rules": [
+      {
+        "name": "The Painted Lines Rule",
+        "body": "Blue is structure only, red is \"now\" only, amber is the best move only. If an element is not a structural rule, the current time, or the recommended choice, it is navy, ice or slate.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Amber Rule",
+        "body": "Amber marks at most one gym and one hour at a time. When the two gyms show the same level, or a level is missing, no gym gets the tag.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Arena Rule",
+        "body": "Dark mode raises the ground to boards navy and keeps numerals ice. No black surfaces, no neon accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Sizes Rule",
+        "body": "Only 0.8125rem, 1rem and 6rem exist. Hierarchy below the numeral comes from face, weight, case and colour, never from a fourth size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number that can change (level, clock, wait clock, counts, axis, chart detail) is set with tabular figures so digits never jitter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Barlow Condensed for names, numerals, labels and stamps; system text for every sentence. Prose is never set in the condensed face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Painted Not Lifted Rule",
+        "body": "Surfaces are separated by colour and by painted lines, never by shadow or blur.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Instant State Rule",
+        "body": "State changes swap without transition; the ticking wait clock is the only motion that carries meaning.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep both gyms on one board, side by side, split by the 2px blue line, visible without scrolling at 375px.",
+      "**Do** set every changing number in tabular figures, and the level numeral at 6rem Barlow Condensed 700.",
+      "**Do** pair every number with its evidence line (report count, freshness, sample count), and write the level as a word under the numeral.",
+      "**Do** print states onto the column (stamp, unlit digit, unlit lamps) instead of transient toasts.",
+      "**Do** keep touch targets at 44px minimum and the focus ring at 3px blue, 2px offset (ice on the board).",
+      "**Do** move dark mode to boards navy ground with ice ink, swapping each token for its `-night` value."
+    ],
+    "donts": [
+      "**Don't** use blue as a fill, a button colour, or a data colour; it is the painted structural line only.",
+      "**Don't** use red for errors, alerts or warnings; red marks \"now\" only, and errors are drawn in ink.",
+      "**Don't** spend amber on anything but the single best choice (quieter gym, next calm hour).",
+      "**Don't** add a fourth text size, shadows, gradients, or decorative motion.",
+      "**Don't** use black or neon surfaces in either scheme, or the fitness-app neon-on-black look.",
+      "**Don't** set sentences in Barlow Condensed, or numerals in the system face."
+    ]
+  }
+}

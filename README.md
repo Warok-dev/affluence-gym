@@ -123,10 +123,11 @@ Le graphique et la prévision ont besoin de plusieurs semaines d'historique. Pou
 cd backend
 .venv\Scripts\python scripts\seed_demo.py
 $env:DB_PATH = "demo.db"
+$env:DEMO_DATA = "true"
 .venv\Scripts\python -m uvicorn app.main:app --port 8000
 ```
 
-Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH`) pour revenir à la vraie base.
+`DEMO_DATA=true` affiche dans l'appli le bandeau « Données de démonstration », pour que des chiffres fictifs ne passent jamais pour de vrais. Ferme ce terminal (ou lance `Remove-Item Env:DB_PATH, Env:DEMO_DATA`) pour revenir à la vraie base.
 
 ## Prévision (machine learning)
 
@@ -160,6 +161,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `ALLOWED_ORIGINS` | backend | `http://localhost:5173,http://127.0.0.1:5173` | Origines autorisées par CORS (séparées par des virgules) |
 | `TIMEZONE` | backend | `America/Toronto` | Fuseau des salles (jours, heures, horaires d'ouverture) |
 | `SNAPSHOT_ENABLED` | backend | `true` | Tâche des snapshots dans le processus de l'API |
+| `DEMO_DATA` | backend | `false` | À mettre à `true` avec `demo.db` : l'appli signale les données fictives |
 | `PORT` | backend (Docker) | `8000` | Port d'écoute, fourni par l'hébergeur |
 | `VITE_API_URL` | frontend (build) | *(vide → `/api`)* | URL publique de l'API en prod |
 | `API_PROXY_TARGET` | frontend (dev) | `http://127.0.0.1:8000` | Cible du proxy `/api` de Vite |
@@ -174,7 +176,7 @@ Toutes les variables sont listées dans [`.env.example`](.env.example).
 | `GET` | `/history/{facility}?days=7` | `{facility, days, points: [{ts, level, source}]}` (1 à 90 jours) |
 | `GET` | `/profile/{facility}?weekday=&weeks=8` | Affluence moyenne par heure d'un jour de semaine (0 = lundi, défaut : aujourd'hui) : `{…, opening_hours, hours: [{hour, level, samples, calm}]}` |
 | `GET` | `/forecast/{facility}?hours=12` | Prévision pour les prochaines heures d'ouverture (1 à 48) : `{available, model, trained_at, training_samples, validation_mae, hours: [{ts, hour, level, calm}], next_calm}` |
-| `GET` | `/health` | `{"status": "ok"}`, utilisé par les health checks (Docker, Render) |
+| `GET` | `/health` | `{"status": "ok", "demo": false}` (champ `demo` additif), utilisé par les health checks (Docker, Render) |
 
 Les horaires d'ouverture se configurent dans `backend/app/facilities.py`. **Les valeurs actuelles sont provisoires et à vérifier.**
 

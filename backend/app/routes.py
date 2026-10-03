@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import history as hist
-from .config import COOLDOWN_SECONDS, LABELS, TIMEZONE
+from .config import COOLDOWN_SECONDS, DEMO_DATA, LABELS, TIMEZONE
 from .db import Report, get_session
 from .facilities import FACILITIES
 from .forecast.service import forecast, forecast_service
@@ -35,7 +35,8 @@ class ReportIn(BaseModel):
 
 @router.get("/health")
 def health():
-    return {"status": "ok"}
+    # "demo" is additive (UI phase): true when serving the synthetic demo database.
+    return {"status": "ok", "demo": DEMO_DATA}
 
 
 @router.post("/reports", status_code=201)
