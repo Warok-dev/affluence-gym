@@ -229,6 +229,12 @@ Table `occupancy_snapshots` (phase 3) (`facility`, `ts` arrondi au quart d'heure
 - `GET /notifications/config`, `POST /alerts` (409 si la salle est fermée), `DELETE /alerts/{id}` (jeton propre à l'appareil). Table `alerts` (migration 0004). Clés VAPID par variables d'environnement ; sans elles, la fonction est désactivée et invisible.
 - Service worker : `public/push-sw.js` importé par Workbox (affiche la notification, ouvre l'appli au clic). iPhone : seulement si l'appli est installée sur l'écran d'accueil (message dans l'interface).
 
+### Phase 10 — Mode écran pour l'entrée de la salle (fait, branche `phase-10-ecran`)
+- Route `#/ecran` : le tableau d'affluence en plein écran, lisible de loin, pour une télé à l'entrée (argument pour le service des sports : l'écran existe déjà au comptoir). Pas d'en-tête, d'onglets ni de bouton de signalement ; rafraîchi toutes les 30 s ; garde l'écran allumé (Screen Wake Lock, si le navigateur l'accepte) ; garde les derniers chiffres et le dit si la connexion tombe.
+- Code QR vers l'appli, généré dans la page (bibliothèque `qrcode-generator` intégrée au build, aucun service externe). Adresse = celle de la page, ou `VITE_PUBLIC_URL` si la télé utilise une autre adresse.
+- Même règle « Plus calme » que l'appli (`quieterIndex` dans `levels.ts`, partagée).
+- Lien discret « Mode écran » dans le pied de page de l'écran d'affluence.
+
 ### Idées futures (hors périmètre actuel)
 Partenaires d'entraînement (impliquerait des comptes, à rediscuter).
 

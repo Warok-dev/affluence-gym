@@ -5,6 +5,15 @@ export const API_BASE: string = (import.meta.env.VITE_API_URL || "/api").replace
 /** Refresh period of the occupancy cards (spec: every 30–60 s). */
 export const REFRESH_MS = 45_000;
 
+/** Screen mode (entrance TV): nobody can pull to refresh, so it polls a bit faster. */
+export const KIOSK_REFRESH_MS = 30_000;
+
+/**
+ * Address the screen-mode QR code points to. Empty -> the address the screen itself uses,
+ * which is only right when the TV opens the public URL (not "localhost").
+ */
+export const PUBLIC_APP_URL: string = import.meta.env.VITE_PUBLIC_URL || "";
+
 /** The typical-day profile changes slowly (one snapshot per 15 min). */
 export const PROFILE_REFRESH_MS = 15 * 60_000;
 

@@ -54,7 +54,11 @@ $ip = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
 Write-Host ""
 Write-Host "Démo lancée (chiffres fictifs, heure simulée : $Hour h)." -ForegroundColor Green
 Write-Host "  Ordinateur : http://localhost:5173"
-if ($ip) { Write-Host "  Téléphone (même Wi-Fi) : http://${ip}:5173" }
+if ($ip) {
+    Write-Host "  Téléphone (même Wi-Fi) : http://${ip}:5173"
+    # Le code QR du mode écran pointe vers l'adresse ouverte : celle-ci marche aussi pour les téléphones.
+    Write-Host "  Mode écran (télé, F11) : http://${ip}:5173/#/ecran"
+}
 Write-Host "Pour arrêter : ferme les trois fenêtres PowerShell ouvertes."
 Start-Sleep -Seconds 8
 Start-Process "http://localhost:5173"

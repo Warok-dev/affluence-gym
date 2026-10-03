@@ -207,4 +207,17 @@ export const en: Messages = {
   equipmentCooldown: "You already reported this machine less than 30 min ago.",
   equipmentUnavailable: "Couldn't load the machines' status right now.",
   machineActions: (name: string) => `Report status: ${name}`,
+
+  // Screen mode (a TV at the gym entrance)
+  kioskLink: "Screen mode (entrance TV)",
+  kioskTitle: "Live occupancy",
+  kioskPlaces: (n: number) => `of ${n} places`,
+  kioskOpenUntil: (close: string) => `Open until ${close}`,
+  kioskOpensAt: (open: string) => `Opens at ${open}`,
+  kioskUpdated: (ago: string) => `Updated ${ago}`,
+  kioskOffline: "Connection lost, retrying automatically…",
+  kioskScan: "Gym occupancy in your pocket",
+  kioskScanHint: "Scan the code with your phone's camera.",
+  kioskQrLabel: "QR code linking to the app",
+  kioskExit: "Leave screen mode",
 };

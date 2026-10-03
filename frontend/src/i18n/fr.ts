@@ -227,6 +227,19 @@ export const fr = {
   equipmentCooldown: "Tu as déjà signalé cette machine il y a moins de 30 min.",
   equipmentUnavailable: "Impossible de charger l'état des machines pour le moment.",
   machineActions: (name: string) => `Signaler l'état : ${name}`,
+
+  // Screen mode (a TV at the gym entrance)
+  kioskLink: "Mode écran (télé à l'entrée)",
+  kioskTitle: "Affluence en direct",
+  kioskPlaces: (n: number) => `sur ${n} places`,
+  kioskOpenUntil: (close: string) => `Ouvert jusqu'à ${close}`,
+  kioskOpensAt: (open: string) => `Ouvre à ${open}`,
+  kioskUpdated: (ago: string) => `Mis à jour ${ago}`,
+  kioskOffline: "Connexion perdue, nouvel essai automatique…",
+  kioskScan: "L'affluence dans ta poche",
+  kioskScanHint: "Scanne le code avec l'appareil photo de ton téléphone.",
+  kioskQrLabel: "Code QR menant à l'application",
+  kioskExit: "Quitter le mode écran",
 };
 
 export type Messages = typeof fr;

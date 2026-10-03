@@ -409,6 +409,9 @@ Machine rows carry their status right-aligned in small slate text. A broken mach
 ### Quiet-Gym Alert
 Unarmed, it is a secondary button with a slate privacy note. Armed, it becomes a navy board box (8px corners, 12px 16px padding) with ice text and an ice-focused text button to cancel.
 
+### Screen Mode (entrance TV)
+The scoreboard alone, full viewport, for reading across a room. Same board, columns, lamps, amber "Plus calme" tag and demo banner; no header bar, tabs, report buttons or footer line. The three text sizes stay three but scale with the screen height (small max(0.8125rem, 2.4vh), body max(1rem, 3.4vh), score min(30vh, 19vw)). Landscape: the two columns fill the height between the title row and a footer row (QR code, freshness line, discreet exit link). Portrait: the columns stack at content height and the page scrolls. The QR code is drawn as an SVG path, navy modules on a white ground in both themes, because phone cameras read dark-on-light reliably.
+
 ### Icons
 Authored inline SVG on a 24-unit grid with 2-unit round strokes in currentColor (check 20px, retry 18px). No icon font, no glyph icons. The set now includes board, dumbbell, book and wrench at 22px for the tab bar, and plus, minus, trash, back and bell at 18px inside buttons.
 

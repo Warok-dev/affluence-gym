@@ -15,6 +15,7 @@ import { GymColumn, isOpenNow } from "../components/GymColumn";
 import { RetryIcon } from "../components/icons";
 import { FACILITIES, PROFILE_REFRESH_MS, REFRESH_MS, WAKING_AFTER_MS, type FacilityId } from "../config";
 import { useT } from "../i18n";
+import { quieterIndex } from "../levels";
 import { minutesSince } from "../time";
 
 type ByGym<T> = Partial<Record<FacilityId, T>>;
@@ -101,21 +102,14 @@ export function OccupancyScreen() {
   const allFailed = FACILITIES.every((f) => errors[f.id]);
   const waking = slowStart && lastSuccess === null && !allFailed;
 
-  // The quieter gym gets the one reserved colour, only when the comparison is meaningful:
-  // occupancy ratios when both gyms have a counter (5-point margin against noise), else levels.
+  // The quieter gym gets the one reserved colour, only when the comparison is meaningful.
   const open = FACILITIES.map((f) => isOpenNow(profiles[f.id], now));
   const levels = FACILITIES.map((f, i) => (open[i] ? (occupancy[f.id]?.level ?? null) : null));
-  const ratios = FACILITIES.map((f, i) => {
-    const o = occupancy[f.id];
-    return open[i] && o?.source === "official" && o.people != null && o.capacity ? o.people / o.capacity : null;
-  });
-  let quieterIndex: number | null = null;
-  if (ratios[0] !== null && ratios[1] !== null) {
-    if (Math.abs(ratios[0] - ratios[1]) >= 0.05) quieterIndex = ratios[0] < ratios[1] ? 0 : 1;
-  } else if (levels[0] !== null && levels[1] !== null && levels[0] !== levels[1]) {
-    quieterIndex = levels[0] < levels[1] ? 0 : 1;
-  }
-  const quieterId = quieterIndex === null ? null : FACILITIES[quieterIndex].id;
+  const quieter = quieterIndex(
+    FACILITIES.map((f) => occupancy[f.id]),
+    open,
+  );
+  const quieterId = quieter === null ? null : FACILITIES[quieter].id;
   const shownGym = selected ?? quieterId ?? FACILITIES[0].id;
 
   return (

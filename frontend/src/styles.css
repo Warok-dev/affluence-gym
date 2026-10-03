@@ -582,6 +582,160 @@ button:disabled {
   font-size: var(--fs-s);
   text-align: center;
 }
+.app-footer a {
+  color: inherit;
+  /* A text link in a footer line: padded to a 44px tap target without moving the line. */
+  display: inline-block;
+  padding: 12px 0;
+  margin: -12px 0;
+}
+
+/* ---------- Screen mode (entrance TV) ---------- */
+
+/*
+ * The same scoreboard, read from across the room. The three text sizes stay three;
+ * they are scaled to the screen's height instead of the phone's root size.
+ */
+.kiosk {
+  --fs-s: max(0.8125rem, 2.4vh);
+  --fs-m: max(1rem, 3.4vh);
+  --fs-score: min(30vh, 19vw);
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: max(var(--s4), 2.5vh);
+  padding: max(var(--s4), 3vh) max(var(--s4), 3vw);
+  overflow: auto;
+  background: var(--ground);
+  font-size: var(--fs-m);
+}
+.kiosk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+.kiosk-head h1 {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.kiosk-subtitle {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.kiosk-head .clock {
+  white-space: nowrap;
+  padding: 0.1em 0.5em;
+  border-radius: var(--corner-s);
+}
+.kiosk-banner {
+  margin: 0;
+}
+
+.kiosk-board {
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+.kiosk-gym {
+  justify-content: center;
+  padding: max(var(--s4), 3vh) max(var(--s4), 3vw);
+}
+.kiosk-gym-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+}
+.kiosk-gym-head h2 {
+  font-family: var(--font-score);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.kiosk-gym .score-digit {
+  font-size: var(--fs-score);
+}
+.kiosk-gym .score-label {
+  font-size: var(--fs-m);
+}
+.kiosk-gym .lamps {
+  gap: 0.4em;
+}
+.kiosk-gym .lamps span {
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 0.2em;
+}
+.kiosk-gym .evidence {
+  min-height: 0;
+}
+
+.kiosk-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3) var(--s5);
+  font-size: var(--fs-s);
+}
+.kiosk-scan {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+.kiosk-scan p {
+  display: flex;
+  flex-direction: column;
+}
+.kiosk-scan-title {
+  font-size: var(--fs-m);
+}
+.kiosk-scan-hint,
+.kiosk-status {
+  color: var(--ink-2);
+}
+/* Dark modules on a light ground in both themes: phone cameras read that reliably. */
+.kiosk-qr {
+  width: max(96px, 16vh);
+  height: max(96px, 16vh);
+  flex: none;
+  border-radius: var(--corner-s);
+}
+.kiosk-qr-ground {
+  fill: #ffffff;
+}
+.kiosk-qr-ink {
+  fill: #13213c;
+}
+.kiosk-status {
+  font-variant-numeric: tabular-nums;
+}
+/* Discreet: staff need a way out, the room does not need to see it. */
+.kiosk-exit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-2);
+}
+
+/* A portrait screen (or a phone trying the mode): the gyms stack. */
+@media (orientation: portrait) {
+  .kiosk {
+    --fs-score: min(16vh, 30vw);
+  }
+  /* Content height, not a forced fit: the page scrolls on a short phone rather than clipping. */
+  .kiosk-board {
+    flex: none;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+}
 
 .sr-only {
   position: absolute;
